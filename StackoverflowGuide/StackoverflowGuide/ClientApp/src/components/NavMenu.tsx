@@ -9,7 +9,6 @@ import {
   NavLink
 } from "reactstrap";
 import { Link } from "react-router-dom";
-import "./NavMenu.css";
 
 export default class NavMenu extends React.PureComponent<
   {},
@@ -24,7 +23,9 @@ export default class NavMenu extends React.PureComponent<
       <header>
         <Navbar
           className="navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3"
-          light
+          color = "primary"
+          dark
+          expand = "sm"
         >
           <Container>
             <NavbarBrand tag={Link} to="/">
@@ -38,12 +39,12 @@ export default class NavMenu extends React.PureComponent<
             >
               <ul className="navbar-nav flex-grow">
                 <NavItem>
-                  <NavLink tag={Link} className="text-dark" to="/">
+                  <NavLink tag={Link} active to="/">
                     Home
                   </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink tag={Link} className="text-dark" to="/counter">
+                  <NavLink tag={Link} to="/counter">
                     Counter
                   </NavLink>
                 </NavItem>
