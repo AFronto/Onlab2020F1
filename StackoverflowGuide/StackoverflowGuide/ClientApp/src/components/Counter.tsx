@@ -1,7 +1,8 @@
 import React, { FunctionComponent, Fragment } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { increment } from "../store/Counter";
-import { ReduxState, store } from "../store";
+import { ReduxState } from "../store";
+import { Button } from "reactstrap";
 
 export const Counter: FunctionComponent = () => {
   const counter = useSelector((state: ReduxState) => state.counter);
@@ -17,13 +18,9 @@ export const Counter: FunctionComponent = () => {
         Current count: <strong>{counter}</strong>
       </p>
 
-      <button
-        type="button"
-        className="btn btn-primary btn-lg"
-        onClick={() => dispatch(increment())}
-      >
+      <Button color="primary" onClick={() => dispatch(increment())}>
         Increment
-      </button>
+      </Button>
     </Fragment>
   );
 };
