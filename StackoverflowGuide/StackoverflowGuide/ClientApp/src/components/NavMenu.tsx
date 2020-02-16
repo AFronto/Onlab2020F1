@@ -21,12 +21,7 @@ export default class NavMenu extends React.PureComponent<
   public render() {
     return (
       <header>
-        <Navbar
-          className="navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3"
-          color = "primary"
-          dark
-          expand = "sm"
-        >
+        <Navbar color="primary" dark expand="sm">
           <Container>
             <NavbarBrand tag={Link} to="/">
               StackoverflowGuide
@@ -39,7 +34,7 @@ export default class NavMenu extends React.PureComponent<
             >
               <ul className="navbar-nav flex-grow">
                 <NavItem>
-                  <NavLink tag={Link} active to="/">
+                  <NavLink tag={Link} to="/">
                     Home
                   </NavLink>
                 </NavItem>
