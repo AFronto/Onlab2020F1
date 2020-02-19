@@ -3,8 +3,8 @@ import { Container } from "reactstrap";
 import NavMenu from "./NavMenu";
 
 export default (props: { children?: React.ReactNode }) => (
-  <React.Fragment>
+  <div style={{ height: "100%" }}>
     <NavMenu />
-    <Container>{props.children}</Container>
-  </React.Fragment>
+    <Container style={{ height: "100%" }}>{props.children}</Container>
+  </div>
 );
