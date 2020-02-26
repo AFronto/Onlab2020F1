@@ -1,44 +1,22 @@
 import React, { FunctionComponent } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  CardImg,
-  CardText,
-  CardBody,
-  CardTitle,
-  CardSubtitle,
-  Button
-} from "reactstrap";
+import { ThreadCard } from "./ThreadCard";
+import { Row, Col } from "reactstrap";
 
 export const ThreadsScreen: FunctionComponent = () => {
+  const threadList = [
+    { id: "0", name: "Web Design", tagList: ["React", "HTML", "Angular"] },
+    { id: "1", name: "Backend", tagList: ["C#", "C++"] },
+    { id: "2", name: "Android", tagList: ["Kotlin"] }
+  ];
+
   return (
     <div className="d-flex align-items-center" style={{ height: "100%" }}>
-      <Row>
-        <Col>
-          <div>
-            <Card>
-              <CardImg
-                top
-                width="100%"
-                src="/assets/318x180.svg"
-                alt="Card image cap"
-              />
-              <CardBody>
-                <CardTitle>Card title</CardTitle>
-                <CardSubtitle>Card subtitle</CardSubtitle>
-                <CardText>
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card's content.
-                </CardText>
-                <Button>Button</Button>
-              </CardBody>
-            </Card>
-          </div>
-        </Col>
-        <Col>.col</Col>
-        <Col>.col</Col>
+      <Row style={{ width: "100%" }}>
+        {threadList.map(threadCard => (
+          <Col>
+            <ThreadCard thread={threadCard} />
+          </Col>
+        ))}
       </Row>
     </div>
   );
