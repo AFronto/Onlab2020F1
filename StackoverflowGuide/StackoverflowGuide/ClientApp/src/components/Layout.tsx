@@ -5,6 +5,6 @@ import NavMenu from "./NavMenu";
 export default (props: { children?: React.ReactNode }) => (
   <div style={{ height: "100%" }}>
     <NavMenu />
-    <Container style={{ height: "100%" }}>{props.children}</Container>
+    <Container style={{ height: "90%" }}>{props.children}</Container>
   </div>
 );

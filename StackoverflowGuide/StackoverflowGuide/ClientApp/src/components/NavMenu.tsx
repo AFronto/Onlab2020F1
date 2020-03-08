@@ -21,7 +21,7 @@ export default class NavMenu extends React.PureComponent<
   public render() {
     return (
       <header>
-        <Navbar color="primary" dark expand="sm">
+        <Navbar color="dark" dark expand="sm">
           <Container>
             <NavbarBrand tag={Link} to="/">
               StackoverflowGuide
