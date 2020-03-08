@@ -1,6 +1,9 @@
 import React, { FunctionComponent } from "react";
 import { ThreadCard } from "./ThreadCard";
 import { Row, Col } from "reactstrap";
+import { useSelector, useDispatch } from "react-redux";
+import { ReduxState } from "../../store";
+import { loadThreads, addThread } from "../../store/Threads";
 
 export const ThreadsScreen: FunctionComponent = () => {
   const threadList = [
@@ -9,10 +12,17 @@ export const ThreadsScreen: FunctionComponent = () => {
     { id: "2", name: "Android", tagList: ["Kotlin"] }
   ];
 
+  const dispatch = useDispatch();
+  dispatch(loadThreads({ threadList: threadList }));
+  dispatch(
+    addThread({ newThread: { id: "3", name: "IoT", tagList: ["C", "C++"] } })
+  );
+  const threads = useSelector((state: ReduxState) => state.threads);
+
   return (
     <div className="d-flex align-items-center" style={{ height: "100%" }}>
       <Row style={{ width: "100%" }}>
-        {threadList.map(threadCard => (
+        {threads.map(threadCard => (
           <Col>
             <ThreadCard thread={threadCard} />
           </Col>

@@ -4,10 +4,12 @@ import thunk from "redux-thunk";
 import history from "./applcationHistory";
 import { connectRouter, routerMiddleware } from "connected-react-router";
 import counter from "./Counter";
+import threads from "./Threads/index";
 
 const rootReducer = combineReducers({
   router: connectRouter(history),
-  counter: counter
+  counter: counter,
+  threads: threads
 });
 
 const middleware = [
