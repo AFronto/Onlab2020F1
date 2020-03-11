@@ -1,11 +1,21 @@
+using AspNetCore.Identity.Mongo;
+using AspNetCore.Identity.Mongo.Model;
+using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using StackoverflowGuide.API.Mapping;
+using StackoverflowGuide.BLL.Services;
+using StackoverflowGuide.BLL.Services.Interfaces;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 
 namespace StackoverflowGuide
 {
@@ -21,13 +31,69 @@ namespace StackoverflowGuide
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var passwordOptions = new PasswordOptions()
+            {
+                RequiredLength = 8,
+                RequireLowercase = false,
+                RequireUppercase = false,
+                RequireNonAlphanumeric = false,
+                RequireDigit = false
+            };
+            
+            services.AddIdentityMongoDbProvider<MongoUser, MongoRole>
+                (
+                    identityOptions => { identityOptions.Password = passwordOptions; },
+                    mongoIdentityOptions =>
+                    {
+                        mongoIdentityOptions.ConnectionString = Configuration.GetConnectionString("MongoDbDatabase");
+                    });
+
+            // Add Jwt Authentication
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
+            services.AddAuthentication(options =>
+            {
+                //Set default Authentication Schema as Bearer
+                options.DefaultAuthenticateScheme =
+                           JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme =
+                           JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme =
+                           JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(cfg =>
+            {
+                cfg.RequireHttpsMetadata = false;
+                cfg.SaveToken = true;
+                cfg.TokenValidationParameters =
+                       new TokenValidationParameters
+                       {
+                           ValidIssuer = Configuration["JwtIssuer"],
+                           ValidAudience = Configuration["JwtIssuer"],
+                           IssuerSigningKey =
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtKey"])),
+                           ClockSkew = TimeSpan.Zero // remove delay of token when expire
+                       };
+            });
+
             services.AddControllersWithViews();
+
+            services.AddSingleton<IAuthService>(
+                new AuthService(
+                    Configuration.GetValue<string>("JwtKey"),
+                    Configuration.GetValue<int>("JwtExpireDays")
+                )
+            );
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/build";
             });
+
+            var mappingConfig = new MapperConfiguration(mc =>
+               mc.AddProfile(new MappingProfile())
+            );
+            services.AddSingleton(mappingConfig.CreateMapper());
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
