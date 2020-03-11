@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useEffect } from "react";
 import { ThreadCard } from "./ThreadCard";
-import { Row, Col } from "reactstrap";
+import { Row, Col } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { ReduxState } from "../../store";
 import { loadThreads, addThread, removeThread } from "../../store/Thread";
@@ -13,6 +13,7 @@ export const ThreadsScreen: FunctionComponent = () => {
   ];
 
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(loadThreads({ threadList: threadList }));
   }, []);
@@ -24,14 +25,12 @@ export const ThreadsScreen: FunctionComponent = () => {
   const threads = useSelector((state: ReduxState) => state.threads);
 
   return (
-    <div className="d-flex align-items-center" style={{ height: "100%" }}>
-      <Row style={{ width: "100%" }}>
-        {threads.map(threadCard => (
-          <Col>
-            <ThreadCard thread={threadCard} />
-          </Col>
-        ))}
-      </Row>
-    </div>
+    <Row>
+      {threads.map(threadCard => (
+        <Col>
+          <ThreadCard thread={threadCard} />
+        </Col>
+      ))}
+    </Row>
   );
 };

@@ -1,110 +1,95 @@
-import React, { FunctionComponent, useState } from "react";
-import {
-  Label,
-  Input,
-  Card,
-  CardBody,
-  CardTitle,
-  Row,
-  Col,
-  Button,
-  Form,
-  FormGroup,
-  FormFeedback
-} from "reactstrap";
+import React, { FunctionComponent } from "react";
+import { Card, Form, Col, Button, Row } from "react-bootstrap";
+import * as yup from "yup";
+import { useForm } from "react-hook-form";
+import { isArray } from "util";
+import { useDispatch } from "react-redux";
+import { login } from "../../api/Auth";
 
 export const LogInScreen: FunctionComponent = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [validEmail, setValidEmail] = useState("");
-  const [validPassword, setValidPassword] = useState("");
+  const schema = yup.object({
+    email: yup
+      .string()
+      .email()
+      .required(),
+    password: yup
+      .string()
+      .min(8)
+      .required()
+  });
 
-  function validateEmail(): boolean {
-    const emailRex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const { register, handleSubmit, errors } = useForm({
+    validationSchema: schema
+  });
 
-    if (!emailRex.test(email)) {
-      setValidEmail("has-danger");
-      return false;
-    } else {
-      setValidEmail("");
-      return true;
-    }
-  }
+  const dispatch = useDispatch();
 
-  function validatePassword(): boolean {
-    if (password.length < 8) {
-      setValidPassword("has-danger");
-      return false;
-    } else {
-      setValidPassword("");
-      return true;
-    }
-  }
-
-  function submitLogIn() {
-    const vE = validateEmail();
-    const vP = validatePassword();
-    if (vE && vP) {
-      console.log("Submit log in");
-    }
-  }
+  const onSubmit = handleSubmit(data => {
+    dispatch(login({ email: data.email, password: data.password }));
+  });
 
   return (
-    <div className="d-flex align-items-center" style={{ height: "100%" }}>
-      <Row style={{ width: "100%", margin: 0 }}>
-        <Col
-          xs={{ size: "12", offset: "0" }}
-          sm={{ size: "10", offset: "1" }}
-          md={{ size: "8", offset: "2" }}
-          lg={{ size: "6", offset: "3" }}
-          xl={{ size: "4", offset: "4" }}
-        >
-          <Card outline color="primary">
-            <CardBody>
-              <h2>
-                <CardTitle>Log In</CardTitle>
-              </h2>
-              <Form>
-                <FormGroup>
-                  <h5>
-                    <Label for="email">Email address:</Label>
-                  </h5>
-                  <Input
-                    invalid={validEmail === "has-danger"}
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    type="email"
-                    bsSize="lg"
-                    placeholder="Your email address"
-                  />
-                  <FormFeedback invalid>
-                    <h6>This must be a legit email address!</h6>
-                  </FormFeedback>
-                </FormGroup>
-                <FormGroup>
-                  <h5>
-                    <Label for="password">Password:</Label>
-                  </h5>
-                  <Input
-                    invalid={validPassword === "has-danger"}
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    type="password"
-                    bsSize="lg"
-                    placeholder="Your password"
-                  />
-                  <FormFeedback invalid>
-                    <h6>The password must be at least 8 characters long!</h6>
-                  </FormFeedback>
-                </FormGroup>
-                <Button block size="lg" color="success" onClick={submitLogIn}>
-                  Log In
-                </Button>
-              </Form>
-            </CardBody>
-          </Card>
-        </Col>
-      </Row>
-    </div>
+    <Row className="h-100 align-items-center justify-content-center">
+      <Card
+        style={{ width: "18rem", marginTop: 100, marginBottom: 100 }}
+        bg={"dark"}
+        text={"white"}
+      >
+        <Card.Header as="h4">Please Sign in!</Card.Header>
+        <Card.Body>
+          <Form noValidate onSubmit={onSubmit}>
+            <Form.Row>
+              <Form.Group as={Col} controlId="emailField">
+                <Form.Label>
+                  <h5>Email:</h5>
+                </Form.Label>
+                <Form.Control
+                  size="lg"
+                  type="text"
+                  name="email"
+                  ref={register}
+                  isInvalid={!!errors.email}
+                />
+                <Form.Control.Feedback type="invalid">
+                  <h6>
+                    {errors.email
+                      ? isArray(errors.email)
+                        ? errors.email[0].message
+                        : errors.email.message
+                      : ""}
+                  </h6>
+                </Form.Control.Feedback>
+              </Form.Group>
+            </Form.Row>
+            <Form.Row>
+              <Form.Group as={Col} controlId="passwordField">
+                <Form.Label>
+                  <h5>Password:</h5>
+                </Form.Label>
+                <Form.Control
+                  size="lg"
+                  type="password"
+                  name="password"
+                  ref={register}
+                  isInvalid={!!errors.password}
+                />
+                <Form.Control.Feedback type="invalid">
+                  <h6>
+                    {errors.password
+                      ? isArray(errors.password)
+                        ? errors.password[0].message
+                        : errors.password.message
+                      : ""}
+                  </h6>
+                </Form.Control.Feedback>
+              </Form.Group>
+            </Form.Row>
+            <Button type="submit" size="lg" block>
+              Log In
+            </Button>
+          </Form>
+        </Card.Body>
+      </Card>
+    </Row>
   );
 };

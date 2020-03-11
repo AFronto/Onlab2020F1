@@ -23,4 +23,6 @@ export const store = configureStore({
   middleware
 });
 
+export type AppDispatch = typeof store.dispatch;
+
 export type ReduxState = ReturnType<typeof store.getState>;

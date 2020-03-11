@@ -1,13 +1,6 @@
 import React, { FunctionComponent } from "react";
 
-import {
-  Card,
-  CardBody,
-  CardTitle,
-  Button,
-  Badge,
-  DropdownItem
-} from "reactstrap";
+import { Card, Button, Badge } from "react-bootstrap";
 import ThreadData from "../../data/Thread/ThreadData";
 import { useDispatch } from "react-redux";
 import { removeThread } from "../../store/Thread";
@@ -17,9 +10,9 @@ export const ThreadCard: FunctionComponent<{ thread: ThreadData }> = props => {
 
   return (
     <Card>
-      <CardBody>
-        <CardTitle>{props.thread.name}</CardTitle>
-        <DropdownItem divider />
+      <Card.Body>
+        <Card.Title>{props.thread.name}</Card.Title>
+
         <h4>
           {props.thread.tagList.map(tag => (
             <Badge style={{ margin: 5 }} pill color="secondary">
@@ -35,7 +28,7 @@ export const ThreadCard: FunctionComponent<{ thread: ThreadData }> = props => {
         >
           Delete
         </Button>
-      </CardBody>
+      </Card.Body>
     </Card>
   );
 };

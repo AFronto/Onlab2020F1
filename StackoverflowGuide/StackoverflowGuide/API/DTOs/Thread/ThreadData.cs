@@ -8,22 +8,6 @@ namespace StackoverflowGuide.API.DTOs.Thread
 {
     public class ThreadData
     {
-        [HttpGet("loadThreads")]
-        public 
-        {
-
-        }
-
-        [HttpPost("addThread")]
-        public ActionResult<ThreadData> Post([FromBody]LoginData model)
-        {
-            return new ThreadData();
-        }
-
-        [HttpDelete("deleteThread")]
-        public 
-        {
-
-        }
+        
     }
 }

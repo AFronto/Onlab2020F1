@@ -1,59 +1,19 @@
-import * as React from "react";
-import {
-  Collapse,
-  Container,
-  Navbar,
-  NavbarBrand,
-  NavbarToggler,
-  NavItem,
-  NavLink
-} from "reactstrap";
-import { Link } from "react-router-dom";
+import React, { FunctionComponent } from "react";
+import { Navbar, Nav } from "react-bootstrap";
 
-export default class NavMenu extends React.PureComponent<
-  {},
-  { isOpen: boolean }
-> {
-  public state = {
-    isOpen: false
-  };
-
-  public render() {
-    return (
-      <header>
-        <Navbar color="dark" dark expand="sm">
-          <Container>
-            <NavbarBrand tag={Link} to="/">
-              StackoverflowGuide
-            </NavbarBrand>
-            <NavbarToggler onClick={this.toggle} className="mr-2" />
-            <Collapse
-              className="d-sm-inline-flex flex-sm-row-reverse"
-              isOpen={this.state.isOpen}
-              navbar
-            >
-              <ul className="navbar-nav flex-grow">
-                <NavItem>
-                  <NavLink tag={Link} to="/">
-                    Home
-                  </NavLink>
-                </NavItem>
-                <NavItem>
-                  <NavLink tag={Link} to="/counter">
-                    Counter
-                  </NavLink>
-                </NavItem>
-              </ul>
-            </Collapse>
-          </Container>
-        </Navbar>
-      </header>
-    );
-  }
-
-  private toggle = () => {
-    this.setState({
-      isOpen: !this.state.isOpen
-    });
-  };
-}
+export const NavMenu: FunctionComponent = () => {
+  return (
+    <Navbar fixed="top" bg="dark" variant="dark" expand="sm">
+      <Navbar.Brand className="ml-3" href="/">
+        StackoverflowGuide
+      </Navbar.Brand>
+      <Navbar.Toggle aria-controls="basic-navbar-nav" />
+      <Navbar.Collapse id="basic-navbar-nav">
+        <Nav className="ml-auto mr-3">
+          <Nav.Link href="/">Home</Nav.Link>
+          <Nav.Link href="/counter">Counter</Nav.Link>
+        </Nav>
+      </Navbar.Collapse>
+    </Navbar>
+  );
+};
