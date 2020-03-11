@@ -1,9 +1,9 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useEffect } from "react";
 import { ThreadCard } from "./ThreadCard";
 import { Row, Col } from "reactstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { ReduxState } from "../../store";
-import { loadThreads, addThread } from "../../store/Threads";
+import { loadThreads, addThread, removeThread } from "../../store/Threads";
 
 export const ThreadsScreen: FunctionComponent = () => {
   const threadList = [
@@ -13,10 +13,14 @@ export const ThreadsScreen: FunctionComponent = () => {
   ];
 
   const dispatch = useDispatch();
-  dispatch(loadThreads({ threadList: threadList }));
-  dispatch(
-    addThread({ newThread: { id: "3", name: "IoT", tagList: ["C", "C++"] } })
-  );
+  useEffect(() => {
+    dispatch(loadThreads({ threadList: threadList }));
+  }, []);
+
+  // dispatch(
+  //   addThread({ newThread: { id: "3", name: "IoT", tagList: ["C", "C++"] } })
+  // );
+  // dispatch(removeThread({ threadId: "0" }));
   const threads = useSelector((state: ReduxState) => state.threads);
 
   return (

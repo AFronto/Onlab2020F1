@@ -9,8 +9,12 @@ import {
   DropdownItem
 } from "reactstrap";
 import Thread from "../../data/Threads/Thread";
+import { useDispatch } from "react-redux";
+import { removeThread } from "../../store/Threads";
 
 export const ThreadCard: FunctionComponent<{ thread: Thread }> = props => {
+  const dispatch = useDispatch();
+
   return (
     <Card>
       <CardBody>
@@ -24,7 +28,13 @@ export const ThreadCard: FunctionComponent<{ thread: Thread }> = props => {
           ))}
         </h4>
         <Button>Edit</Button>
-        <Button>Delete</Button>
+        <Button
+          onClick={() => {
+            dispatch(removeThread({ threadId: props.thread.id }));
+          }}
+        >
+          Delete
+        </Button>
       </CardBody>
     </Card>
   );
