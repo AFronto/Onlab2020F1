@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import Thread from "../../data/Threads/Thread";
+import ThreadData from "../../data/Thread/ThreadData";
 
 const threadsSlice = createSlice({
   name: "threads",
-  initialState: [] as Thread[],
+  initialState: [] as ThreadData[],
   reducers: {
     loadThreads(_state, action) {
       return action.payload.threadList;

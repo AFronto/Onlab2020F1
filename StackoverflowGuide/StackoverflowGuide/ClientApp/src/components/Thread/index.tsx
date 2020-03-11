@@ -3,7 +3,7 @@ import { ThreadCard } from "./ThreadCard";
 import { Row, Col } from "reactstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { ReduxState } from "../../store";
-import { loadThreads, addThread, removeThread } from "../../store/Threads";
+import { loadThreads, addThread, removeThread } from "../../store/Thread";
 
 export const ThreadsScreen: FunctionComponent = () => {
   const threadList = [

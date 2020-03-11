@@ -1,4 +1,4 @@
-export default interface Thread {
+export default interface ThreadData {
   id: string;
   name: string;
   tagList: string[];

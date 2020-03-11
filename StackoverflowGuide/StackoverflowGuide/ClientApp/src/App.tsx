@@ -3,7 +3,7 @@ import { Route } from "react-router";
 import Layout from "./components/Layout";
 import Home from "./components/Home";
 import { Counter } from "./components/Counter";
-import { ThreadsScreen } from "./components/Threads";
+import { ThreadsScreen } from "./components/Thread";
 import { LogInScreen } from "./components/Auth/LogIn";
 import { RegisterScreen } from "./components/Auth/Register";
 

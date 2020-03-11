@@ -8,11 +8,11 @@ import {
   Badge,
   DropdownItem
 } from "reactstrap";
-import Thread from "../../data/Threads/Thread";
+import ThreadData from "../../data/Thread/ThreadData";
 import { useDispatch } from "react-redux";
-import { removeThread } from "../../store/Threads";
+import { removeThread } from "../../store/Thread";
 
-export const ThreadCard: FunctionComponent<{ thread: Thread }> = props => {
+export const ThreadCard: FunctionComponent<{ thread: ThreadData }> = props => {
   const dispatch = useDispatch();
 
   return (
