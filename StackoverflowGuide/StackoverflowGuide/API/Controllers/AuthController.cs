@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using StackoverflowGuide.API.DTOs;
+using StackoverflowGuide.BLL.Models;
+using StackoverflowGuide.BLL.Models.Auth;
 using StackoverflowGuide.BLL.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -23,17 +25,36 @@ namespace StackoverflowGuide.API.Controllers
         }
 
         [HttpPost("login")]
-        public ActionResult<AuthData> Post([FromBody]LoginData model)
+        public async Task<ActionResult<AuthData>> Post([FromBody]LoginData model)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            return new AuthData();
+            try
+            {
+                var id = await authService.LogUserIn(mapper.Map<Login>(model));
+
+                return authService.GetAuthData(id);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { error = e.Message });
+            }
         }
 
         [HttpPost("register")]
-        public ActionResult<AuthData> Post([FromBody]RegisterData model)
+        public async Task<ActionResult<AuthData>> PostAsync([FromBody]RegisterData model)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            return new AuthData();
+
+            try
+            {
+                var id = await authService.CreateNewUser(mapper.Map<Registration>(model));
+
+                return authService.GetAuthData(id);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { error = e.Message });
+            }
         }
 
     }

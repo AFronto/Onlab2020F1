@@ -3,12 +3,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import thunk from "redux-thunk";
 import history from "./applcationHistory";
 import { connectRouter, routerMiddleware } from "connected-react-router";
-import counter from "./Counter";
-import threads from "./Thread/index";
+import threads from "./Thread";
+import jwt from "./Auth";
+import errors from "./Errors";
 
 const rootReducer = combineReducers({
   router: connectRouter(history),
-  counter: counter,
+  jwt: jwt,
+  errors: errors,
   threads: threads
 });
 

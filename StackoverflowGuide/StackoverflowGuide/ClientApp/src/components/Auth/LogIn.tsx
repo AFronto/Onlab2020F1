@@ -3,8 +3,10 @@ import { Card, Form, Col, Button, Row } from "react-bootstrap";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { isArray } from "util";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../api/Auth";
+import { ReduxState } from "../../store";
+import { clearError } from "../../store/Errors";
 
 export const LogInScreen: FunctionComponent = () => {
   const schema = yup.object({
@@ -12,10 +14,7 @@ export const LogInScreen: FunctionComponent = () => {
       .string()
       .email()
       .required(),
-    password: yup
-      .string()
-      .min(8)
-      .required()
+    password: yup.string().required()
   });
 
   const { register, handleSubmit, errors } = useForm({
@@ -27,6 +26,12 @@ export const LogInScreen: FunctionComponent = () => {
   const onSubmit = handleSubmit(data => {
     dispatch(login({ email: data.email, password: data.password }));
   });
+
+  const onChangeOfCredentials = () => {
+    dispatch(clearError({ name: "credentialError" }));
+  };
+
+  const errorsFromServer = useSelector((state: ReduxState) => state.errors);
 
   return (
     <Row className="h-100 align-items-center justify-content-center">
@@ -47,6 +52,7 @@ export const LogInScreen: FunctionComponent = () => {
                   size="lg"
                   type="text"
                   name="email"
+                  onChange={onChangeOfCredentials}
                   ref={register}
                   isInvalid={!!errors.email}
                 />
@@ -71,6 +77,7 @@ export const LogInScreen: FunctionComponent = () => {
                   type="password"
                   name="password"
                   ref={register}
+                  onChange={onChangeOfCredentials}
                   isInvalid={!!errors.password}
                 />
                 <Form.Control.Feedback type="invalid">
@@ -82,6 +89,13 @@ export const LogInScreen: FunctionComponent = () => {
                       : ""}
                   </h6>
                 </Form.Control.Feedback>
+                {errors.password
+                  ? ""
+                  : errorsFromServer["credentialError"] !== undefined && (
+                      <h6 className="mt-2 text-danger">
+                        {errorsFromServer["credentialError"]}
+                      </h6>
+                    )}
               </Form.Group>
             </Form.Row>
             <Button type="submit" size="lg" block>

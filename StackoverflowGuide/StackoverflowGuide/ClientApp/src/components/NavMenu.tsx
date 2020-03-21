@@ -11,7 +11,6 @@ export const NavMenu: FunctionComponent = () => {
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="ml-auto mr-3">
           <Nav.Link href="/">Home</Nav.Link>
-          <Nav.Link href="/counter">Counter</Nav.Link>
         </Nav>
       </Navbar.Collapse>
     </Navbar>

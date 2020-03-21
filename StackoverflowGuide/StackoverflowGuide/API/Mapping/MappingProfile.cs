@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using StackoverflowGuide.API.DTOs;
+using StackoverflowGuide.BLL.Models;
+using StackoverflowGuide.BLL.Models.Auth;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +13,8 @@ namespace StackoverflowGuide.API.Mapping
     {
         public MappingProfile()
         {
-           
+            CreateMap<RegisterData, Registration>();
+            CreateMap<LoginData, Login>();
         }
     }
 }
