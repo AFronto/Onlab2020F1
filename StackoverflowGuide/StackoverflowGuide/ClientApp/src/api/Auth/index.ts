@@ -4,11 +4,15 @@ import RegisterData from "../../data/Auth/RegisterData";
 import { AppDispatch } from "../../store";
 import { loadAuthData } from "../../store/Auth";
 import { addError } from "../../store/Errors";
+import { replace } from "connected-react-router";
 
 export function login(loginData: LoginData) {
   return (dispatch: AppDispatch) => {
     return axios.post("auth/login", loginData).then(
-      success => dispatch(loadAuthData({ jwt: success.data })),
+      success => {
+        dispatch(loadAuthData({ jwt: success.data }));
+        dispatch(replace("/threads"));
+      },
       error =>
         dispatch(
           addError({
@@ -23,8 +27,17 @@ export function login(loginData: LoginData) {
 export function createNewAccount(registerData: RegisterData) {
   return (dispatch: AppDispatch) => {
     return axios.post("auth/register", registerData).then(
-      success => dispatch(loadAuthData({ jwt: success.data })),
-      error => console.log(error.response.data.error)
+      success => {
+        dispatch(loadAuthData({ jwt: success.data }));
+        dispatch(replace("/threads"));
+      },
+      error =>
+        dispatch(
+          addError({
+            name: "registrationCredentialError",
+            description: error.response.data.error
+          })
+        )
     );
   };
 }

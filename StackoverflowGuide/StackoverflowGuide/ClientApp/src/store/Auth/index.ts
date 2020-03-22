@@ -6,6 +6,12 @@ const authSlice = createSlice({
   initialState: {} as AuthData,
   reducers: {
     loadAuthData(_state, action) {
+      localStorage.setItem("jwtToken", action.payload.jwt.token);
+      localStorage.setItem(
+        "jwtTokenExpirationTime",
+        action.payload.jwt.tokenExpirationTime
+      );
+      localStorage.setItem("jwtId", action.payload.jwt.id);
       return action.payload.jwt;
     }
   }

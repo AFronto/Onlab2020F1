@@ -14,7 +14,6 @@ namespace StackoverflowGuide.API.DTOs
 
         [Required]
         [DataType(DataType.Password)]
-        [MinLength(8)]
         public string Password { get; set; }
     }
 }

@@ -15,9 +15,8 @@ export default () => (
     <AuthenticatedRoute exact path="/">
       <ThreadsScreen />
     </AuthenticatedRoute>
-    {/* <AuthenticatedRoute path="/threads">
+    <AuthenticatedRoute path="/threads">
       <ThreadsScreen />
-    </AuthenticatedRoute> */}
-    <Route path="/threads" component={ThreadsScreen} />
+    </AuthenticatedRoute>
   </Layout>
 );

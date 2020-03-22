@@ -43,7 +43,7 @@ namespace StackoverflowGuide.BLL.Services
                     await signInManager.SignInAsync(user, false);
                     return new Guid(user.Id);
                 }
-                throw new Exception("Cannot create User!");
+                throw new Exception("Cannot create User with these credentials!");
             }
             throw new Exception("Password and RepeatePassword dosen't match!");
         }

@@ -4,7 +4,9 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { isArray } from "util";
 import { createNewAccount } from "../../api/Auth";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { clearError } from "../../store/Errors";
+import { ReduxState } from "../../store";
 
 export const RegisterScreen: FunctionComponent = () => {
   const schema = yup.object({
@@ -37,6 +39,12 @@ export const RegisterScreen: FunctionComponent = () => {
     );
   });
 
+  const onChangeOfCredentials = () => {
+    dispatch(clearError({ name: "registrationCredentialError" }));
+  };
+
+  const errorsFromServer = useSelector((state: ReduxState) => state.errors);
+
   return (
     <Row className="h-100 align-items-center justify-content-center">
       <Card
@@ -56,6 +64,7 @@ export const RegisterScreen: FunctionComponent = () => {
                   size="lg"
                   type="text"
                   name="email"
+                  onChange={onChangeOfCredentials}
                   ref={register}
                   isInvalid={!!errors.email}
                 />
@@ -79,6 +88,7 @@ export const RegisterScreen: FunctionComponent = () => {
                   size="lg"
                   type="password"
                   name="password"
+                  onChange={onChangeOfCredentials}
                   ref={register}
                   isInvalid={!!errors.password}
                 />
@@ -102,6 +112,7 @@ export const RegisterScreen: FunctionComponent = () => {
                   size="lg"
                   type="password"
                   name="passwordConfirmation"
+                  onChange={onChangeOfCredentials}
                   ref={register}
                   isInvalid={!!errors.passwordConfirmation}
                 />
@@ -114,6 +125,14 @@ export const RegisterScreen: FunctionComponent = () => {
                       : ""}
                   </h6>
                 </Form.Control.Feedback>
+                {errors.passwordConfirmation
+                  ? ""
+                  : errorsFromServer["registrationCredentialError"] !==
+                      undefined && (
+                      <h6 className="mt-2 text-danger">
+                        {errorsFromServer["registrationCredentialError"]}
+                      </h6>
+                    )}
               </Form.Group>
             </Form.Row>
             <Button type="submit" size="lg" block>
