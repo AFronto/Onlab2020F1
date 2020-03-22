@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using StackoverflowGuide.BLL.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,6 @@ namespace StackoverflowGuide.API.Controllers
     [Route("[controller]")]
     public class ThreadController : ControllerBase
     {
+        IThreadService threadService;
     }
 }

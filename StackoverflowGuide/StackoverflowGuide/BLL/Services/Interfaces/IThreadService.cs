@@ -7,5 +7,6 @@ namespace StackoverflowGuide.BLL.Services.Interfaces
 {
     public interface IThreadService
     {
+        public void CreateNewThread();
     }
 }
