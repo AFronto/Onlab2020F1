@@ -10,7 +10,7 @@ export const NavMenu: FunctionComponent = () => {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="ml-auto mr-3">
-          <Nav.Link href="/">Home</Nav.Link>
+          <Nav.Link href="/">Threads</Nav.Link>
         </Nav>
       </Navbar.Collapse>
     </Navbar>
