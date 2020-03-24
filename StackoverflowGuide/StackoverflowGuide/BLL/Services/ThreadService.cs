@@ -1,16 +1,25 @@
-﻿using StackoverflowGuide.BLL.Services.Interfaces;
+﻿using StackoverflowGuide.BLL.Models.Thread;
+using StackoverflowGuide.BLL.RepositoryInterfaces;
+using StackoverflowGuide.BLL.Services.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace StackoverflowGuide.BLL.Services
 {
     public class ThreadService : IThreadService
     {
-        public void CreateNewThread()
+
+        private IThreadRepository threadRepository;
+        public ThreadService(IThreadRepository threadRepository)
         {
-            
+            this.threadRepository = threadRepository;
+        }
+        public Guid CreateNewThread(Thread newThread)
+        {
+            var id = Guid.NewGuid();
+            newThread.Id = id.ToString();
+            threadRepository.Add(newThread);
+            var rep = threadRepository.GetAll();
+            return id;
         }
     }
 }

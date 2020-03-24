@@ -12,8 +12,11 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using StackoverflowGuide.API.Mapping;
 using StackoverflowGuide.BLL.Models.User;
+using StackoverflowGuide.BLL.RepositoryInterfaces;
 using StackoverflowGuide.BLL.Services;
 using StackoverflowGuide.BLL.Services.Interfaces;
+using StackoverflowGuide.DATA.Context;
+using StackoverflowGuide.DATA.Repositories;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
@@ -81,6 +84,10 @@ namespace StackoverflowGuide
             var userManager = serviceProvider.GetService<UserManager<User>>();
             var signInManager = serviceProvider.GetService<SignInManager<User>>();
 
+
+            services.AddScoped<IMongoDBContext, MongoDBContext>();
+            services.AddScoped<IThreadRepository, ThreadRepository>();
+
             services.AddSingleton<IAuthService>(
                 new AuthService(
                     Configuration.GetValue<string>("JwtKey"),
@@ -89,6 +96,7 @@ namespace StackoverflowGuide
                     signInManager
                 )
             );
+            services.AddScoped<IThreadService, ThreadService>();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

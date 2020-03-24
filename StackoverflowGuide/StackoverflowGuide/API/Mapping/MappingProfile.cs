@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using StackoverflowGuide.API.DTOs;
+using StackoverflowGuide.API.DTOs.Thread;
 using StackoverflowGuide.BLL.Models;
 using StackoverflowGuide.BLL.Models.Auth;
+using StackoverflowGuide.BLL.Models.Thread;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +17,7 @@ namespace StackoverflowGuide.API.Mapping
         {
             CreateMap<RegisterData, Registration>();
             CreateMap<LoginData, Login>();
+            CreateMap<ThreadData, Thread>();
         }
     }
 }

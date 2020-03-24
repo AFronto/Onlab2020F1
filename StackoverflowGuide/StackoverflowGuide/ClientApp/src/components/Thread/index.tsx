@@ -4,6 +4,7 @@ import { Row, Col, Button } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { ReduxState } from "../../store";
 import { loadThreads, addThread, removeThread } from "../../store/Thread";
+import { createNewThread } from "../../api/Thread";
 
 export const ThreadsScreen: FunctionComponent = () => {
   const threadList = [
@@ -28,10 +29,13 @@ export const ThreadsScreen: FunctionComponent = () => {
     <div style={{ marginTop: 100, marginBottom: 100 }}>
       <Button
         onClick={() => {
+          // dispatch(
+          //   addThread({
+          //     newThread: { id: "3", name: "IoT", tagList: ["C", "C++"] }
+          //   })
+          // );
           dispatch(
-            addThread({
-              newThread: { id: "3", name: "IoT", tagList: ["C", "C++"] }
-            })
+            createNewThread({ id: "3", name: "IoT", tagList: ["C", "C++"] })
           );
         }}
       >

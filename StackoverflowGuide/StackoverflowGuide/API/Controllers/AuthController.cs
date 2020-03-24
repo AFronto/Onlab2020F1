@@ -25,7 +25,7 @@ namespace StackoverflowGuide.API.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<AuthData>> Post([FromBody]LoginData model)
+        public async Task<ActionResult<AuthData>> PostAsync([FromBody]LoginData model)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             try
