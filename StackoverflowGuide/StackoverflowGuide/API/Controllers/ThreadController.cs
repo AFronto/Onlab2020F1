@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StackoverflowGuide.API.DTOs.Thread;
 using StackoverflowGuide.BLL.Models.Thread;
@@ -10,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace StackoverflowGuide.API.Controllers
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     [Route("[controller]")]
     public class ThreadController : ControllerBase

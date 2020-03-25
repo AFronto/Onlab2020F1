@@ -70,8 +70,11 @@ namespace StackoverflowGuide
                 cfg.TokenValidationParameters =
                        new TokenValidationParameters
                        {
-                           ValidIssuer = Configuration["JwtIssuer"],
-                           ValidAudience = Configuration["JwtIssuer"],
+                           ValidateIssuer = false,
+                           ValidateAudience = false,
+                           ValidateLifetime = true,
+                           ValidateIssuerSigningKey = true,
+
                            IssuerSigningKey =
                         new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtKey"])),
                            ClockSkew = TimeSpan.Zero // remove delay of token when expire
@@ -130,6 +133,7 @@ namespace StackoverflowGuide
             app.UseSpaStaticFiles();
 
             app.UseRouting();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
@@ -147,6 +151,7 @@ namespace StackoverflowGuide
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
+
         }
     }
 }
