@@ -18,6 +18,7 @@ namespace StackoverflowGuide.API.Mapping
             CreateMap<RegisterData, Registration>();
             CreateMap<LoginData, Login>();
             CreateMap<ThreadData, Thread>();
+            CreateMap<Thread, ThreadData>();
         }
     }
 }

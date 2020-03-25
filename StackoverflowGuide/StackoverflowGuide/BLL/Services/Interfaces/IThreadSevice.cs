@@ -8,6 +8,7 @@ namespace StackoverflowGuide.BLL.Services.Interfaces
 {
     public interface IThreadService
     {
-        public Guid CreateNewThread(Thread newThread);
+        public string CreateNewThread(Thread newThread);
+        public IEnumerable<Thread> GetAll();
     }
 }

@@ -1,54 +1,76 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
+using StackoverflowGuide.BLL.Models.DB;
 using StackoverflowGuide.BLL.RepositoryInterfaces;
 using StackoverflowGuide.DATA.Context;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace StackoverflowGuide.DATA.Repositories
 {
-    public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
+    public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity:DBModel
     {
-        protected readonly IMongoDBContext _context;
-        protected readonly IMongoCollection<TEntity> DbSet;
-
-        protected BaseRepository(IMongoDBContext context)
+        private IMongoDBContext _dbContext;
+        public IMongoCollection<TEntity> Collection { get; private set; }
+        public BaseRepository(IMongoDBContext dbContext)
         {
-            _context = context;
-            DbSet = _context.GetCollection<TEntity>(typeof(TEntity).Name);
+            this._dbContext = dbContext;
+            Collection = _dbContext.GetCollection<TEntity>();
         }
 
-        public virtual Task Add(TEntity obj)
+        public TEntity Find(string id)
         {
-            return _context.AddCommand(async () => await DbSet.InsertOneAsync(obj));
-        }
-
-        public virtual async Task<TEntity> GetById(string id)
-        {
-            var data = await DbSet.FindAsync(Builders<TEntity>.Filter.Eq(" _id ", id));
-            return data.FirstOrDefault();
-        }
-
-        public virtual async Task<IEnumerable<TEntity>> GetAll()
-        {
-            var all = await DbSet.FindAsync(Builders<TEntity>.Filter.Empty);
-            return all.ToList();
-        }
-
-        public virtual Task Update(string id, TEntity obj)
-        {
-            return _context.AddCommand(async () =>
+            ObjectId objectId;
+            if (!ObjectId.TryParse(id.ToString(), out objectId))
             {
-                await DbSet.ReplaceOneAsync(Builders<TEntity>.Filter.Eq(" _id ", id), obj);
-            });
+                return null;
+            }
+            var filterId = Builders<TEntity>.Filter.Eq("_id", objectId);
+            var model = Collection.Find(filterId).FirstOrDefault();
+            return model;
         }
 
-        public virtual Task Remove(string id) => _context.AddCommand(() => DbSet.DeleteOneAsync(Builders<TEntity>.Filter.Eq(" _id ", id)));
-
-        public void Dispose()
+        public bool Update(TEntity model)
         {
-            GC.SuppressFinalize(this);
+            var filterId = Builders<TEntity>.Filter.Eq("_id", model.Id);
+            var updated = Collection.FindOneAndReplace(filterId, model);
+            return updated != null;
+        }
+
+        public bool Create(TEntity model)
+        {
+            try
+            {
+                Collection.InsertOne(model);
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
+        public bool Delete(string id)
+        {
+            ObjectId objectId;
+            if (!ObjectId.TryParse(id.ToString(), out objectId))
+            {
+                return false;
+            }
+            var filterId = Builders<TEntity>.Filter.Eq("_id", objectId);
+            var deleted = Collection.FindOneAndDelete(filterId);
+            return deleted != null;
+        }
+
+        public IEnumerable<TEntity> QuerryAll()
+        {
+            return Collection.Find(FilterDefinition<TEntity>.Empty).ToList();
+        }
+        public IEnumerable<TEntity> Querry(Expression<Func<TEntity, bool>> filter)
+        {
+            return Collection.Find(filter).ToList();
         }
     }
 }

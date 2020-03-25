@@ -1,7 +1,9 @@
-﻿using StackoverflowGuide.BLL.Models.Thread;
+﻿using MongoDB.Bson;
+using StackoverflowGuide.BLL.Models.Thread;
 using StackoverflowGuide.BLL.RepositoryInterfaces;
 using StackoverflowGuide.BLL.Services.Interfaces;
 using System;
+using System.Collections.Generic;
 
 namespace StackoverflowGuide.BLL.Services
 {
@@ -13,13 +15,19 @@ namespace StackoverflowGuide.BLL.Services
         {
             this.threadRepository = threadRepository;
         }
-        public Guid CreateNewThread(Thread newThread)
+        public string CreateNewThread(Thread newThread)
         {
-            var id = Guid.NewGuid();
-            newThread.Id = id.ToString();
-            threadRepository.Add(newThread);
-            var rep = threadRepository.GetAll();
+            //TODO:finish and error handling
+            var id = ObjectId.GenerateNewId().ToString();
+            newThread.Id = id;
+            threadRepository.Create(newThread);
             return id;
+        }
+
+        public IEnumerable<Thread> GetAll()
+        {
+            //TODO:finish and error handling
+            return threadRepository.QuerryAll();
         }
     }
 }

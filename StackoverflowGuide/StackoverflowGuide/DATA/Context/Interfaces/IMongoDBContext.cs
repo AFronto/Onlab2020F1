@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using StackoverflowGuide.BLL.Models.DB;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +9,7 @@ namespace StackoverflowGuide.DATA.Context
 {
     public interface IMongoDBContext
     {
-        public int SaveChanges();
-        public IMongoCollection<T> GetCollection<T>(string name);
-        public void Dispose();
-        public Task AddCommand(Func<Task> func);
+        public IMongoCollection<T> GetCollection<T>() where T : DBModel;
 
     }
 }

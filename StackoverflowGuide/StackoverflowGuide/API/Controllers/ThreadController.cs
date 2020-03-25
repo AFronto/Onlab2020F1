@@ -33,9 +33,22 @@ namespace StackoverflowGuide.API.Controllers
                 var responseId = new ThreadIdData() { 
                     Id = threadService
                          .CreateNewThread(mapper.Map<Thread>(model))
-                         .ToString()
                 };
                 return responseId;
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { error = e.Message });
+            }
+        }
+
+        [HttpGet]
+        public ActionResult<List<ThreadData>> GetAll()
+        {
+            try
+            {
+                var threads = threadService.GetAll();
+                return threads.Select(mapper.Map<ThreadData>).ToList();
             }
             catch (Exception e)
             {

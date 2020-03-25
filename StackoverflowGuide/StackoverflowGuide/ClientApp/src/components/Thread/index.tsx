@@ -3,8 +3,8 @@ import { ThreadCard } from "./ThreadCard";
 import { Row, Col, Button } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { ReduxState } from "../../store";
-import { loadThreads, addThread, removeThread } from "../../store/Thread";
-import { createNewThread } from "../../api/Thread";
+
+import { createNewThread, getThreads } from "../../api/Thread";
 
 export const ThreadsScreen: FunctionComponent = () => {
   const threadList = [
@@ -16,7 +16,7 @@ export const ThreadsScreen: FunctionComponent = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(loadThreads({ threadList: threadList }));
+    dispatch(getThreads());
   }, []);
 
   // dispatch(
