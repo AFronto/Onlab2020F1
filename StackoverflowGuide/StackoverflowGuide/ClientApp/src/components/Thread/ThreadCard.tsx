@@ -4,6 +4,7 @@ import { Card, Button, Badge } from "react-bootstrap";
 import ThreadData from "../../data/Thread/ThreadData";
 import { useDispatch } from "react-redux";
 import { removeThread } from "../../store/Thread";
+import { deleteThread } from "../../api/Thread";
 
 export const ThreadCard: FunctionComponent<{ thread: ThreadData }> = (
   props
@@ -26,6 +27,7 @@ export const ThreadCard: FunctionComponent<{ thread: ThreadData }> = (
         <Button
           onClick={() => {
             dispatch(removeThread({ threadId: props.thread.id }));
+            dispatch(deleteThread(props.thread));
           }}
         >
           Delete

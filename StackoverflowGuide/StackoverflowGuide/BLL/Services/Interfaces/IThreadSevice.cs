@@ -9,6 +9,8 @@ namespace StackoverflowGuide.BLL.Services.Interfaces
     public interface IThreadService
     {
         public string CreateNewThread(Thread newThread);
+
+        public string DeleteThread(string id);
         public IEnumerable<Thread> GetAll();
     }
 }

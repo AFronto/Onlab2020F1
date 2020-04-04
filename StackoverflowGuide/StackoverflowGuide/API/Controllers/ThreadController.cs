@@ -45,6 +45,27 @@ namespace StackoverflowGuide.API.Controllers
             }
         }
 
+        [HttpDelete("{id}")]
+        public ActionResult<ThreadIdData> Delete(string id)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            try
+            {
+                var responseId = new ThreadIdData()
+                {
+                    Id = threadService
+                         .DeleteThread(id)
+                };
+                return responseId;
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { error = e.Message });
+            }
+        }
+
+
         [HttpGet]
         public ActionResult<List<ThreadData>> GetAll()
         {

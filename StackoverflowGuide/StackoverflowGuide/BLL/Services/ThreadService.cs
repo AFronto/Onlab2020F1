@@ -24,6 +24,19 @@ namespace StackoverflowGuide.BLL.Services
             return id;
         }
 
+        public string DeleteThread(string id)
+        {
+            if(threadRepository.Find(id) != null)
+            {
+                threadRepository.Delete(id);
+                return id;
+            }
+            else
+            {
+                throw new Exception("Cannot delete nonexistant thread!");
+            }
+        }
+
         public IEnumerable<Thread> GetAll()
         {
             //TODO:finish and error handling
