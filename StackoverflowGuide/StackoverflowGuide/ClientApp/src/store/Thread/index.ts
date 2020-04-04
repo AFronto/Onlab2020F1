@@ -12,20 +12,29 @@ const threadsSlice = createSlice({
       state.push(action.payload.newThread);
       return state;
     },
-    removeThread(state, action) {
-      console.log(state);
-      console.log("test");
-      console.log(action.payload.threadId);
-      var threadToDelete = state.find(
-        thread => thread.id === action.payload.threadId
+    updateThread(state, action) {
+      var threadToUpdateIndex = state.findIndex(
+        (thread) => thread.id === action.payload.threadId
       );
-      if (threadToDelete !== undefined) {
-        state.splice(state.indexOf(threadToDelete), 1);
+      state[threadToUpdateIndex] = action.payload.updatedThread;
+      return state;
+    },
+    removeThread(state, action) {
+      var threadToDeleteIndex = state.findIndex(
+        (thread) => thread.id === action.payload.threadId
+      );
+      if (threadToDeleteIndex !== -1) {
+        state.splice(threadToDeleteIndex, 1);
       }
       return state;
-    }
-  }
+    },
+  },
 });
 
-export const { loadThreads, addThread, removeThread } = threadsSlice.actions;
+export const {
+  loadThreads,
+  addThread,
+  updateThread,
+  removeThread,
+} = threadsSlice.actions;
 export default threadsSlice.reducer;

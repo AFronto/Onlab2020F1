@@ -1,7 +1,7 @@
 import axios from "axios";
 import ThreadData from "../../data/Thread/ThreadData";
 import { AppDispatch, ReduxState } from "../../store";
-import { loadThreads } from "../../store/Thread";
+import { loadThreads, updateThread, removeThread } from "../../store/Thread";
 import { generateAuthenticationHeadder } from "../Helpers/HeaderHelper";
 import { jwtExpires } from "../Helpers/JWTExpireHelper";
 
@@ -12,10 +12,10 @@ export function getThreads() {
     return axios({
       method: "GET",
       url: "thread",
-      headers: header
+      headers: header,
     }).then(
-      success => dispatch(loadThreads({ threadList: success.data })),
-      error => {
+      (success) => dispatch(loadThreads({ threadList: success.data })),
+      (error) => {
         if (error.response.status === 401) {
           jwtExpires(dispatch);
         }
@@ -32,10 +32,18 @@ export function createNewThread(threadData: ThreadData) {
       method: "POST",
       url: "thread/create",
       headers: header,
-      data: threadData
+      data: threadData,
     }).then(
-      success => console.log(success), ///refactor, too server relient!!
-      error => {
+      (success) => {
+        dispatch(
+          updateThread({
+            threadId: threadData.id,
+            updatedThread: { ...threadData, id: success.data.id },
+          })
+        );
+      },
+      (error) => {
+        dispatch(removeThread({ threadId: threadData.id }));
         if (error.response.status === 401) {
           jwtExpires(dispatch);
         }
