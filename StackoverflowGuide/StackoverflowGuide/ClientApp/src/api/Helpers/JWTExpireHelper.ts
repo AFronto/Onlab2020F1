@@ -1,6 +1,6 @@
 import { AppDispatch } from "../../store";
 import { addError } from "../../store/Errors";
-import { replace } from "connected-react-router";
+import { logOut } from "../../general_helpers/AuthHelper";
 
 export function jwtExpires(dispatch: AppDispatch) {
   dispatch(
@@ -9,5 +9,5 @@ export function jwtExpires(dispatch: AppDispatch) {
       description: "Your JWT token has expired"
     })
   );
-  dispatch(replace("/login"));
+  logOut(dispatch);
 }

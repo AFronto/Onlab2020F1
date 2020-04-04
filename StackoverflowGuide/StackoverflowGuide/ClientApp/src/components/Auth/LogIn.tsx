@@ -7,6 +7,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../api/Auth";
 import { ReduxState } from "../../store";
 import { clearError } from "../../store/Errors";
+import { Redirect } from "react-router";
+import { isLoggedIn } from "../../general_helpers/AuthHelper";
 
 export const LogInScreen: FunctionComponent = () => {
   const schema = yup.object({
@@ -33,7 +35,13 @@ export const LogInScreen: FunctionComponent = () => {
 
   const errorsFromServer = useSelector((state: ReduxState) => state.errors);
 
-  return (
+  return isLoggedIn() ? (
+    <Redirect
+      to={{
+        pathname: "/threads"
+      }}
+    />
+  ) : (
     <Row className="h-100 align-items-center justify-content-center">
       <Card
         style={{ width: "18rem", marginTop: 100, marginBottom: 100 }}

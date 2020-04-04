@@ -4,14 +4,14 @@ import RegisterData from "../../data/Auth/RegisterData";
 import { AppDispatch } from "../../store";
 import { loadAuthData } from "../../store/Auth";
 import { addError } from "../../store/Errors";
-import { replace } from "connected-react-router";
+import { push } from "connected-react-router";
 
 export function login(loginData: LoginData) {
   return (dispatch: AppDispatch) => {
     return axios.post("auth/login", loginData).then(
       success => {
         dispatch(loadAuthData({ jwt: success.data }));
-        dispatch(replace("/threads"));
+        dispatch(push("/threads"));
       },
       error =>
         dispatch(
@@ -29,7 +29,7 @@ export function createNewAccount(registerData: RegisterData) {
     return axios.post("auth/register", registerData).then(
       success => {
         dispatch(loadAuthData({ jwt: success.data }));
-        dispatch(replace("/threads"));
+        dispatch(push("/threads"));
       },
       error =>
         dispatch(

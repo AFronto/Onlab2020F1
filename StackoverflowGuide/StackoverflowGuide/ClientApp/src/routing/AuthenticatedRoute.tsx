@@ -1,9 +1,9 @@
 import React, { FunctionComponent } from "react";
 import { Route, Redirect } from "react-router";
-import { ReduxState } from "../store";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { loadAuthData } from "../store/Auth";
 import AuthData from "../data/Auth/AuthData";
+import { isLoggedIn } from "../general_helpers/AuthHelper";
 
 interface IProps {
   exact?: boolean;
@@ -15,14 +15,9 @@ export const AuthenticatedRoute: FunctionComponent<IProps> = ({
   children,
   ...rest
 }) => {
-  const jwtToken = useSelector((state: ReduxState) => state.jwt.token);
-
   const dispatch = useDispatch();
 
-  if (
-    localStorage.getItem("jwtToken") !== undefined &&
-    localStorage.getItem("jwtToken") !== null
-  ) {
+  if (isLoggedIn()) {
     const jwt: AuthData = {
       token: localStorage.getItem("jwtToken")!,
       tokenExpirationTime: parseInt(
@@ -39,7 +34,7 @@ export const AuthenticatedRoute: FunctionComponent<IProps> = ({
     <Route
       {...rest}
       render={({ location }) =>
-        jwtToken !== undefined ? (
+        isLoggedIn() ? (
           children
         ) : (
           <Redirect

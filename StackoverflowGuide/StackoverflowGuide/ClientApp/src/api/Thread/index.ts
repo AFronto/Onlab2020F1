@@ -3,8 +3,6 @@ import ThreadData from "../../data/Thread/ThreadData";
 import { AppDispatch, ReduxState } from "../../store";
 import { loadThreads } from "../../store/Thread";
 import { generateAuthenticationHeadder } from "../Helpers/HeaderHelper";
-import { replace } from "connected-react-router";
-import { addError } from "../../store/Errors";
 import { jwtExpires } from "../Helpers/JWTExpireHelper";
 
 export function getThreads() {

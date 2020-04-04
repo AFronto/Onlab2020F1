@@ -7,16 +7,20 @@ import { RegisterScreen } from "./components/Auth/Register";
 
 import "./custom.css";
 import { AuthenticatedRoute } from "./routing/AuthenticatedRoute";
+import { NavMenu } from "./components/NavMenu";
 
 export default () => (
-  <Layout>
-    <Route path="/login" component={LogInScreen} />
-    <Route path="/register" component={RegisterScreen} />
-    <AuthenticatedRoute exact path="/">
-      <ThreadsScreen />
-    </AuthenticatedRoute>
-    <AuthenticatedRoute path="/threads">
-      <ThreadsScreen />
-    </AuthenticatedRoute>
-  </Layout>
+  <div style={{ height: "100%" }}>
+    <NavMenu />
+    <Layout>
+      <Route path="/login" component={LogInScreen} />
+      <Route path="/register" component={RegisterScreen} />
+      <AuthenticatedRoute exact path="/">
+        <ThreadsScreen />
+      </AuthenticatedRoute>
+      <AuthenticatedRoute path="/threads">
+        <ThreadsScreen />
+      </AuthenticatedRoute>
+    </Layout>
+  </div>
 );

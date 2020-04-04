@@ -13,9 +13,15 @@ const authSlice = createSlice({
       );
       localStorage.setItem("jwtId", action.payload.jwt.id);
       return action.payload.jwt;
+    },
+    removeAuthData() {
+      localStorage.removeItem("jwtToken");
+      localStorage.removeItem("jwtId");
+      localStorage.removeItem("jwtTokenExpirationTime");
+      return {} as AuthData;
     }
   }
 });
 
-export const { loadAuthData } = authSlice.actions;
+export const { removeAuthData, loadAuthData } = authSlice.actions;
 export default authSlice.reducer;

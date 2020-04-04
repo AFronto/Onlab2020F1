@@ -7,12 +7,6 @@ import { ReduxState } from "../../store";
 import { createNewThread, getThreads } from "../../api/Thread";
 
 export const ThreadsScreen: FunctionComponent = () => {
-  const threadList = [
-    { id: "0", name: "Web Design", tagList: ["React", "HTML", "Angular"] },
-    { id: "1", name: "Backend", tagList: ["C#", "C++"] },
-    { id: "2", name: "Android", tagList: ["Kotlin"] }
-  ];
-
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -26,8 +20,12 @@ export const ThreadsScreen: FunctionComponent = () => {
   const threads = useSelector((state: ReduxState) => state.threads);
 
   return (
-    <div style={{ marginTop: 100, marginBottom: 100 }}>
+    <div className="h-100">
       <Button
+        style={{
+          marginTop: 100,
+          marginBottom: 100
+        }}
         onClick={() => {
           // dispatch(
           //   addThread({
@@ -41,7 +39,7 @@ export const ThreadsScreen: FunctionComponent = () => {
       >
         Add Thread
       </Button>
-      <Row style={{ marginTop: 100, marginBottom: 100 }}>
+      <Row style={{ marginBottom: 100 }}>
         {threads.map(threadCard => (
           <Col>
             <ThreadCard thread={threadCard} />
