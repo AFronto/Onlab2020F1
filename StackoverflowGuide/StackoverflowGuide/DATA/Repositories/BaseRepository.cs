@@ -34,7 +34,12 @@ namespace StackoverflowGuide.DATA.Repositories
 
         public bool Update(TEntity model)
         {
-            var filterId = Builders<TEntity>.Filter.Eq("_id", model.Id);
+            ObjectId objectId;
+            if (!ObjectId.TryParse(model.Id.ToString(), out objectId))
+            {
+                return false;
+            }
+            var filterId = Builders<TEntity>.Filter.Eq("_id", objectId);
             var updated = Collection.FindOneAndReplace(filterId, model);
             return updated != null;
         }

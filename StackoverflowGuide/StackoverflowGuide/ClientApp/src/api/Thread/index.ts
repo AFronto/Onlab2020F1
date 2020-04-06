@@ -78,3 +78,34 @@ export function deleteThread(threadData: ThreadData) {
     );
   };
 }
+
+export function editThread(
+  originalthreadData: ThreadData,
+  newThreadData: ThreadData
+) {
+  return (dispatch: AppDispatch, getState: () => ReduxState) => {
+    const header = generateAuthenticationHeadder(getState());
+
+    return axios({
+      method: "PUT",
+      url: "thread/" + newThreadData.id,
+      headers: header,
+      data: newThreadData,
+    }).then(
+      (success) => {
+        console.log(success);
+      },
+      (error) => {
+        dispatch(
+          updateThread({
+            threadId: originalthreadData.id,
+            updatedThread: { ...originalthreadData, id: originalthreadData.id },
+          })
+        );
+        if (error.response.status === 401) {
+          jwtExpires(dispatch);
+        }
+      }
+    );
+  };
+}

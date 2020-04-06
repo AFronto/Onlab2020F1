@@ -11,6 +11,8 @@ namespace StackoverflowGuide.BLL.Services.Interfaces
         public string CreateNewThread(Thread newThread);
 
         public string DeleteThread(string id);
+
+        public string EditThread(string id, Thread updatedThread);
         public IEnumerable<Thread> GetAll();
     }
 }

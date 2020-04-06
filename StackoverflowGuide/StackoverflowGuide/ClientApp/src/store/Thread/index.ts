@@ -16,7 +16,9 @@ const threadsSlice = createSlice({
       var threadToUpdateIndex = state.findIndex(
         (thread) => thread.id === action.payload.threadId
       );
-      state[threadToUpdateIndex] = action.payload.updatedThread;
+      if (threadToUpdateIndex !== -1) {
+        state[threadToUpdateIndex] = action.payload.updatedThread;
+      }
       return state;
     },
     removeThread(state, action) {

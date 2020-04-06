@@ -65,6 +65,26 @@ namespace StackoverflowGuide.API.Controllers
             }
         }
 
+        [HttpPut("{id}")]
+        public ActionResult<ThreadIdData> Edit(string id, [FromBody]ThreadData model)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            try
+            {
+                var responseId = new ThreadIdData()
+                {
+                    Id = threadService
+                         .EditThread(id, mapper.Map<Thread>(model))
+                };
+                return responseId;
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { error = e.Message });
+            }
+        }
+
 
         [HttpGet]
         public ActionResult<List<ThreadData>> GetAll()

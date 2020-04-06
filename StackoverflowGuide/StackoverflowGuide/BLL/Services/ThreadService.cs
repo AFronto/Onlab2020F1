@@ -17,23 +17,40 @@ namespace StackoverflowGuide.BLL.Services
         }
         public string CreateNewThread(Thread newThread)
         {
-            //TODO:finish and error handling
             var id = ObjectId.GenerateNewId().ToString();
             newThread.Id = id;
-            threadRepository.Create(newThread);
-            return id;
+            if(threadRepository.Create(newThread))
+            {
+                return id;
+            }
+            else
+            {
+                throw new Exception("Couldn't create a new thread!");
+            }
+
         }
 
         public string DeleteThread(string id)
         {
-            if(threadRepository.Find(id) != null)
+            if(threadRepository.Delete(id))
             {
-                threadRepository.Delete(id);
                 return id;
             }
             else
             {
                 throw new Exception("Cannot delete nonexistant thread!");
+            }
+        }
+
+        public string EditThread(string id, Thread updatedThread)
+        {
+            if (threadRepository.Update(updatedThread))
+            {
+                return id;
+            }
+            else
+            {
+                throw new Exception("Cannot update nonexistant thread!");
             }
         }
 
