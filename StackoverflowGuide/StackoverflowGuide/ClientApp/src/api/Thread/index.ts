@@ -1,5 +1,5 @@
 import axios from "axios";
-import ThreadData from "../../data/Thread/ThreadData";
+import ThreadData from "../../data/server/Thread/ThreadData";
 import { AppDispatch, ReduxState } from "../../store";
 import {
   loadThreads,

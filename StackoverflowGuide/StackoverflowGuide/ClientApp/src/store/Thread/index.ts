@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import ThreadData from "../../data/Thread/ThreadData";
+import ThreadData from "../../data/server/Thread/ThreadData";
 
 const threadsSlice = createSlice({
   name: "threads",

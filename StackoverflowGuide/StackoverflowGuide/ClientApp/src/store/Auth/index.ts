@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import AuthData from "../../data/Auth/AuthData";
+import AuthData from "../../data/server/Auth/AuthData";
 
 const authSlice = createSlice({
   name: "jwt",
@@ -19,8 +19,8 @@ const authSlice = createSlice({
       localStorage.removeItem("jwtId");
       localStorage.removeItem("jwtTokenExpirationTime");
       return {} as AuthData;
-    }
-  }
+    },
+  },
 });
 
 export const { removeAuthData, loadAuthData } = authSlice.actions;

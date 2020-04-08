@@ -2,7 +2,7 @@ import React, { FunctionComponent } from "react";
 import { Route, Redirect } from "react-router";
 import { useDispatch } from "react-redux";
 import { loadAuthData } from "../store/Auth";
-import AuthData from "../data/Auth/AuthData";
+import AuthData from "../data/server/Auth/AuthData";
 import { isLoggedIn } from "../general_helpers/AuthHelper";
 
 interface IProps {
@@ -23,7 +23,7 @@ export const AuthenticatedRoute: FunctionComponent<IProps> = ({
       tokenExpirationTime: parseInt(
         localStorage.getItem("jwtTokenExpirationTime")!
       ),
-      id: localStorage.getItem("jwtId")!
+      id: localStorage.getItem("jwtId")!,
     };
     dispatch(loadAuthData({ jwt: jwt }));
 
@@ -40,7 +40,7 @@ export const AuthenticatedRoute: FunctionComponent<IProps> = ({
           <Redirect
             to={{
               pathname: "/login",
-              state: { from: location }
+              state: { from: location },
             }}
           />
         )

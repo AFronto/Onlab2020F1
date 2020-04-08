@@ -1,12 +1,12 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useState, useCallback } from "react";
+import { FaTrash, FaPencilAlt } from "react-icons/fa";
 
-import { Card, Button, Badge, Modal, Form } from "react-bootstrap";
-import ThreadData from "../../data/Thread/ThreadData";
+import { Card, Button, Badge } from "react-bootstrap";
+import ThreadData from "../../data/server/Thread/ThreadData";
 import { useDispatch } from "react-redux";
 import { removeThread } from "../../store/Thread";
-import { updateThread } from "../../store/Thread";
 import { deleteThread } from "../../api/Thread";
-import { editThread } from "../../api/Thread";
+import { ThreadModal } from "./ThreadModal";
 
 export const ThreadCard: FunctionComponent<{ thread: ThreadData }> = (
   props
@@ -15,90 +15,52 @@ export const ThreadCard: FunctionComponent<{ thread: ThreadData }> = (
 
   const [show, setShow] = useState(false);
 
-  const handleClose = () => setShow(false);
+  const handleClose = useCallback(() => setShow(false), [setShow]);
   const handleShow = () => setShow(true);
 
   return (
     <>
-      <Card style={{ width: "18rem", marginBottom: 40 }}>
+      <Card
+        style={{ width: "18rem", marginBottom: 40 }}
+        className="mx-auto"
+        border="primary"
+      >
+        <Card.Header as="h5">{props.thread.name}</Card.Header>
         <Card.Body>
-          <Card.Title>{props.thread.name}</Card.Title>
-
           <h4>
             {props.thread.tagList.map((tag) => (
-              <Badge style={{ margin: 5 }} pill color="secondary">
+              <Badge style={{ margin: 5 }} pill variant="secondary">
                 {tag}
               </Badge>
             ))}
           </h4>
-          <Button
-            onClick={() => {
-              handleShow();
-            }}
-          >
-            Edit
-          </Button>
-          <Button
-            onClick={() => {
-              dispatch(removeThread({ threadId: props.thread.id }));
-              dispatch(deleteThread(props.thread));
-            }}
-          >
-            Delete
-          </Button>
+          <div className="d-flex justify-content-end">
+            <Button
+              className="mr-2"
+              onClick={() => {
+                handleShow();
+              }}
+            >
+              <FaPencilAlt />
+            </Button>
+            <Button
+              variant="danger"
+              onClick={() => {
+                dispatch(removeThread({ threadId: props.thread.id }));
+                dispatch(deleteThread(props.thread));
+              }}
+            >
+              <FaTrash />
+            </Button>
+          </div>
         </Card.Body>
       </Card>
 
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Edit the Thread</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <>
-            <Form>
-              <Form.Group controlId="formThreadName">
-                <Form.Label>Thread Name</Form.Label>
-                <Form.Control type="email" placeholder={props.thread.name} />
-              </Form.Group>
-
-              <Form.Group controlId="formThreadTags">
-                <Form.Label>Tags</Form.Label>
-                <Form.Control type="email" placeholder="Password" />
-              </Form.Group>
-            </Form>
-          </>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => {
-              dispatch(
-                editThread(props.thread, {
-                  id: props.thread.id,
-                  name: "Edit",
-                  tagList: ["Edit", "C++"],
-                })
-              );
-              dispatch(
-                updateThread({
-                  threadId: props.thread.id,
-                  updatedThread: {
-                    id: props.thread.id,
-                    name: "Edit",
-                    tagList: ["Edit", "C++"],
-                  },
-                })
-              );
-              handleClose();
-            }}
-          >
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <ThreadModal
+        model={{ show, handleClose }}
+        isNew={false}
+        thread={props.thread}
+      />
     </>
   );
 };
