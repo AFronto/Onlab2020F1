@@ -14,5 +14,6 @@ namespace StackoverflowGuide.BLL.Services.Interfaces
 
         public string EditThread(string id, Thread updatedThread);
         public IEnumerable<Thread> GetAll();
+        public SingleThread GetSingleThread(string id);
     }
 }

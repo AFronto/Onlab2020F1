@@ -9,6 +9,7 @@ import {
 } from "../../store/Thread";
 import { generateAuthenticationHeadder } from "../Helpers/HeaderHelper";
 import { jwtExpires } from "../Helpers/JWTExpireHelper";
+import { loadSingleThread } from "../../store/Thread/OpenThread";
 
 export function getThreads() {
   return (dispatch: AppDispatch, getState: () => ReduxState) => {
@@ -102,6 +103,25 @@ export function editThread(
             updatedThread: { ...originalthreadData, id: originalthreadData.id },
           })
         );
+        if (error.response.status === 401) {
+          jwtExpires(dispatch);
+        }
+      }
+    );
+  };
+}
+
+export function getSingleThread(id: String) {
+  return (dispatch: AppDispatch, getState: () => ReduxState) => {
+    const header = generateAuthenticationHeadder(getState());
+
+    return axios({
+      method: "GET",
+      url: "thread/" + id,
+      headers: header,
+    }).then(
+      (success) => dispatch(loadSingleThread({ singleThread: success.data })),
+      (error) => {
         if (error.response.status === 401) {
           jwtExpires(dispatch);
         }

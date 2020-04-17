@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { removeThread } from "../../store/Thread";
 import { deleteThread } from "../../api/Thread";
 import { ThreadModal } from "./ThreadModal";
+import { push } from "connected-react-router";
 
 export const ThreadCard: FunctionComponent<{ thread: ThreadData }> = (
   props
@@ -34,24 +35,32 @@ export const ThreadCard: FunctionComponent<{ thread: ThreadData }> = (
               </Badge>
             ))}
           </h4>
-          <div className="d-flex justify-content-end">
+          <div className="d-flex justify-content-between">
             <Button
-              className="mr-2"
-              onClick={() => {
-                handleShow();
-              }}
+              variant="success"
+              onClick={() => dispatch(push(`/threads/${props.thread.id}`))}
             >
-              <FaPencilAlt />
+              Show
             </Button>
-            <Button
-              variant="danger"
-              onClick={() => {
-                dispatch(removeThread({ threadId: props.thread.id }));
-                dispatch(deleteThread(props.thread));
-              }}
-            >
-              <FaTrash />
-            </Button>
+            <div className="d-flex justify-content-end">
+              <Button
+                className="mr-2"
+                onClick={() => {
+                  handleShow();
+                }}
+              >
+                <FaPencilAlt />
+              </Button>
+              <Button
+                variant="danger"
+                onClick={() => {
+                  dispatch(removeThread({ threadId: props.thread.id }));
+                  dispatch(deleteThread(props.thread));
+                }}
+              >
+                <FaTrash />
+              </Button>
+            </div>
           </div>
         </Card.Body>
       </Card>

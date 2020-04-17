@@ -4,6 +4,7 @@ import Layout from "./components/Layout";
 import { ThreadsScreen } from "./components/Thread";
 import { LogInScreen } from "./components/Auth/LogIn";
 import { RegisterScreen } from "./components/Auth/Register";
+import { SingleThreadScreen } from "./components/Thread/SingleThread";
 
 import "./custom.css";
 import { AuthenticatedRoute } from "./routing/AuthenticatedRoute";
@@ -18,8 +19,11 @@ export default () => (
       <AuthenticatedRoute exact path="/">
         <ThreadsScreen />
       </AuthenticatedRoute>
-      <AuthenticatedRoute path="/threads">
+      <AuthenticatedRoute exact path="/threads">
         <ThreadsScreen />
+      </AuthenticatedRoute>
+      <AuthenticatedRoute path="/threads/:id">
+        <SingleThreadScreen />
       </AuthenticatedRoute>
     </Layout>
   </div>

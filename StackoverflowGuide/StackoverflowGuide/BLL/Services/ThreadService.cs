@@ -1,9 +1,11 @@
 ﻿using MongoDB.Bson;
+using StackoverflowGuide.BLL.Models.Post;
 using StackoverflowGuide.BLL.Models.Thread;
 using StackoverflowGuide.BLL.RepositoryInterfaces;
 using StackoverflowGuide.BLL.Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace StackoverflowGuide.BLL.Services
 {
@@ -19,7 +21,7 @@ namespace StackoverflowGuide.BLL.Services
         {
             var id = ObjectId.GenerateNewId().ToString();
             newThread.Id = id;
-            if(threadRepository.Create(newThread))
+            if (threadRepository.Create(newThread))
             {
                 return id;
             }
@@ -32,7 +34,7 @@ namespace StackoverflowGuide.BLL.Services
 
         public string DeleteThread(string id)
         {
-            if(threadRepository.Delete(id))
+            if (threadRepository.Delete(id))
             {
                 return id;
             }
@@ -58,6 +60,42 @@ namespace StackoverflowGuide.BLL.Services
         {
             //TODO:finish and error handling
             return threadRepository.QuerryAll();
+        }
+
+        public SingleThread GetSingleThread(string id)
+        {
+            var mockPosts = new List<ThreadPost>();
+            mockPosts.Add(
+                new ThreadPost
+                {
+                    Id = "fakeId1",
+                    ThreadIndex = 0,
+                    Body = "That is the questions real description thi is a really long body",
+                    Title = "What is the question?",
+                    ConnectedPosts = new List<string> { "fakeId2" }
+                });
+            mockPosts.Add(new ThreadPost
+            {
+                Id = "fakeId2",
+                ThreadIndex = 1,
+                Body = "That is the questions real description thi is a really long body",
+                Title = "What is the question 2?",
+                ConnectedPosts = new List<string> { "fakeId1", "fakeId3" }
+            });
+            mockPosts.Add(new ThreadPost
+            {
+                Id = "fakeId3",
+                ThreadIndex = 2,
+                Body = "That is the questions real description thi is a really long body",
+                Title = "What is the question 3?",
+                ConnectedPosts = new List<string> { "fakeId2" }
+            });
+
+            return new SingleThread
+            {
+                Thread = threadRepository.Find(id),
+                Posts = mockPosts.OrderBy(post => post.ThreadIndex).ToList()
+            };
         }
     }
 }

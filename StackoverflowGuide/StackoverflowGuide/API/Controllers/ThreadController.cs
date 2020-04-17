@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using StackoverflowGuide.API.DTOs.Post;
 using StackoverflowGuide.API.DTOs.Thread;
 using StackoverflowGuide.BLL.Models.Thread;
 using StackoverflowGuide.BLL.Services.Interfaces;
@@ -33,7 +34,8 @@ namespace StackoverflowGuide.API.Controllers
 
             try
             {
-                var responseId = new ThreadIdData() { 
+                var responseId = new ThreadIdData()
+                {
                     Id = threadService
                          .CreateNewThread(mapper.Map<Thread>(model))
                 };
@@ -85,6 +87,24 @@ namespace StackoverflowGuide.API.Controllers
             }
         }
 
+
+        [HttpGet("{id}")]
+        public ActionResult<SingleThreadData> GetSingleThread(string id)
+        {
+            try
+            {
+                var singleThread = threadService.GetSingleThread(id);
+                return new SingleThreadData
+                {
+                    Thread = mapper.Map<ThreadData>(singleThread.Thread),
+                    Posts = singleThread.Posts.Select(mapper.Map<PostData>).ToList()
+                };
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { error = e.Message });
+            }
+        }
 
         [HttpGet]
         public ActionResult<List<ThreadData>> GetAll()
