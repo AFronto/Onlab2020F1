@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using StackoverflowGuide.BLL.Models.Post;
+using StackoverflowGuide.BLL.Models.Tag;
 using StackoverflowGuide.BLL.Models.Thread;
 using StackoverflowGuide.BLL.RepositoryInterfaces;
 using StackoverflowGuide.BLL.Services.Interfaces;
@@ -60,6 +61,44 @@ namespace StackoverflowGuide.BLL.Services
         {
             //TODO:finish and error handling
             return threadRepository.QuerryAll();
+        }
+
+        public IEnumerable<Tag> GetAllTags()
+        {
+            var mockTags = new List<Tag>();
+            mockTags.Add(
+                new Tag
+                {
+                    Id = "fakeTagId1",
+                    Name = "C",
+                });
+            mockTags.Add(
+                new Tag
+                {
+                    Id = "fakeTagId2",
+                    Name = "C++",
+                });
+            mockTags.Add(
+                new Tag
+                {
+                    Id = "fakeTagId3",
+                    Name = "C#",
+                });
+            mockTags.Add(
+                new Tag
+                {
+                    Id = "fakeTagId4",
+                    Name = "Java",
+                });
+            mockTags.Add(
+                new Tag
+                {
+                    Id = "fakeTagId5",
+                    Name = "Python",
+                });
+
+            return mockTags;
+
         }
 
         public SingleThread GetSingleThread(string id)

@@ -5,7 +5,7 @@ import { Card, Button, Badge } from "react-bootstrap";
 import ThreadData from "../../data/server/Thread/ThreadData";
 import { useDispatch } from "react-redux";
 import { removeThread } from "../../store/Thread";
-import { deleteThread } from "../../api/Thread";
+import { deleteThread, getAllTags } from "../../api/Thread";
 import { ThreadModal } from "./ThreadModal";
 import { push } from "connected-react-router";
 
@@ -46,6 +46,7 @@ export const ThreadCard: FunctionComponent<{ thread: ThreadData }> = (
               <Button
                 className="mr-2"
                 onClick={() => {
+                  dispatch(getAllTags());
                   handleShow();
                 }}
               >

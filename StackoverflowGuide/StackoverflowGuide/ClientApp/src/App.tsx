@@ -7,6 +7,7 @@ import { RegisterScreen } from "./components/Auth/Register";
 import { SingleThreadScreen } from "./components/Thread/SingleThread";
 
 import "./custom.css";
+import "react-bootstrap-typeahead/css/Typeahead.css";
 import { AuthenticatedRoute } from "./routing/AuthenticatedRoute";
 import { NavMenu } from "./components/NavMenu";
 

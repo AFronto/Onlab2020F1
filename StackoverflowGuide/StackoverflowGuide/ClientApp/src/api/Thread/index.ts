@@ -10,6 +10,7 @@ import {
 import { generateAuthenticationHeadder } from "../Helpers/HeaderHelper";
 import { jwtExpires } from "../Helpers/JWTExpireHelper";
 import { loadSingleThread } from "../../store/Thread/OpenThread";
+import { loadAllTags } from "../../store/Tag";
 
 export function getThreads() {
   return (dispatch: AppDispatch, getState: () => ReduxState) => {
@@ -121,6 +122,25 @@ export function getSingleThread(id: String) {
       headers: header,
     }).then(
       (success) => dispatch(loadSingleThread({ singleThread: success.data })),
+      (error) => {
+        if (error.response.status === 401) {
+          jwtExpires(dispatch);
+        }
+      }
+    );
+  };
+}
+
+export function getAllTags() {
+  return (dispatch: AppDispatch, getState: () => ReduxState) => {
+    const header = generateAuthenticationHeadder(getState());
+
+    return axios({
+      method: "GET",
+      url: "thread/tags",
+      headers: header,
+    }).then(
+      (success) => dispatch(loadAllTags({ tags: success.data })),
       (error) => {
         if (error.response.status === 401) {
           jwtExpires(dispatch);

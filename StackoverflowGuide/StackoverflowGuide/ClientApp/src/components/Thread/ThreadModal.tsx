@@ -1,13 +1,16 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useState, Fragment } from "react";
 import ThreadData from "../../data/server/Thread/ThreadData";
 import { Modal, Form, Button } from "react-bootstrap";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updateThread } from "../../store/Thread";
 import { editThread } from "../../api/Thread";
 import ModalModel from "../../data/client/Modal/ModalModel";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { isArray } from "util";
+import { Typeahead } from "react-bootstrap-typeahead";
+import { ReduxState } from "../../store";
+import TagData from "../../data/server/Tag/TagData";
 
 export const ThreadModal: FunctionComponent<{
   model: ModalModel;
@@ -15,7 +18,10 @@ export const ThreadModal: FunctionComponent<{
   thread: ThreadData;
 }> = (props) => {
   const { show, handleClose } = props.model;
+  const [selected, setSelected] = useState([] as TagData[]);
   const dispatch = useDispatch();
+
+  const tags = useSelector((state: ReduxState) => state.tags);
 
   const schema = yup.object({
     name: yup.string().required(),
@@ -76,7 +82,19 @@ export const ThreadModal: FunctionComponent<{
 
           <Form.Group controlId="formThreadTags">
             <Form.Label>Tags</Form.Label>
-            <Form.Control type="text" placeholder="Password" />
+            <Fragment>
+              <div className="clearfix">
+                <Typeahead
+                  id="tag-selection"
+                  labelKey="name"
+                  multiple={true}
+                  options={tags}
+                  onChange={setSelected}
+                  placeholder="Choose a tag..."
+                  selected={selected}
+                />
+              </div>
+            </Fragment>
           </Form.Group>
 
           <Button variant="secondary" onClick={handleClose}>

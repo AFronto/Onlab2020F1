@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StackoverflowGuide.API.DTOs.Post;
+using StackoverflowGuide.API.DTOs.Tag;
 using StackoverflowGuide.API.DTOs.Thread;
 using StackoverflowGuide.BLL.Models.Thread;
 using StackoverflowGuide.BLL.Services.Interfaces;
@@ -80,6 +81,20 @@ namespace StackoverflowGuide.API.Controllers
                          .EditThread(id, mapper.Map<Thread>(model))
                 };
                 return responseId;
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { error = e.Message });
+            }
+        }
+
+        [HttpGet("tags")]
+        public ActionResult<List<TagData>> GetAllTags()
+        {
+            try
+            {
+                var tags = threadService.GetAllTags();
+                return tags.Select(mapper.Map<TagData>).ToList();
             }
             catch (Exception e)
             {

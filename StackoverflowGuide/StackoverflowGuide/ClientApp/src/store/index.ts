@@ -7,12 +7,14 @@ import threads from "./Thread";
 import open_thread from "./Thread/OpenThread";
 import jwt from "./Auth";
 import errors from "./Errors";
+import tags from "./Tag";
 
 const rootReducer = combineReducers({
   router: connectRouter(history),
   jwt: jwt,
   errors: errors,
   threads: threads,
+  tags: tags,
   open_thread: open_thread,
 });
 

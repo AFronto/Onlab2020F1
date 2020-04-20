@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using StackoverflowGuide.API.DTOs;
 using StackoverflowGuide.API.DTOs.Post;
+using StackoverflowGuide.API.DTOs.Tag;
 using StackoverflowGuide.API.DTOs.Thread;
 using StackoverflowGuide.BLL.Models;
 using StackoverflowGuide.BLL.Models.Auth;
 using StackoverflowGuide.BLL.Models.Post;
+using StackoverflowGuide.BLL.Models.Tag;
 using StackoverflowGuide.BLL.Models.Thread;
 using System;
 using System.Collections.Generic;
@@ -22,6 +24,7 @@ namespace StackoverflowGuide.API.Mapping
             CreateMap<ThreadData, Thread>();
             CreateMap<Thread, ThreadData>();
             CreateMap<ThreadPost, PostData>();
+            CreateMap<Tag, TagData>();
         }
     }
 }
