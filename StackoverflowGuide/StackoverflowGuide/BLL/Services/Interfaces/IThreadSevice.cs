@@ -11,11 +11,11 @@ namespace StackoverflowGuide.BLL.Services.Interfaces
     {
         public string CreateNewThread(Thread newThread);
 
-        public string DeleteThread(string id);
+        public string DeleteThread(string id, string askingUser);
 
         public string EditThread(string id, Thread updatedThread);
-        public IEnumerable<Thread> GetAll();
-        public SingleThread GetSingleThread(string id);
+        public IEnumerable<Thread> GetAll(string userId);
+        public SingleThread GetSingleThread(string id, string askingUser);
 
         public IEnumerable<Tag> GetAllTags();
     }

@@ -7,7 +7,7 @@ namespace StackoverflowGuide.BLL.Models.Thread
     public class Thread: DBModel
     {
         public string Name { get; set; }
-
+        public string Owner { get; set; }
         public string[] TagList { get; set; }
     }
 }

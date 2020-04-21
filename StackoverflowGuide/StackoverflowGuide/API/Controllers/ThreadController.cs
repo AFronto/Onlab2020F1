@@ -10,7 +10,6 @@ using StackoverflowGuide.BLL.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace StackoverflowGuide.API.Controllers
 {
@@ -33,12 +32,16 @@ namespace StackoverflowGuide.API.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
+            var userId = this.User.Claims.FirstOrDefault().Value;
+            var thread = mapper.Map<Thread>(model);
+            thread.Owner = userId;
+
             try
             {
                 var responseId = new ThreadIdData()
                 {
                     Id = threadService
-                         .CreateNewThread(mapper.Map<Thread>(model))
+                         .CreateNewThread(thread)
                 };
                 return responseId;
             }
@@ -51,14 +54,15 @@ namespace StackoverflowGuide.API.Controllers
         [HttpDelete("{id}")]
         public ActionResult<ThreadIdData> Delete(string id)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid) return BadRequest(ModelState); 
+            var userId = this.User.Claims.FirstOrDefault().Value;
 
             try
             {
                 var responseId = new ThreadIdData()
                 {
                     Id = threadService
-                         .DeleteThread(id)
+                         .DeleteThread(id, userId)
                 };
                 return responseId;
             }
@@ -73,12 +77,16 @@ namespace StackoverflowGuide.API.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
+            var userId = this.User.Claims.FirstOrDefault().Value;
+            var thread = mapper.Map<Thread>(model);
+            thread.Owner = userId;
+
             try
             {
                 var responseId = new ThreadIdData()
                 {
                     Id = threadService
-                         .EditThread(id, mapper.Map<Thread>(model))
+                         .EditThread(id, thread)
                 };
                 return responseId;
             }
@@ -106,9 +114,12 @@ namespace StackoverflowGuide.API.Controllers
         [HttpGet("{id}")]
         public ActionResult<SingleThreadData> GetSingleThread(string id)
         {
+
+            var userId = this.User.Claims.FirstOrDefault().Value;
+
             try
             {
-                var singleThread = threadService.GetSingleThread(id);
+                var singleThread = threadService.GetSingleThread(id, userId);
                 return new SingleThreadData
                 {
                     Thread = mapper.Map<ThreadData>(singleThread.Thread),
@@ -122,11 +133,13 @@ namespace StackoverflowGuide.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<ThreadData>> GetAll()
+        public ActionResult<List<ThreadData>> GetAllAsync()
         {
+            var userId = this.User.Claims.FirstOrDefault().Value;
+
             try
             {
-                var threads = threadService.GetAll();
+                var threads = threadService.GetAll(userId);
                 return threads.Select(mapper.Map<ThreadData>).ToList();
             }
             catch (Exception e)

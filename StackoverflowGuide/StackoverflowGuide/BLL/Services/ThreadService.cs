@@ -17,7 +17,8 @@ namespace StackoverflowGuide.BLL.Services
         public ThreadService(IThreadRepository threadRepository)
         {
             this.threadRepository = threadRepository;
-        }
+        } 
+
         public string CreateNewThread(Thread newThread)
         {
             var id = ObjectId.GenerateNewId().ToString();
@@ -33,8 +34,13 @@ namespace StackoverflowGuide.BLL.Services
 
         }
 
-        public string DeleteThread(string id)
+        public string DeleteThread(string id, string askingUser)
         {
+            if (!hasAccessToThread(id, askingUser))
+            {
+                throw new Exception("You have no access to this thread!");
+            }
+
             if (threadRepository.Delete(id))
             {
                 return id;
@@ -47,6 +53,11 @@ namespace StackoverflowGuide.BLL.Services
 
         public string EditThread(string id, Thread updatedThread)
         {
+            if (!hasAccessToThread(id, updatedThread.Owner))
+            {
+                throw new Exception("You have no access to this thread!");
+            }
+
             if (threadRepository.Update(updatedThread))
             {
                 return id;
@@ -57,10 +68,10 @@ namespace StackoverflowGuide.BLL.Services
             }
         }
 
-        public IEnumerable<Thread> GetAll()
+        public IEnumerable<Thread> GetAll(string userId)
         {
             //TODO:finish and error handling
-            return threadRepository.QuerryAll();
+            return threadRepository.Querry(thread => thread.Owner == userId);
         }
 
         public IEnumerable<Tag> GetAllTags()
@@ -101,7 +112,7 @@ namespace StackoverflowGuide.BLL.Services
 
         }
 
-        public SingleThread GetSingleThread(string id)
+        public SingleThread GetSingleThread(string id, string askingUser)
         {
             var mockPosts = new List<ThreadPost>();
             mockPosts.Add(
@@ -130,11 +141,23 @@ namespace StackoverflowGuide.BLL.Services
                 ConnectedPosts = new List<string> { "fakeId2" }
             });
 
+            if(!hasAccessToThread(id,askingUser))
+            {
+                throw new Exception("You have no access to this thread!");
+            }
+
             return new SingleThread
             {
                 Thread = threadRepository.Find(id),
                 Posts = mockPosts.OrderBy(post => post.ThreadIndex).ToList()
             };
+        }
+
+        private bool hasAccessToThread(string threadId,string userId)
+        {
+            var thread = threadRepository.Find(threadId);
+
+            return thread.Owner == userId;     
         }
     }
 }
