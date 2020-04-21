@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useEffect } from "react";
 import { Card, Form, Col, Button, Row } from "react-bootstrap";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
@@ -12,33 +12,32 @@ import { isLoggedIn } from "../../general_helpers/AuthHelper";
 
 export const LogInScreen: FunctionComponent = () => {
   const schema = yup.object({
-    email: yup
-      .string()
-      .email()
-      .required(),
-    password: yup.string().required()
+    email: yup.string().email().required(),
+    password: yup.string().required(),
   });
 
   const { register, handleSubmit, errors } = useForm({
-    validationSchema: schema
+    validationSchema: schema,
   });
 
   const dispatch = useDispatch();
 
-  const onSubmit = handleSubmit(data => {
+  const onSubmit = handleSubmit((data) => {
     dispatch(login({ email: data.email, password: data.password }));
   });
 
-  const onChangeOfCredentials = () => {
+  const clearCredentialsError = () => {
     dispatch(clearError({ name: "credentialError" }));
   };
+
+  useEffect(() => clearCredentialsError(), []);
 
   const errorsFromServer = useSelector((state: ReduxState) => state.errors);
 
   return isLoggedIn() ? (
     <Redirect
       to={{
-        pathname: "/threads"
+        pathname: "/threads",
       }}
     />
   ) : (
@@ -60,7 +59,7 @@ export const LogInScreen: FunctionComponent = () => {
                   size="lg"
                   type="text"
                   name="email"
-                  onChange={onChangeOfCredentials}
+                  onChange={clearCredentialsError}
                   ref={register}
                   isInvalid={!!errors.email}
                 />
@@ -85,7 +84,7 @@ export const LogInScreen: FunctionComponent = () => {
                   type="password"
                   name="password"
                   ref={register}
-                  onChange={onChangeOfCredentials}
+                  onChange={clearCredentialsError}
                   isInvalid={!!errors.password}
                 />
                 <Form.Control.Feedback type="invalid">
