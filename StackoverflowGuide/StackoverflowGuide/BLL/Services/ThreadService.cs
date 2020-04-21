@@ -17,7 +17,7 @@ namespace StackoverflowGuide.BLL.Services
         public ThreadService(IThreadRepository threadRepository)
         {
             this.threadRepository = threadRepository;
-        } 
+        }
 
         public string CreateNewThread(Thread newThread)
         {
@@ -141,7 +141,7 @@ namespace StackoverflowGuide.BLL.Services
                 ConnectedPosts = new List<string> { "fakeId2" }
             });
 
-            if(!hasAccessToThread(id,askingUser))
+            if (!hasAccessToThread(id, askingUser))
             {
                 throw new Exception("You have no access to this thread!");
             }
@@ -153,11 +153,11 @@ namespace StackoverflowGuide.BLL.Services
             };
         }
 
-        private bool hasAccessToThread(string threadId,string userId)
+        private bool hasAccessToThread(string threadId, string userId)
         {
             var thread = threadRepository.Find(threadId);
 
-            return thread.Owner == userId;     
+            return thread.Owner == userId;
         }
     }
 }

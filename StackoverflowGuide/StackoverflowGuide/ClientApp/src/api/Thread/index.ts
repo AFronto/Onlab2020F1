@@ -72,6 +72,7 @@ export function deleteThread(threadData: ThreadData) {
         console.log(success.data.threadId);
       },
       (error) => {
+        console.log(error.response);
         dispatch(addThread({ newThread: threadData }));
         if (error.response.status === 401) {
           jwtExpires(dispatch);
