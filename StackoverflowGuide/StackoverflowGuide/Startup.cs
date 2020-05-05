@@ -11,10 +11,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using StackoverflowGuide.API.Mapping;
+using StackoverflowGuide.BLL.BigQueryInterfaces;
 using StackoverflowGuide.BLL.Models.User;
 using StackoverflowGuide.BLL.RepositoryInterfaces;
 using StackoverflowGuide.BLL.Services;
 using StackoverflowGuide.BLL.Services.Interfaces;
+using StackoverflowGuide.DATA.BigQuerry;
 using StackoverflowGuide.DATA.Context;
 using StackoverflowGuide.DATA.Repositories;
 using System;
@@ -87,9 +89,12 @@ namespace StackoverflowGuide
             var userManager = serviceProvider.GetService<UserManager<User>>();
             var signInManager = serviceProvider.GetService<SignInManager<User>>();
 
+            services.AddTransient<IBigQuery, BigQuery>();
 
             services.AddScoped<IMongoDBContext, MongoDBContext>();
             services.AddScoped<IThreadRepository, ThreadRepository>();
+            services.AddScoped<IPostsBQRepository, PostsBQRepository>();
+            services.AddScoped<IPostsRepository, PostsRepository>();
 
             services.AddSingleton<IAuthService>(
                 new AuthService(
@@ -111,6 +116,7 @@ namespace StackoverflowGuide
                mc.AddProfile(new MappingProfile())
             );
             services.AddSingleton(mappingConfig.CreateMapper());
+
 
         }
 

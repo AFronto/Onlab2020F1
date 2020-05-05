@@ -14,15 +14,21 @@ namespace StackoverflowGuide.BLL.Services
     {
 
         private IThreadRepository threadRepository;
-        public ThreadService(IThreadRepository threadRepository)
+        private IPostsBQRepository postsBQRepository;
+        private IPostsRepository postsRepository;
+
+        public ThreadService(IThreadRepository threadRepository, IPostsBQRepository postsBQRepository, IPostsRepository postsRepository)
         {
             this.threadRepository = threadRepository;
+            this.postsBQRepository = postsBQRepository;
+            this.postsRepository = postsRepository;
         }
 
         public string CreateNewThread(Thread newThread)
         {
             var id = ObjectId.GenerateNewId().ToString();
             newThread.Id = id;
+            newThread.ThreadPosts = new List<string>();
             if (threadRepository.Create(newThread))
             {
                 return id;
@@ -114,42 +120,30 @@ namespace StackoverflowGuide.BLL.Services
 
         public SingleThread GetSingleThread(string id, string askingUser)
         {
-            var mockPosts = new List<ThreadPost>();
-            mockPosts.Add(
-                new ThreadPost
-                {
-                    Id = "fakeId1",
-                    ThreadIndex = 0,
-                    Body = "That is the questions real description thi is a really long body",
-                    Title = "What is the question?",
-                    ConnectedPosts = new List<string> { "fakeId2" }
-                });
-            mockPosts.Add(new ThreadPost
-            {
-                Id = "fakeId2",
-                ThreadIndex = 1,
-                Body = "That is the questions real description thi is a really long body",
-                Title = "What is the question 2?",
-                ConnectedPosts = new List<string> { "fakeId1", "fakeId3" }
-            });
-            mockPosts.Add(new ThreadPost
-            {
-                Id = "fakeId3",
-                ThreadIndex = 2,
-                Body = "That is the questions real description thi is a really long body",
-                Title = "What is the question 3?",
-                ConnectedPosts = new List<string> { "fakeId2" }
-            });
+            var thread = threadRepository.Find(id);
+            var bqPosts = postsBQRepository.GetAllByIds(thread.ThreadPosts);
+            var storedThreadPosts = postsRepository.Querry(p => thread.ThreadPosts.Contains(p.ThreadId));
 
-            if (!hasAccessToThread(id, askingUser))
+            if (bqPosts.Count() != storedThreadPosts.Count())
             {
-                throw new Exception("You have no access to this thread!");
+                throw new Exception("Cannot get the relevant posts!");
             }
 
             return new SingleThread
             {
-                Thread = threadRepository.Find(id),
-                Posts = mockPosts.OrderBy(post => post.ThreadIndex).ToList()
+                Thread = thread,
+                Posts = bqPosts.Select(bqP =>
+                {
+                    var storedThreadPost = storedThreadPosts.Where(sTP => sTP.ThreadId == bqP.Id).First();
+                    return new ThreadPost
+                    {
+                        Id = bqP.Id,
+                        Title = bqP.Title,
+                        Body = bqP.Body,
+                        ThreadIndex = storedThreadPost.ThreadIndex,
+                        ConnectedPosts = storedThreadPost.ConnectedPosts
+                    };
+                }).OrderBy(post => post.ThreadIndex).ToList()
             };
         }
 
