@@ -10,5 +10,6 @@ namespace StackoverflowGuide.API.DTOs.Thread
     {
         public ThreadData Thread { get; set; }
         public List<PostData> Posts { get; set; }
+        public List<PostData> Suggestions { get; set; }
     }
 }

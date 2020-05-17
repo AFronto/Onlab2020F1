@@ -123,7 +123,8 @@ namespace StackoverflowGuide.API.Controllers
                 return new SingleThreadData
                 {
                     Thread = mapper.Map<ThreadData>(singleThread.Thread),
-                    Posts = singleThread.Posts.Select(mapper.Map<PostData>).ToList()
+                    Posts = singleThread.Posts.Select(mapper.Map<PostData>).ToList(),
+                    Suggestions = singleThread.Suggestions.Select(mapper.Map<PostData>).ToList()
                 };
             }
             catch (Exception e)

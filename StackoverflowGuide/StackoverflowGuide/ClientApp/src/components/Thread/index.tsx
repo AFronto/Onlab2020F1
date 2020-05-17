@@ -10,8 +10,7 @@ import { Row, Col, Button } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { ReduxState } from "../../store";
 
-import { createNewThread, getThreads } from "../../api/Thread";
-import { addThread } from "../../store/Thread";
+import { getThreads } from "../../api/Thread";
 import { ThreadModal } from "./ThreadModal";
 
 export const ThreadsScreen: FunctionComponent = () => {

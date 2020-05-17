@@ -10,5 +10,6 @@ namespace StackoverflowGuide.BLL.Models.Thread
     {
         public Thread Thread { get; set; }
         public List<ThreadPost> Posts { get; set; }
+        public List<ThreadPost> Suggestions { get; set; }
     }
 }
