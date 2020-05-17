@@ -9,8 +9,10 @@ import {
 } from "../../store/Thread";
 import { generateAuthenticationHeadder } from "../Helpers/HeaderHelper";
 import { jwtExpires } from "../Helpers/JWTExpireHelper";
-import { loadSingleThread } from "../../store/Thread/OpenThread";
+import { loadSingleThread } from "../../store/Thread/SingleThread/OpenThread";
 import { loadAllTags } from "../../store/Tag";
+import { loadSuggestions } from "../../store/Thread/SingleThread/Suggestions";
+import SingleThreadData from "../../data/server/Thread/SingleThreadData";
 
 export function getThreads() {
   return (dispatch: AppDispatch, getState: () => ReduxState) => {
@@ -122,7 +124,17 @@ export function getSingleThread(id: String) {
       url: "thread/" + id,
       headers: header,
     }).then(
-      (success) => dispatch(loadSingleThread({ singleThread: success.data })),
+      (success) => {
+        dispatch(
+          loadSingleThread({
+            singleThread: {
+              thread: success.data.thread,
+              posts: success.data.posts,
+            } as SingleThreadData,
+          })
+        );
+        dispatch(loadSuggestions({ suggestions: success.data.suggestions }));
+      },
       (error) => {
         if (error.response.status === 401) {
           jwtExpires(dispatch);

@@ -4,10 +4,10 @@ import thunk from "redux-thunk";
 import history from "./applcationHistory";
 import { connectRouter, routerMiddleware } from "connected-react-router";
 import threads from "./Thread";
-import open_thread from "./Thread/OpenThread";
 import jwt from "./Auth";
 import errors from "./Errors";
 import tags from "./Tag";
+import { single_thread } from "./Thread/SingleThread";
 
 const rootReducer = combineReducers({
   router: connectRouter(history),
@@ -15,7 +15,7 @@ const rootReducer = combineReducers({
   errors: errors,
   threads: threads,
   tags: tags,
-  open_thread: open_thread,
+  single_thread: single_thread,
 });
 
 const middleware = [

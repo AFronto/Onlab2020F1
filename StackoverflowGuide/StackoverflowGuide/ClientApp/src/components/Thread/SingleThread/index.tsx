@@ -3,7 +3,7 @@ import { useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { getSingleThread } from "../../../api/Thread";
 import { ReduxState } from "../../../store";
-import { loadSingleThread } from "../../../store/Thread/OpenThread";
+import { loadSingleThread } from "../../../store/Thread/SingleThread/OpenThread";
 import { Graph } from "react-d3-graph";
 import { graphData, customLabelBuilder } from "./logic/graphGeneration";
 import { Row, Col } from "react-bootstrap";
@@ -24,8 +24,21 @@ export const SingleThreadScreen: FunctionComponent = () => {
     };
   }, []);
 
-  const open_thread = useSelector((state: ReduxState) => state.open_thread);
-  const data = open_thread.posts ? graphData(open_thread) : undefined;
+  const open_thread = useSelector(
+    (state: ReduxState) => state.single_thread.open_thread
+  );
+
+  const suggestions = useSelector(
+    (state: ReduxState) => state.single_thread.suggestions
+  );
+
+  var postData = [];
+  postData.push(...suggestions);
+  if (open_thread.posts) {
+    postData.push(...open_thread.posts);
+  }
+
+  const data = postData.length > 0 ? graphData(postData) : undefined;
 
   const myConfig = {
     nodeHighlightBehavior: true,
@@ -44,7 +57,7 @@ export const SingleThreadScreen: FunctionComponent = () => {
 
   return (
     <div className="h-100" style={{ paddingTop: 100 }}>
-      {data && (
+      {data && open_thread.posts && (
         <Row>
           <Col xl={4} xs={12}>
             <Row>

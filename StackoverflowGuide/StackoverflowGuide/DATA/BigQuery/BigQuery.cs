@@ -32,7 +32,6 @@ namespace StackoverflowGuide.DATA.BigQuerry
         {
             var bqClient = GetBigqueryClient();
             var result = bqClient.ExecuteQuery(query, parameters: null).ToList();
-
             return result;
         }
     }

@@ -1,5 +1,4 @@
 import PostData from "../../../../data/server/Post/PostData";
-import SingleThreadData from "../../../../data/server/Thread/SingleThreadData";
 
 export function customLabelBuilder(node: PostData) {
   return node.title;
@@ -18,14 +17,15 @@ function generateLinks(
       }
     });
   });
-  console.log(links);
   return links;
 }
 
-export function graphData(open_thread: SingleThreadData) {
+export function graphData(postsData: PostData[]) {
   return {
-    nodes: open_thread.posts,
-    links: generateLinks(open_thread.posts),
-    focusedNodeId: open_thread.posts.find((p) => p.threadIndex === 0),
+    nodes: postsData,
+    links: generateLinks(postsData),
+    focusedNodeId: postsData.find(
+      (p) => p.threadIndex === 0 || p.threadIndex === -1
+    ),
   };
 }

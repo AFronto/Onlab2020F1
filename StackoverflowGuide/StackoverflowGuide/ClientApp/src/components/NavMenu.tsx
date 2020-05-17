@@ -5,14 +5,15 @@ import { Link } from "react-router-dom";
 import { ReduxState } from "../store";
 import { FaArrowLeft } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
-import { loadSingleThread } from "../store/Thread/OpenThread";
 
 export const NavMenu: FunctionComponent = () => {
   const activePath = useSelector(
     (state: ReduxState) => state.router.location.pathname
   );
 
-  const open_thread = useSelector((state: ReduxState) => state.open_thread);
+  const open_thread = useSelector(
+    (state: ReduxState) => state.single_thread.open_thread
+  );
 
   const dispatch = useDispatch();
 

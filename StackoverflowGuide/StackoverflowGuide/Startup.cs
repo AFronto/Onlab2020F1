@@ -12,6 +12,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using StackoverflowGuide.API.Mapping;
 using StackoverflowGuide.BLL.BigQueryInterfaces;
+using StackoverflowGuide.BLL.Helpers;
+using StackoverflowGuide.BLL.Helpers.Interfaces;
 using StackoverflowGuide.BLL.Models.User;
 using StackoverflowGuide.BLL.RepositoryInterfaces;
 using StackoverflowGuide.BLL.Services;
@@ -105,6 +107,9 @@ namespace StackoverflowGuide
                 )
             );
             services.AddScoped<IThreadService, ThreadService>();
+            services.AddScoped<IPostService, PostService>();
+
+            services.AddSingleton<ISuggestionHelper>(new SugesstionHelper());
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

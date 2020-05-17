@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson;
+using StackoverflowGuide.BLL.Helpers.Interfaces;
 using StackoverflowGuide.BLL.Models.Post;
 using StackoverflowGuide.BLL.Models.Tag;
 using StackoverflowGuide.BLL.Models.Thread;
@@ -16,12 +17,15 @@ namespace StackoverflowGuide.BLL.Services
         private IThreadRepository threadRepository;
         private IPostsBQRepository postsBQRepository;
         private IPostsRepository postsRepository;
+        private ISuggestionHelper suggestionHelper;
 
-        public ThreadService(IThreadRepository threadRepository, IPostsBQRepository postsBQRepository, IPostsRepository postsRepository)
+        public ThreadService(IThreadRepository threadRepository, IPostsBQRepository postsBQRepository,
+                                IPostsRepository postsRepository, ISuggestionHelper suggestionHelper)
         {
             this.threadRepository = threadRepository;
             this.postsBQRepository = postsBQRepository;
             this.postsRepository = postsRepository;
+            this.suggestionHelper = suggestionHelper;
         }
 
         public string CreateNewThread(Thread newThread)
@@ -120,11 +124,17 @@ namespace StackoverflowGuide.BLL.Services
 
         public SingleThread GetSingleThread(string id, string askingUser)
         {
+            if (!hasAccessToThread(id, askingUser))
+            {
+                throw new Exception("You have no access to this thread!");
+            }
+
             var thread = threadRepository.Find(id);
-            var bqPosts = postsBQRepository.GetAllByIds(thread.ThreadPosts);
+            var suggestions = suggestionHelper.GetSuggestionIds();
+            var bqPosts = postsBQRepository.GetAllByIds(thread.ThreadPosts.Concat(suggestions).ToList());
             var storedThreadPosts = postsRepository.Querry(p => thread.ThreadPosts.Contains(p.ThreadId));
 
-            if (bqPosts.Count() != storedThreadPosts.Count())
+            if (bqPosts.Count() != storedThreadPosts.Count() + suggestions.Count)
             {
                 throw new Exception("Cannot get the relevant posts!");
             }
@@ -132,18 +142,22 @@ namespace StackoverflowGuide.BLL.Services
             return new SingleThread
             {
                 Thread = thread,
-                Posts = bqPosts.Select(bqP =>
+                Posts = storedThreadPosts.Select(sTP =>
                 {
-                    var storedThreadPost = storedThreadPosts.Where(sTP => sTP.ThreadId == bqP.Id).First();
+                    var bqPost = bqPosts.Where(bqP => sTP.ThreadId == bqP.Id).First();
                     return new ThreadPost
                     {
-                        Id = bqP.Id,
-                        Title = bqP.Title,
-                        Body = bqP.Body,
-                        ThreadIndex = storedThreadPost.ThreadIndex,
-                        ConnectedPosts = storedThreadPost.ConnectedPosts
+                        Id = bqPost.Id,
+                        Title = bqPost.Title,
+                        Body = bqPost.Body,
+                        ThreadIndex = sTP.ThreadIndex,
+                        ConnectedPosts = sTP.ConnectedPosts
                     };
-                }).OrderBy(post => post.ThreadIndex).ToList()
+                }).OrderBy(post => post.ThreadIndex).ToList(),
+                Suggestions = suggestionHelper.ParseSuggestions(bqPosts
+                                                                .Where(bqP => suggestions.Contains(bqP.Id))
+                                                                .ToList(),
+                                                               storedThreadPosts.ToList())
             };
         }
 

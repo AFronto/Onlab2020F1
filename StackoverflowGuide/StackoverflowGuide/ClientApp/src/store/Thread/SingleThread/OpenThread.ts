@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import SingleThreadData from "../../data/server/Thread/SingleThreadData";
+import SingleThreadData from "../../../data/server/Thread/SingleThreadData";
 
 const openThreadSlice = createSlice({
   name: "open_thread",
