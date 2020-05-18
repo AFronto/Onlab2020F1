@@ -30,21 +30,23 @@ export const ThreadCard: FunctionComponent<{ thread: ThreadData }> = (
         <Card.Body>
           <h4>
             {props.thread.tagList.map((tag) => (
-              <Badge style={{ margin: 5 }} pill variant="secondary">
+              <Badge style={{ margin: 5 }} pill variant="warning">
                 {tag}
               </Badge>
             ))}
           </h4>
           <div className="d-flex justify-content-between">
             <Button
-              variant="success"
+              variant="outline-success"
+              className="border border-success"
               onClick={() => dispatch(push(`/threads/${props.thread.id}`))}
             >
               Show
             </Button>
             <div className="d-flex justify-content-end">
               <Button
-                className="mr-2"
+                variant="outline-primary"
+                className="border border-primary mr-2"
                 onClick={() => {
                   handleShow();
                 }}
@@ -52,7 +54,8 @@ export const ThreadCard: FunctionComponent<{ thread: ThreadData }> = (
                 <FaPencilAlt />
               </Button>
               <Button
-                variant="danger"
+                variant="outline-danger"
+                className="border border-danger"
                 onClick={() => {
                   dispatch(removeThread({ threadId: props.thread.id }));
                   dispatch(deleteThread(props.thread));

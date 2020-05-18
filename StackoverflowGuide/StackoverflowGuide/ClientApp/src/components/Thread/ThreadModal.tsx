@@ -64,11 +64,19 @@ export const ThreadModal: FunctionComponent<{
   var modalTitle = props.isNew ? "Create a new Thread" : "Edit the Thread";
 
   var submitButton = props.isNew ? (
-    <Button variant="success" type="submit">
+    <Button
+      variant="outline-success"
+      className="border border-success"
+      type="submit"
+    >
       Create Thread
     </Button>
   ) : (
-    <Button variant="primary" type="submit">
+    <Button
+      variant="outline-primary"
+      className="border border-primary"
+      type="submit"
+    >
       Save Changes
     </Button>
   );
@@ -121,7 +129,11 @@ export const ThreadModal: FunctionComponent<{
 
           <div className="d-flex justify-content-end">
             {submitButton}
-            <Button className="ml-2" variant="danger" onClick={handleClose}>
+            <Button
+              variant="outline-danger"
+              className="border border-danger ml-2"
+              onClick={handleClose}
+            >
               Close
             </Button>
           </div>
