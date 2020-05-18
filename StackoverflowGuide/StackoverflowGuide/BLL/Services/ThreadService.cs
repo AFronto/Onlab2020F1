@@ -130,7 +130,7 @@ namespace StackoverflowGuide.BLL.Services
             }
 
             var thread = threadRepository.Find(id);
-            var suggestions = suggestionHelper.GetSuggestionIds();
+            var suggestions = suggestionHelper.GetSuggestionIds(thread.ThreadPosts);
             var bqPosts = postsBQRepository.GetAllByIds(thread.ThreadPosts.Concat(suggestions).ToList());
             var storedThreadPosts = postsRepository.Querry(p => thread.ThreadPosts.Contains(p.ThreadId));
 

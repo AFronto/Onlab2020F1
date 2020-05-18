@@ -34,11 +34,11 @@ namespace StackoverflowGuide.BLL.Services
                 throw new Exception("You have no access to this thread!");
             }
 
-            var mockSugestions = suggestionHelper.GetSuggestionIds();
 
             var thread = threadRepository.Find(threadId);
-            var bqPosts = postsBQRepository.GetAllByIds(mockSugestions);
             thread.ThreadPosts.Add(acceptedPost.Id);
+            var suggestion = suggestionHelper.GetSuggestionIds(thread.ThreadPosts);
+            var bqPosts = postsBQRepository.GetAllByIds(suggestion);
             threadRepository.Update(thread);
             var storedThreadPosts = postsRepository.Querry(p => thread.ThreadPosts.Contains(p.ThreadId)).ToList();
             var acceptedStoredThreadPost = new StoredThreadPost
@@ -72,9 +72,9 @@ namespace StackoverflowGuide.BLL.Services
                 throw new Exception("You have no access to this thread!");
             }
 
-            var mockSugestions = suggestionHelper.GetSuggestionIds();
 
             var thread = threadRepository.Find(threadId);
+            var mockSugestions = suggestionHelper.GetSuggestionIds(thread.ThreadPosts);
             var bqPosts = postsBQRepository.GetAllByIds(mockSugestions);
             var storedThreadPosts = postsRepository.Querry(p => thread.ThreadPosts.Contains(p.ThreadId));
 

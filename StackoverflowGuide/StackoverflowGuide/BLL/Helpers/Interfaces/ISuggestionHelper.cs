@@ -9,7 +9,8 @@ namespace StackoverflowGuide.BLL.Helpers.Interfaces
 {
     public interface ISuggestionHelper
     {
-        List<string> GetSuggestionIds();
-        List<ThreadPost> ParseSuggestions(List<Post> bqPosts, List<StoredThreadPost> storedThreadPosts);
+        public List<string> GetSuggestionIds(List<string> incomingIds);
+        public List<ThreadPost> ParseSuggestions(List<Post> bqPosts, List<StoredThreadPost> storedThreadPosts);
+        public List<int> GetPostsFromCluster(int clusterId);
     }
 }
