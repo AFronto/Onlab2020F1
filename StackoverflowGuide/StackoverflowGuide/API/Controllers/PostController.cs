@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StackoverflowGuide.API.DTOs.Post;
+using StackoverflowGuide.BLL.Models.Post;
 using StackoverflowGuide.BLL.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -25,13 +26,39 @@ namespace StackoverflowGuide.API.Controllers
             this.postService = postService;
         }
 
-        [HttpGet("suggestions/{threadId}")]
-        public ActionResult<List<PostData>> GetSuggestions(string threadId)
+        [HttpPost("suggestions/{threadId}/declined")]
+        public ActionResult<List<PostData>> GetSuggestionsAfterDecline(string threadId, [FromBody]PostData model)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var userId = this.User.Claims.FirstOrDefault().Value;
+
             try
             {
-                var suggestions = postService.GetSuggestions(threadId);
+                var suggestions = postService.GetSuggestionsAfterDecline(threadId, mapper.Map<ThreadPost>(model), userId);
                 return suggestions.Select(mapper.Map<PostData>).ToList();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { error = e.Message });
+            }
+        }
+
+        [HttpPost("suggestions/{threadId}/accepted")]
+        public ActionResult<NewPostAndSuggestionsData> GetSuggestionsAfterAccept(string threadId, [FromBody]PostData model)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var userId = this.User.Claims.FirstOrDefault().Value;
+
+            try
+            {
+                var response = postService.GetSuggestionsAfterAccept(threadId, mapper.Map<ThreadPost>(model), userId);
+                return new NewPostAndSuggestionsData
+                {
+                    NewPost = mapper.Map<PostData>(response.NewPost),
+                    Suggestions = response.Suggestions.Select(mapper.Map<PostData>).ToList()
+                };
             }
             catch (Exception e)
             {

@@ -1,4 +1,5 @@
-﻿using MoreLinq;
+﻿using MongoDB.Bson;
+using MoreLinq;
 using StackoverflowGuide.BLL.Helpers.Interfaces;
 using StackoverflowGuide.BLL.Models.Post;
 using StackoverflowGuide.BLL.RepositoryInterfaces;
@@ -26,16 +27,67 @@ namespace StackoverflowGuide.BLL.Services
             this.suggestionHelper = suggestionHelper;
         }
 
-        public List<ThreadPost> GetSuggestions(string threadId)
+        public NewPostAndSuggestions GetSuggestionsAfterAccept(string threadId, ThreadPost acceptedPost, string askingUser)
         {
+            if (!hasAccessToThread(threadId, askingUser))
+            {
+                throw new Exception("You have no access to this thread!");
+            }
+
+            var mockSugestions = suggestionHelper.GetSuggestionIds();
+
+            var thread = threadRepository.Find(threadId);
+            var bqPosts = postsBQRepository.GetAllByIds(mockSugestions);
+            thread.ThreadPosts.Add(acceptedPost.Id);
+            threadRepository.Update(thread);
+            var storedThreadPosts = postsRepository.Querry(p => thread.ThreadPosts.Contains(p.ThreadId)).ToList();
+            var acceptedStoredThreadPost = new StoredThreadPost
+            {
+                Id = ObjectId.GenerateNewId().ToString(),
+                ThreadId = acceptedPost.Id,
+                ConnectedPosts = acceptedPost.ConnectedPosts,
+                ThreadIndex = storedThreadPosts.Count() > 0 ? storedThreadPosts.MaxBy(sTP => sTP.ThreadIndex).First().ThreadIndex + 1 : 0
+            };
+            storedThreadPosts.Add(acceptedStoredThreadPost);
+            postsRepository.Create(acceptedStoredThreadPost);
+
+            return new NewPostAndSuggestions
+            {
+                NewPost = new ThreadPost
+                {
+                    Id = acceptedStoredThreadPost.ThreadId,
+                    ThreadIndex = acceptedStoredThreadPost.ThreadIndex,
+                    Title = acceptedPost.Title,
+                    Body = acceptedPost.Body,
+                    ConnectedPosts = acceptedStoredThreadPost.ConnectedPosts
+                },
+                Suggestions = suggestionHelper.ParseSuggestions(bqPosts, storedThreadPosts)
+            };
+        }
+
+        public List<ThreadPost> GetSuggestionsAfterDecline(string threadId, ThreadPost declinedPost, string askingUser)
+        {
+            if (!hasAccessToThread(threadId, askingUser))
+            {
+                throw new Exception("You have no access to this thread!");
+            }
+
             var mockSugestions = suggestionHelper.GetSuggestionIds();
 
             var thread = threadRepository.Find(threadId);
             var bqPosts = postsBQRepository.GetAllByIds(mockSugestions);
             var storedThreadPosts = postsRepository.Querry(p => thread.ThreadPosts.Contains(p.ThreadId));
 
+
             return suggestionHelper.ParseSuggestions(bqPosts, storedThreadPosts.ToList());
 
+        }
+
+        private bool hasAccessToThread(string threadId, string userId)
+        {
+            var thread = threadRepository.Find(threadId);
+
+            return thread.Owner == userId;
         }
     }
 }

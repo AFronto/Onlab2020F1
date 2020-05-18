@@ -8,6 +8,8 @@ namespace StackoverflowGuide.BLL.Services.Interfaces
 {
     public interface IPostService
     {
-        public List<ThreadPost> GetSuggestions(string threadId);
+        public List<ThreadPost> GetSuggestionsAfterDecline(string threadId, ThreadPost declinedPost, string askingUser);
+
+        public NewPostAndSuggestions GetSuggestionsAfterAccept(string threadId, ThreadPost acceptedPost, string askingUser);
     }
 }

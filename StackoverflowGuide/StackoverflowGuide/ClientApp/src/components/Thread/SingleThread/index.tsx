@@ -18,6 +18,10 @@ import { useWindowSize } from "../../../general_helpers/WindowHelper";
 import { loadSuggestions } from "../../../store/Thread/SingleThread/Suggestions";
 import PostData from "../../../data/server/Post/PostData";
 import SingleThreadData from "../../../data/server/Thread/SingleThreadData";
+import {
+  getSuggestionsAfterDecline,
+  getSuggestionsAfterAccept,
+} from "../../../api/Post";
 
 export const SingleThreadScreen: FunctionComponent = () => {
   var { id } = useParams();
@@ -74,10 +78,16 @@ export const SingleThreadScreen: FunctionComponent = () => {
 
   const handleDeclineSuggestion = useCallback(
     (declined: PostData) => {
+      var oldState = suggestions;
+
       dispatch(
         loadSuggestions({
           suggestions: suggestions.filter((s) => s.id !== declined.id),
         })
+      );
+
+      dispatch(
+        getSuggestionsAfterDecline(open_thread.thread.id, oldState, declined)
       );
     },
     [suggestions]
@@ -85,6 +95,11 @@ export const SingleThreadScreen: FunctionComponent = () => {
 
   const handleAcceptSuggestion = useCallback(
     (accepted: PostData) => {
+      var oldState = {
+        suggestions: suggestions,
+        singleThread: open_thread,
+      };
+
       dispatch(
         loadSuggestions({
           suggestions: suggestions
@@ -102,12 +117,18 @@ export const SingleThreadScreen: FunctionComponent = () => {
               {
                 ...accepted,
                 threadIndex:
-                  open_thread.posts[open_thread.posts.length - 1].threadIndex +
-                  1,
+                  open_thread.posts.length > 0
+                    ? open_thread.posts[open_thread.posts.length - 1]
+                        .threadIndex + 1
+                    : 0,
               },
             ]),
           } as SingleThreadData,
         })
+      );
+
+      dispatch(
+        getSuggestionsAfterAccept(open_thread.thread.id, oldState, accepted)
       );
     },
     [suggestions]
