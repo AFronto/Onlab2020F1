@@ -96,6 +96,7 @@ namespace StackoverflowGuide
             services.AddScoped<IMongoDBContext, MongoDBContext>();
             services.AddScoped<IThreadRepository, ThreadRepository>();
             services.AddScoped<IPostsBQRepository, PostsBQRepository>();
+            services.AddScoped<ITagBQRepository, TagBQRepository>();
             services.AddScoped<IPostsRepository, PostsRepository>();
 
             services.AddSingleton<IAuthService>(

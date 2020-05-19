@@ -37,9 +37,8 @@ namespace StackoverflowGuide.BLL.Services
 
             var thread = threadRepository.Find(threadId);
             thread.ThreadPosts.Add(acceptedPost.Id);
-            var suggestion = suggestionHelper.GetSuggestionIds(thread.ThreadPosts);
-            var bqPosts = postsBQRepository.GetAllByIds(suggestion);
             threadRepository.Update(thread);
+
             var storedThreadPosts = postsRepository.Querry(p => thread.ThreadPosts.Contains(p.ThreadId)).ToList();
             var acceptedStoredThreadPost = new StoredThreadPost
             {
@@ -50,6 +49,12 @@ namespace StackoverflowGuide.BLL.Services
             };
             storedThreadPosts.Add(acceptedStoredThreadPost);
             postsRepository.Create(acceptedStoredThreadPost);
+
+            var suggestion = suggestionHelper.GetSuggestionIds(storedThreadPosts.OrderByDescending(sTP => sTP.ThreadIndex)
+                                                                                .Select(sTP => sTP.ThreadId)
+                                                                                .ToList());
+
+            var bqPosts = postsBQRepository.GetAllByIds(suggestion);
 
             return new NewPostAndSuggestions
             {
@@ -74,9 +79,11 @@ namespace StackoverflowGuide.BLL.Services
 
 
             var thread = threadRepository.Find(threadId);
-            var mockSugestions = suggestionHelper.GetSuggestionIds(thread.ThreadPosts);
-            var bqPosts = postsBQRepository.GetAllByIds(mockSugestions);
             var storedThreadPosts = postsRepository.Querry(p => thread.ThreadPosts.Contains(p.ThreadId));
+            var suggestions = suggestionHelper.GetSuggestionIds(storedThreadPosts.OrderByDescending(sTP => sTP.ThreadIndex)
+                                                                                .Select(sTP => sTP.ThreadId)
+                                                                                .ToList());
+            var bqPosts = postsBQRepository.GetAllByIds(suggestions);
 
 
             return suggestionHelper.ParseSuggestions(bqPosts, storedThreadPosts.ToList());

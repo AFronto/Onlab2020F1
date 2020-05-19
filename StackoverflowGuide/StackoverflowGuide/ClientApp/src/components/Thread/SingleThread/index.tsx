@@ -61,7 +61,9 @@ export const SingleThreadScreen: FunctionComponent = () => {
   const data = postData.length > 0 ? graphData(postData) : undefined;
 
   const myConfig = {
-    nodeHighlightBehavior: true,
+    nodeHighlightBehavior: false,
+    automaticRearrangeAfterDropNode: true,
+
     node: {
       color: "#38a1f4",
       size: 120,

@@ -17,15 +17,18 @@ namespace StackoverflowGuide.BLL.Services
         private IThreadRepository threadRepository;
         private IPostsBQRepository postsBQRepository;
         private IPostsRepository postsRepository;
+        private ITagBQRepository tagBQRepository;
         private ISuggestionHelper suggestionHelper;
 
         public ThreadService(IThreadRepository threadRepository, IPostsBQRepository postsBQRepository,
-                                IPostsRepository postsRepository, ISuggestionHelper suggestionHelper)
+                                IPostsRepository postsRepository, ISuggestionHelper suggestionHelper,
+                                ITagBQRepository tagBQRepository)
         {
             this.threadRepository = threadRepository;
             this.postsBQRepository = postsBQRepository;
             this.postsRepository = postsRepository;
             this.suggestionHelper = suggestionHelper;
+            this.tagBQRepository = tagBQRepository;
         }
 
         public string CreateNewThread(Thread newThread)
@@ -86,40 +89,7 @@ namespace StackoverflowGuide.BLL.Services
 
         public IEnumerable<Tag> GetAllTags()
         {
-            var mockTags = new List<Tag>();
-            mockTags.Add(
-                new Tag
-                {
-                    Id = "fakeTagId1",
-                    Name = "C",
-                });
-            mockTags.Add(
-                new Tag
-                {
-                    Id = "fakeTagId2",
-                    Name = "C++",
-                });
-            mockTags.Add(
-                new Tag
-                {
-                    Id = "fakeTagId3",
-                    Name = "C#",
-                });
-            mockTags.Add(
-                new Tag
-                {
-                    Id = "fakeTagId4",
-                    Name = "Java",
-                });
-            mockTags.Add(
-                new Tag
-                {
-                    Id = "fakeTagId5",
-                    Name = "Python",
-                });
-
-            return mockTags;
-
+            return tagBQRepository.GetAll(); 
         }
 
         public SingleThread GetSingleThread(string id, string askingUser)
@@ -130,9 +100,11 @@ namespace StackoverflowGuide.BLL.Services
             }
 
             var thread = threadRepository.Find(id);
-            var suggestions = suggestionHelper.GetSuggestionIds(thread.ThreadPosts);
-            var bqPosts = postsBQRepository.GetAllByIds(thread.ThreadPosts.Concat(suggestions).ToList());
             var storedThreadPosts = postsRepository.Querry(p => thread.ThreadPosts.Contains(p.ThreadId));
+            var suggestions = suggestionHelper.GetSuggestionIds(storedThreadPosts.OrderByDescending(sTP => sTP.ThreadIndex)
+                                                                                .Select(sTP => sTP.ThreadId)
+                                                                                .ToList());
+            var bqPosts = postsBQRepository.GetAllByIds(thread.ThreadPosts.Concat(suggestions).ToList());
 
             if (bqPosts.Count() != storedThreadPosts.Count() + suggestions.Count)
             {

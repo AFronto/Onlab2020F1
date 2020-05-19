@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useState, useEffect } from "react";
 import ThreadData from "../../data/server/Thread/ThreadData";
-import { Modal, Form, Button } from "react-bootstrap";
+import { Modal, Form, Button, Spinner } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { updateThread, addThread } from "../../store/Thread";
 import { editThread, createNewThread, getAllTags } from "../../api/Thread";
@@ -11,6 +11,7 @@ import { isArray } from "util";
 import { Typeahead } from "react-bootstrap-typeahead";
 import { ReduxState } from "../../store";
 import TagData from "../../data/server/Tag/TagData";
+import { loadAllTags } from "../../store/Tag";
 
 export const ThreadModal: FunctionComponent<{
   model: ModalModel;
@@ -21,11 +22,15 @@ export const ThreadModal: FunctionComponent<{
   const [selected, setSelected] = useState([] as TagData[]);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(getAllTags());
-  }, []);
-
   const tags = useSelector((state: ReduxState) => state.tags);
+
+  useEffect(() => {
+    if (tags.length === 0 && show) {
+      dispatch(getAllTags());
+    } else {
+      dispatch(loadAllTags({ tags: [] }));
+    }
+  }, [show]);
 
   const schema = yup.object({
     name: yup.string().required(),
@@ -86,59 +91,65 @@ export const ThreadModal: FunctionComponent<{
       <Modal.Header closeButton>
         <Modal.Title>{modalTitle}</Modal.Title>
       </Modal.Header>
-      <Modal.Body>
-        <Form noValidate onSubmit={onSubmit}>
-          <Form.Group controlId="formThreadName">
-            <Form.Label>Thread Name</Form.Label>
-            <Form.Control
-              name="name"
-              type="text"
-              defaultValue={props.thread ? props.thread.name : ""}
-              ref={register}
-              isInvalid={!!errors.name}
-              placeholder="Name of your Thread..."
-            />
-            <Form.Control.Feedback type="invalid">
-              <h6>
-                {errors.name
-                  ? isArray(errors.name)
-                    ? errors.name[0].message
-                    : errors.name.message
-                  : ""}
-              </h6>
-            </Form.Control.Feedback>
-          </Form.Group>
-
-          <Form.Group controlId="formThreadTags">
-            <Form.Label>Tags</Form.Label>
-            <div className="clearfix">
-              <Typeahead
-                id="tag-selection"
-                labelKey="name"
-                multiple={true}
-                defaultSelected={tags.filter(
-                  (tag) =>
-                    props.thread && props.thread.tagList.includes(tag.name)
-                )}
-                options={tags}
-                onChange={setSelected}
-                placeholder="Choose a tag..."
+      {tags.length > 0 ? (
+        <Modal.Body>
+          <Form noValidate onSubmit={onSubmit}>
+            <Form.Group controlId="formThreadName">
+              <Form.Label>Thread Name</Form.Label>
+              <Form.Control
+                name="name"
+                type="text"
+                defaultValue={props.thread ? props.thread.name : ""}
+                ref={register}
+                isInvalid={!!errors.name}
+                placeholder="Name of your Thread..."
               />
-            </div>
-          </Form.Group>
+              <Form.Control.Feedback type="invalid">
+                <h6>
+                  {errors.name
+                    ? isArray(errors.name)
+                      ? errors.name[0].message
+                      : errors.name.message
+                    : ""}
+                </h6>
+              </Form.Control.Feedback>
+            </Form.Group>
 
-          <div className="d-flex justify-content-end">
-            {submitButton}
-            <Button
-              variant="outline-danger"
-              className="border border-danger ml-2"
-              onClick={handleClose}
-            >
-              Close
-            </Button>
-          </div>
-        </Form>
-      </Modal.Body>
+            <Form.Group controlId="formThreadTags">
+              <Form.Label>Tags</Form.Label>
+              <div className="clearfix">
+                <Typeahead
+                  id="tag-selection"
+                  labelKey="name"
+                  multiple={true}
+                  defaultSelected={tags.filter(
+                    (tag) =>
+                      props.thread && props.thread.tagList.includes(tag.name)
+                  )}
+                  options={tags}
+                  onChange={setSelected}
+                  placeholder="Choose a tag..."
+                />
+              </div>
+            </Form.Group>
+
+            <div className="d-flex justify-content-end">
+              {submitButton}
+              <Button
+                variant="outline-danger"
+                className="border border-danger ml-2"
+                onClick={handleClose}
+              >
+                Close
+              </Button>
+            </div>
+          </Form>
+        </Modal.Body>
+      ) : (
+        <div className="d-flex justify-content-center">
+          <Spinner animation="border" />
+        </div>
+      )}
       <Modal.Footer></Modal.Footer>
     </Modal>
   );

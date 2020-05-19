@@ -28,7 +28,12 @@ namespace StackoverflowGuide.BLL.Helpers
 
             var posts = GetPostsFromCluster(GetCommonCluster(buffedIncoming
                             .Select(id => Int32.Parse(id)).ToList()));
-            return posts.Take(3).Select(id => id.ToString()).ToList();
+            Random rng = new Random();
+            var shuffledPosts = posts.OrderBy(a => rng.Next());
+            return shuffledPosts.Where(p => !incomingIds.Contains("" + p) && !buffedIncoming.Contains("" + p))
+                                .Take(3)
+                                .Select(id => id.ToString())
+                                .ToList();
 
         }
 
