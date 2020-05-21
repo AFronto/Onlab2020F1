@@ -3,6 +3,7 @@ import React, {
   useEffect,
   useCallback,
   useRef,
+  useState,
 } from "react";
 import { useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,6 +28,7 @@ export const SingleThreadScreen: FunctionComponent = () => {
   var { id } = useParams();
 
   const dispatch = useDispatch();
+  const [found, setFound] = useState<PostData | undefined>(undefined);
 
   useEffect(() => {
     if (id) {
@@ -48,7 +50,7 @@ export const SingleThreadScreen: FunctionComponent = () => {
 
   const size = useWindowSize();
 
-  var postData = [];
+  var postData = [] as PostData[];
   postData.push(
     ...suggestions.map((s) => {
       return { ...s, color: "#ffa31c" };
@@ -57,6 +59,23 @@ export const SingleThreadScreen: FunctionComponent = () => {
   if (open_thread.posts) {
     postData.push(...open_thread.posts);
   }
+
+  const divRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<ScrollArea>(null);
+
+  const onClickNode = (nodeId: string) => {
+    var clicked = postData.find((pD) => pD.id === nodeId)!;
+    setFound(clicked);
+    setTimeout(() => {
+      setFound(undefined);
+    }, 20000);
+    if (clicked.threadIndex !== -1) {
+      console.log((clicked.threadIndex - 1) * 140);
+      scrollRef.current?.scrollYTo((clicked.threadIndex - 1) * 140);
+    } else {
+      scrollRef.current?.scrollBottom();
+    }
+  };
 
   const data = postData.length > 0 ? graphData(postData) : undefined;
 
@@ -136,17 +155,17 @@ export const SingleThreadScreen: FunctionComponent = () => {
     [suggestions]
   );
 
-  const divRef = useRef<HTMLDivElement>(null);
-
   return (
     <div className="h-100" style={{ paddingTop: 100 }}>
       {data && open_thread.posts && (
         <Row>
           <Col xl={4} xs={12}>
             <ScrollArea
+              ref={scrollRef}
               style={{
                 height: size.height ? size.height - 100 : size.height,
               }}
+              smoothScrolling={true}
               speed={0.8}
               className="area"
               contentClassName="content"
@@ -168,6 +187,7 @@ export const SingleThreadScreen: FunctionComponent = () => {
                         divRef={divRef}
                         handleDeclineSuggestion={handleDeclineSuggestion}
                         handleAcceptSuggestion={handleAcceptSuggestion}
+                        found={found !== undefined && found.id === post.id}
                       />
                     </Col>
                   ))}
@@ -184,6 +204,7 @@ export const SingleThreadScreen: FunctionComponent = () => {
                         divRef={divRef}
                         handleDeclineSuggestion={handleDeclineSuggestion}
                         handleAcceptSuggestion={handleAcceptSuggestion}
+                        found={found !== undefined && found.id === post.id}
                       />
                     </Col>
                   ))}
@@ -196,6 +217,7 @@ export const SingleThreadScreen: FunctionComponent = () => {
               id="graph-id" // id is mandatory, if no id is defined rd3g will throw an error
               data={data}
               config={myConfig}
+              onClickNode={onClickNode}
             />
           </Col>
         </Row>

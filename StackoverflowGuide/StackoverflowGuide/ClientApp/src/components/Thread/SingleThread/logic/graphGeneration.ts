@@ -22,10 +22,10 @@ function generateLinks(
 }
 
 export function graphData(postsData: PostData[]) {
-  var x = 200;
-  var y = 100;
-  var x_wiggle = -40;
-  var xOffset = [-30, -30, 30];
+  let x = 200;
+  let y = 100;
+  let x_wiggle = -40;
+  let xOffset = [-30, -30, 30];
   postsData = postsData
     .slice(3)
     .map((pD) => {
@@ -41,7 +41,6 @@ export function graphData(postsData: PostData[]) {
         return { ...pD, fx: x, fy: y };
       })
     );
-  console.log(postsData);
   return {
     nodes: postsData,
     links: generateLinks(postsData),

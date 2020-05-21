@@ -9,6 +9,7 @@ export const PostCard: FunctionComponent<{
   divRef: React.RefObject<HTMLDivElement>;
   handleDeclineSuggestion: (arg0: PostData) => void;
   handleAcceptSuggestion: (arg0: PostData) => void;
+  found?: boolean;
 }> = (props) => {
   const suggestionOptions = [
     { title: "Accept", action: () => {} },
@@ -25,7 +26,7 @@ export const PostCard: FunctionComponent<{
 
   const popover = (
     <Popover id="popover-basic">
-      <Popover.Title as="h3">Options</Popover.Title>
+      <Popover.Title as="h3">Save Suggestion?</Popover.Title>
       <Popover.Content>
         <div className="d-flex justify-content-between">
           {suggestionOptions.map((option) => (
@@ -58,7 +59,8 @@ export const PostCard: FunctionComponent<{
   return (
     <Card
       style={{ width: "18rem", marginBottom: 30 }}
-      className="mx-auto"
+      className={props.found ? "mx-auto text-light" : "mx-auto"}
+      bg={props.found ? (props.isSuggestion ? "warning" : "primary") : "light"}
       border={props.isSuggestion ? "warning" : "primary"}
     >
       <Card.Body>
@@ -67,7 +69,7 @@ export const PostCard: FunctionComponent<{
           {props.isSuggestion ? (
             <Button
               className="ml-4"
-              style={{ color: "#444" }}
+              style={{ color: props.found ? "#fff" : "#444" }}
               variant="link"
               onClick={handleClick}
             >
@@ -76,7 +78,13 @@ export const PostCard: FunctionComponent<{
               </h4>
             </Button>
           ) : (
-            <Button className="ml-4" style={{ color: "#444" }} variant="link">
+            <Button
+              className="ml-4"
+              style={{
+                color: props.found ? "#fff" : "#444",
+              }}
+              variant="link"
+            >
               <h4>
                 <FaExternalLinkAlt />
               </h4>
