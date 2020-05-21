@@ -30,6 +30,10 @@ export const ThreadModal: FunctionComponent<{
     } else {
       dispatch(loadAllTags({ tags: [] }));
     }
+
+    return function cleanup() {
+      dispatch(loadAllTags({ tags: [] }));
+    };
   }, [show]);
 
   const schema = yup.object({
