@@ -2,6 +2,7 @@
 using MoreLinq;
 using StackoverflowGuide.API.DTOs.Thread;
 using StackoverflowGuide.BLL.Helpers.Interfaces;
+using StackoverflowGuide.BLL.Helpers.Models;
 using StackoverflowGuide.BLL.Models.Post;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace StackoverflowGuide.BLL.Helpers
     public class SugesstionHelper : ISuggestionHelper
     {
 
-        private Dictionary<int, List<int>> postInClusters = new Dictionary<int, List<int>>();
+        private Dictionary<int, SuggestedPost> postInClusters = new Dictionary<int, SuggestedPost>();
         public SugesstionHelper()
         {
             ReadHierarchy();
@@ -21,7 +22,7 @@ namespace StackoverflowGuide.BLL.Helpers
         public List<string> GetSuggestionIds(List<string> incomingIds)
         {
 
-            var buffedIncoming = incomingIds.Concat(new List<string> { "13", "192", "78669", "75267", "19" })
+            var buffedIncoming = incomingIds.Concat(new List<string> { "4", "25224", "78669", "75267", "19" })
                                             .Distinct()
                                             .Take(5);
 
@@ -56,7 +57,7 @@ namespace StackoverflowGuide.BLL.Helpers
 
         public List<int> GetPostsFromCluster(int clusterId)
         {
-            return postInClusters.Where(postAndClusters => postAndClusters.Value.Contains(clusterId))
+            return postInClusters.Where(postAndClusters => postAndClusters.Value.Clusters.Contains(clusterId))
                                  .Select(postAndClusters => postAndClusters.Key)
                                  .ToList();
         }
@@ -64,10 +65,10 @@ namespace StackoverflowGuide.BLL.Helpers
 
         private int GetCommonCluster(List<int> ids)
         {
-            List<int> commonClusters = postInClusters[ids.First()];
+            List<int> commonClusters = postInClusters[ids.First()].Clusters;
             foreach (int id in ids)
             {
-                commonClusters = commonClusters.Intersect(postInClusters[id]).ToList();
+                commonClusters = commonClusters.Intersect(postInClusters[id].Clusters).ToList();
             }
 
             return commonClusters.First();
@@ -77,6 +78,7 @@ namespace StackoverflowGuide.BLL.Helpers
         {
             List<int> postIds = new List<int>();
             List<List<int>> listOfMerges = new List<List<int>>();
+            Dictionary<int, List<string>> tagsOfPosts = new Dictionary<int, List<string>>();
 
             using (var parser = new Microsoft.VisualBasic.FileIO.TextFieldParser("Resources/linkage.csv"))
             {
@@ -105,19 +107,38 @@ namespace StackoverflowGuide.BLL.Helpers
                 }
             }
 
+            using (var parser = new Microsoft.VisualBasic.FileIO.TextFieldParser("Resources/tag.csv"))
+            {
+                parser.TextFieldType = Microsoft.VisualBasic.FileIO.FieldType.Delimited;
+                parser.SetDelimiters(new string[] { ";" });
+
+                while (!parser.EndOfData)
+                {
+                    string[] row = parser.ReadFields();
+                    string[] splitTags = row[2].Split(',');
+                    List<string> tags = new List<string>();
+                    foreach (string splitTag in splitTags)
+                    {
+                        if(splitTag != "")
+                            tags.Add(splitTag);
+                    }
+                    tagsOfPosts.Add(int.Parse(row[1]), tags);
+                }
+            }
 
             for (int i = 0; i < postIds.Count; i++)
             {
-                postInClusters.Add(postIds[i], new List<int>());
+                postInClusters.Add(postIds[i], new SuggestedPost());
 
                 List<int> idHit = listOfMerges.Where(pair => pair.Contains(i)).First();
                 var clusterNumber = listOfMerges.IndexOf(idHit) + postIds.Count;
-                postInClusters[postIds[i]].Add(clusterNumber);
+                postInClusters[postIds[i]].Clusters.Add(clusterNumber);
                 while (clusterNumber != (postIds.Count - 1) * 2)
                 {
                     idHit = listOfMerges.Where(pair => pair.Contains(clusterNumber)).First();
                     clusterNumber = listOfMerges.IndexOf(idHit) + postIds.Count;
-                    postInClusters[postIds[i]].Add(clusterNumber);
+                    postInClusters[postIds[i]].Clusters.Add(clusterNumber);
+                    postInClusters[postIds[i]].TagList = tagsOfPosts[postIds[i]];
                 }
             }
         }
