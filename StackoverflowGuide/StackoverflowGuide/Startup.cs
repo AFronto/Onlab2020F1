@@ -87,9 +87,6 @@ namespace StackoverflowGuide
 
             services.AddControllersWithViews();
 
-            var serviceProvider = services.BuildServiceProvider();
-            var userManager = serviceProvider.GetService<UserManager<User>>();
-            var signInManager = serviceProvider.GetService<SignInManager<User>>();
 
             services.AddTransient<IBigQuery, BigQuery>();
 
@@ -98,6 +95,11 @@ namespace StackoverflowGuide
             services.AddScoped<IPostsBQRepository, PostsBQRepository>();
             services.AddScoped<ITagBQRepository, TagBQRepository>();
             services.AddScoped<IPostsRepository, PostsRepository>();
+            services.AddScoped<ITagRepository, TagRepository>();
+
+            var serviceProvider = services.BuildServiceProvider();
+            var userManager = serviceProvider.GetService<UserManager<User>>();
+            var signInManager = serviceProvider.GetService<SignInManager<User>>();
 
             services.AddSingleton<IAuthService>(
                 new AuthService(
@@ -110,7 +112,8 @@ namespace StackoverflowGuide
             services.AddScoped<IThreadService, ThreadService>();
             services.AddScoped<IPostService, PostService>();
 
-            services.AddSingleton<ISuggestionHelper>(new SugesstionHelper());
+   
+            services.AddSingleton<ISuggestionHelper>(new SugesstionHelper(serviceProvider.GetService<ITagRepository>()));
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

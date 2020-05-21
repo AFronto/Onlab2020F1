@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace StackoverflowGuide.DATA.Repositories
 {
-    public class TagBQRepository : BaseBQRepository<Tag>, ITagBQRepository
+    public class TagBQRepository : BaseBQRepository<BqTag>, ITagBQRepository
     {
         public TagBQRepository(IBigQuery bigQuery) : base(bigQuery)
         {
         }
 
-        public List<Tag> GetAll()
+        public List<BqTag> GetAll()
         {            
             var query = $"SELECT id, tag_name FROM `bigquery-public-data.stackoverflow.tags` ";
             

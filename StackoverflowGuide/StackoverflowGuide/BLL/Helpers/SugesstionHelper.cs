@@ -1,9 +1,12 @@
 ﻿using Google.Apis.Bigquery.v2.Data;
+using MongoDB.Bson;
 using MoreLinq;
 using StackoverflowGuide.API.DTOs.Thread;
 using StackoverflowGuide.BLL.Helpers.Interfaces;
 using StackoverflowGuide.BLL.Helpers.Models;
 using StackoverflowGuide.BLL.Models.Post;
+using StackoverflowGuide.BLL.Models.Tag;
+using StackoverflowGuide.BLL.RepositoryInterfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,10 +16,12 @@ namespace StackoverflowGuide.BLL.Helpers
 {
     public class SugesstionHelper : ISuggestionHelper
     {
-
+        private ITagRepository tagRepository;
         private Dictionary<int, SuggestedPost> postInClusters = new Dictionary<int, SuggestedPost>();
-        public SugesstionHelper()
+        public SugesstionHelper(ITagRepository tagRepository)
         {
+            this.tagRepository = tagRepository;
+            CreateTagRepository();
             ReadHierarchy();
         }
         public List<string> GetSuggestionIds(List<string> incomingIds)
@@ -139,6 +144,30 @@ namespace StackoverflowGuide.BLL.Helpers
                     clusterNumber = listOfMerges.IndexOf(idHit) + postIds.Count;
                     postInClusters[postIds[i]].Clusters.Add(clusterNumber);
                     postInClusters[postIds[i]].TagList = tagsOfPosts[postIds[i]];
+                }
+            }
+        }
+
+        private void CreateTagRepository()
+        {
+            tagRepository.EmptyTable();
+
+            using (var parser = new Microsoft.VisualBasic.FileIO.TextFieldParser("Resources/uniqueTag.csv"))
+            {
+                parser.TextFieldType = Microsoft.VisualBasic.FileIO.FieldType.Delimited;
+                parser.SetDelimiters(new string[] { ";" });
+
+                while (!parser.EndOfData)
+                {
+                    string[] row = parser.ReadFields();
+                    var id = ObjectId.GenerateNewId().ToString();
+                    DbTag tag = new DbTag();
+                    tag.Id = id;
+                    tag.Name = row[1];
+                    if (!tagRepository.Create(tag))
+                    {
+                        throw new Exception("Couldn't create a new Tag!");
+                    }
                 }
             }
         }

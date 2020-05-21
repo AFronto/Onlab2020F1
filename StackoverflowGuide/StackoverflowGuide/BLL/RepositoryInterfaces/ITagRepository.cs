@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace StackoverflowGuide.BLL.RepositoryInterfaces
 {
-    public interface ITagBQRepository: IBaseBQRepository<BqTag>
+    public interface ITagRepository : IBaseRepository<DbTag>
     {
-        public List<BqTag> GetAll();
     }
 }

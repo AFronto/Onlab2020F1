@@ -25,7 +25,8 @@ namespace StackoverflowGuide.API.Mapping
             CreateMap<Thread, ThreadData>();
             CreateMap<ThreadPost, PostData>();
             CreateMap<PostData, ThreadPost>();
-            CreateMap<Tag, TagData>();
+            CreateMap<BqTag, TagData>();
+            CreateMap<DbTag, TagData>();
         }
     }
 }

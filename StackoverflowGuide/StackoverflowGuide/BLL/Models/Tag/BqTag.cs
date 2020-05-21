@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace StackoverflowGuide.BLL.Models.Tag
 {
-    public class Tag : BQModel
+    public class BqTag : BQModel
     {
         public string Name { get; set; }
 

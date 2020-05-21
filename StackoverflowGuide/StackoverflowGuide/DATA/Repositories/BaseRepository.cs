@@ -77,5 +77,10 @@ namespace StackoverflowGuide.DATA.Repositories
         {
             return Collection.Find(filter).ToList();
         }
+
+        public DeleteResult EmptyTable()
+        {
+            return Collection.DeleteMany(FilterDefinition<TEntity>.Empty);
+        }
     }
 }

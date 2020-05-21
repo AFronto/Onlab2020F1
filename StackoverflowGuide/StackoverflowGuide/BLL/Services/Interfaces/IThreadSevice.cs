@@ -17,6 +17,6 @@ namespace StackoverflowGuide.BLL.Services.Interfaces
         public IEnumerable<Thread> GetAll(string userId);
         public SingleThread GetSingleThread(string id, string askingUser);
 
-        public IEnumerable<Tag> GetAllTags();
+        public IEnumerable<DbTag> GetAllTags();
     }
 }

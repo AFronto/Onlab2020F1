@@ -18,17 +18,19 @@ namespace StackoverflowGuide.BLL.Services
         private IPostsBQRepository postsBQRepository;
         private IPostsRepository postsRepository;
         private ITagBQRepository tagBQRepository;
+        private ITagRepository tagRepository;
         private ISuggestionHelper suggestionHelper;
 
         public ThreadService(IThreadRepository threadRepository, IPostsBQRepository postsBQRepository,
                                 IPostsRepository postsRepository, ISuggestionHelper suggestionHelper,
-                                ITagBQRepository tagBQRepository)
+                                ITagBQRepository tagBQRepository, ITagRepository tagRepository)
         {
             this.threadRepository = threadRepository;
             this.postsBQRepository = postsBQRepository;
             this.postsRepository = postsRepository;
             this.suggestionHelper = suggestionHelper;
             this.tagBQRepository = tagBQRepository;
+            this.tagRepository = tagRepository;
         }
 
         public string CreateNewThread(Thread newThread)
@@ -87,9 +89,9 @@ namespace StackoverflowGuide.BLL.Services
             return threadRepository.Querry(thread => thread.Owner == userId);
         }
 
-        public IEnumerable<Tag> GetAllTags()
+        public IEnumerable<DbTag> GetAllTags()
         {
-            return tagBQRepository.GetAll(); 
+            return tagRepository.QuerryAll();
         }
 
         public SingleThread GetSingleThread(string id, string askingUser)

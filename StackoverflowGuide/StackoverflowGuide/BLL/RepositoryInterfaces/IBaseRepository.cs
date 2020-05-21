@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MongoDB.Driver;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -15,6 +16,8 @@ namespace StackoverflowGuide.BLL.RepositoryInterfaces
         bool Create(TEntity model);
 
         bool Delete(string id);
+
+        DeleteResult EmptyTable();
 
         IEnumerable<TEntity> QuerryAll();
 
