@@ -11,5 +11,7 @@ namespace StackoverflowGuide.BLL.Services.Interfaces
         public List<ThreadPost> GetSuggestionsAfterDecline(string threadId, ThreadPost declinedPost, string askingUser);
 
         public NewPostAndSuggestions GetSuggestionsAfterAccept(string threadId, ThreadPost acceptedPost, string askingUser);
+
+        public string DeletePost(string threadId, string postId, string askingUser);
     }
 }

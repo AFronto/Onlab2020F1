@@ -79,3 +79,38 @@ export function getSuggestionsAfterAccept(
     );
   };
 }
+
+export function deleteWatched(
+  id: String,
+  oldState: { suggestions: PostData[]; singleThread: SingleThreadData },
+  deletedPost: PostData
+) {
+  return (dispatch: AppDispatch, getState: () => ReduxState) => {
+    const header = generateAuthenticationHeadder(getState());
+
+    return axios({
+      method: "DELETE",
+      url: `post/${id}/delete/${deletedPost.id}`,
+      headers: header,
+    }).then(
+      (_success) => {
+        console.log("Succesfully deleted!");
+      },
+      (error) => {
+        dispatch(
+          loadSuggestions({
+            suggestions: oldState.suggestions,
+          })
+        );
+        dispatch(
+          loadSingleThread({
+            singleThread: oldState.singleThread,
+          })
+        );
+        if (error.response.status === 401) {
+          jwtExpires(dispatch);
+        }
+      }
+    );
+  };
+}

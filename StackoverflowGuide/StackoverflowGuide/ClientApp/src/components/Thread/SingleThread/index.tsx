@@ -12,7 +12,7 @@ import { ReduxState } from "../../../store";
 import { loadSingleThread } from "../../../store/Thread/SingleThread/OpenThread";
 import { Graph } from "react-d3-graph";
 import { graphData, customLabelBuilder } from "./logic/graphGeneration";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Spinner } from "react-bootstrap";
 import { PostCard } from "./ThreadPost";
 import ScrollArea from "react-scrollbar";
 import { useWindowSize } from "../../../general_helpers/WindowHelper";
@@ -22,11 +22,13 @@ import SingleThreadData from "../../../data/server/Thread/SingleThreadData";
 import {
   getSuggestionsAfterDecline,
   getSuggestionsAfterAccept,
+  deleteWatched,
 } from "../../../api/Post";
 
 export const SingleThreadScreen: FunctionComponent = () => {
+  /////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////// Initialization //////////////////////////////////
   var { id } = useParams();
-
   const dispatch = useDispatch();
   const [found, setFound] = useState<PostData | undefined>(undefined);
 
@@ -47,7 +49,8 @@ export const SingleThreadScreen: FunctionComponent = () => {
   const suggestions = useSelector(
     (state: ReduxState) => state.single_thread.suggestions
   );
-
+  /////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////// Graph configuration ////////////////////////////////
   const size = useWindowSize();
 
   var postData = [] as PostData[];
@@ -62,20 +65,6 @@ export const SingleThreadScreen: FunctionComponent = () => {
 
   const divRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<ScrollArea>(null);
-
-  const onClickNode = (nodeId: string) => {
-    var clicked = postData.find((pD) => pD.id === nodeId)!;
-    setFound(clicked);
-    setTimeout(() => {
-      setFound(undefined);
-    }, 20000);
-    if (clicked.threadIndex !== -1) {
-      console.log((clicked.threadIndex - 1) * 140);
-      scrollRef.current?.scrollYTo((clicked.threadIndex - 1) * 140);
-    } else {
-      scrollRef.current?.scrollBottom();
-    }
-  };
 
   const data = postData.length > 0 ? graphData(postData) : undefined;
 
@@ -96,10 +85,25 @@ export const SingleThreadScreen: FunctionComponent = () => {
     height: size.height ? size.height - 100 : size.height,
     width: 700,
   };
+  /////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////// Handler functions /////////////////////////////////
+  const onClickNode = (nodeId: string) => {
+    var clicked = postData.find((pD) => pD.id === nodeId)!;
+    setFound(clicked);
+    setTimeout(() => {
+      setFound(undefined);
+    }, 2000);
+    if (clicked.threadIndex !== -1) {
+      console.log((clicked.threadIndex - 1) * 140);
+      scrollRef.current?.scrollYTo((clicked.threadIndex - 1) * 140);
+    } else {
+      scrollRef.current?.scrollBottom();
+    }
+  };
 
   const handleDeclineSuggestion = useCallback(
     (declined: PostData) => {
-      var oldState = suggestions;
+      const oldState = suggestions;
 
       dispatch(
         loadSuggestions({
@@ -111,12 +115,12 @@ export const SingleThreadScreen: FunctionComponent = () => {
         getSuggestionsAfterDecline(open_thread.thread.id, oldState, declined)
       );
     },
-    [suggestions]
+    [suggestions, open_thread, dispatch]
   );
 
   const handleAcceptSuggestion = useCallback(
     (accepted: PostData) => {
-      var oldState = {
+      const oldState = {
         suggestions: suggestions,
         singleThread: open_thread,
       };
@@ -152,12 +156,60 @@ export const SingleThreadScreen: FunctionComponent = () => {
         getSuggestionsAfterAccept(open_thread.thread.id, oldState, accepted)
       );
     },
-    [suggestions]
+    [suggestions, open_thread, dispatch]
   );
 
+  const handleDeleteWatched = useCallback(
+    (deleted: PostData) => {
+      const oldState = {
+        suggestions: suggestions,
+        singleThread: open_thread,
+      };
+
+      if (suggestions.some((s) => s.connectedPosts.includes(deleted.id))) {
+        dispatch(
+          loadSuggestions({
+            suggestions: suggestions.map((s) => {
+              return { ...s, connectedPosts: deleted.connectedPosts };
+            }),
+          })
+        );
+      }
+      let newList = open_thread.posts.filter((p) => p.id !== deleted.id);
+      dispatch(
+        loadSingleThread({
+          singleThread: {
+            thread: open_thread.thread,
+            posts: newList.map((p) => {
+              if (p.connectedPosts.includes(deleted.id)) {
+                return {
+                  ...p,
+                  connectedPosts: deleted.connectedPosts,
+                  threadIndex: deleted.threadIndex,
+                };
+              } else {
+                if (p.threadIndex > deleted.threadIndex) {
+                  return {
+                    ...p,
+                    threadIndex: p.threadIndex - 1,
+                  };
+                }
+                return p;
+              }
+            }),
+          } as SingleThreadData,
+        })
+      );
+
+      dispatch(deleteWatched(open_thread.thread.id, oldState, deleted));
+    },
+    [suggestions, open_thread, dispatch]
+  );
+  /////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////// Render ////////////////////////////////////////
   return (
     <div className="h-100" style={{ paddingTop: 100 }}>
-      {data && open_thread.posts && (
+      {data && open_thread.posts ? (
         <Row>
           <Col xl={4} xs={12}>
             <ScrollArea
@@ -187,6 +239,7 @@ export const SingleThreadScreen: FunctionComponent = () => {
                         divRef={divRef}
                         handleDeclineSuggestion={handleDeclineSuggestion}
                         handleAcceptSuggestion={handleAcceptSuggestion}
+                        handleDeleteWatched={handleDeleteWatched}
                         found={found !== undefined && found.id === post.id}
                       />
                     </Col>
@@ -204,6 +257,7 @@ export const SingleThreadScreen: FunctionComponent = () => {
                         divRef={divRef}
                         handleDeclineSuggestion={handleDeclineSuggestion}
                         handleAcceptSuggestion={handleAcceptSuggestion}
+                        handleDeleteWatched={handleDeleteWatched}
                         found={found !== undefined && found.id === post.id}
                       />
                     </Col>
@@ -221,6 +275,10 @@ export const SingleThreadScreen: FunctionComponent = () => {
             />
           </Col>
         </Row>
+      ) : (
+        <div className="d-flex justify-content-center align-items-center h-100">
+          <Spinner animation="border" />
+        </div>
       )}
     </div>
   );

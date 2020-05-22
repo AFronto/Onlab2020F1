@@ -1,7 +1,7 @@
 import PostData from "../../../data/server/Post/PostData";
-import React, { FunctionComponent, useRef, useState, MouseEvent } from "react";
+import React, { FunctionComponent, useState, MouseEvent } from "react";
 import { Card, Button, Popover, Overlay } from "react-bootstrap";
-import { FaEllipsisV, FaExternalLinkAlt } from "react-icons/fa";
+import { FaEllipsisV } from "react-icons/fa";
 
 export const PostCard: FunctionComponent<{
   post: PostData;
@@ -9,11 +9,35 @@ export const PostCard: FunctionComponent<{
   divRef: React.RefObject<HTMLDivElement>;
   handleDeclineSuggestion: (arg0: PostData) => void;
   handleAcceptSuggestion: (arg0: PostData) => void;
+  handleDeleteWatched: (arg0: PostData) => void;
   found?: boolean;
 }> = (props) => {
   const suggestionOptions = [
-    { title: "Accept", action: () => {} },
-    { title: "Decline", action: () => {} },
+    {
+      index: 0,
+      title: "Accept",
+      action: () => {
+        props.handleAcceptSuggestion(props.post);
+      },
+    },
+    {
+      index: 1,
+      title: "Decline",
+      action: () => {
+        props.handleDeclineSuggestion(props.post);
+      },
+    },
+  ];
+
+  const watchedOptions = [
+    { index: 0, title: "Open", action: () => {} },
+    {
+      index: 1,
+      title: "Delete",
+      action: () => {
+        props.handleDeleteWatched(props.post);
+      },
+    },
   ];
 
   const [show, setShow] = useState(false);
@@ -26,31 +50,31 @@ export const PostCard: FunctionComponent<{
 
   const popover = (
     <Popover id="popover-basic">
-      <Popover.Title as="h3">Save Suggestion?</Popover.Title>
+      <Popover.Title as="h3">
+        {props.isSuggestion ? "Save Suggestion?" : "Options"}
+      </Popover.Title>
       <Popover.Content>
         <div className="d-flex justify-content-between">
-          {suggestionOptions.map((option) => (
-            <Button
-              variant={
-                option.title === "Accept" ? "outline-success" : "outline-danger"
-              }
-              className={
-                option.title === "Accept"
-                  ? "border border-success"
-                  : "border border-danger ml-2"
-              }
-              onClick={() => {
-                setShow(false);
-                if (option.title === "Accept") {
-                  props.handleAcceptSuggestion(props.post);
-                } else {
-                  props.handleDeclineSuggestion(props.post);
+          {(props.isSuggestion ? suggestionOptions : watchedOptions).map(
+            (option) => (
+              <Button
+                variant={
+                  option.index === 0 ? "outline-success" : "outline-danger"
                 }
-              }}
-            >
-              {option.title}
-            </Button>
-          ))}
+                className={
+                  option.index === 0
+                    ? "border border-success"
+                    : "border border-danger ml-2"
+                }
+                onClick={() => {
+                  setShow(false);
+                  option.action();
+                }}
+              >
+                {option.title}
+              </Button>
+            )
+          )}
         </div>
       </Popover.Content>
     </Popover>
@@ -84,9 +108,10 @@ export const PostCard: FunctionComponent<{
                 color: props.found ? "#fff" : "#444",
               }}
               variant="link"
+              onClick={handleClick}
             >
               <h4>
-                <FaExternalLinkAlt />
+                <FaEllipsisV />
               </h4>
             </Button>
           )}

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StackoverflowGuide.API.DTOs.Post;
+using StackoverflowGuide.API.DTOs.Thread;
 using StackoverflowGuide.BLL.Models.Post;
 using StackoverflowGuide.BLL.Services.Interfaces;
 using System;
@@ -64,6 +65,28 @@ namespace StackoverflowGuide.API.Controllers
             {
                 return BadRequest(new { error = e.Message });
             }
+        }
+
+        [HttpDelete("{threadId}/delete/{postId}")]
+        public ActionResult<ThreadIdData> DeleteWatched(string threadId, string postId)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            var userId = this.User.Claims.FirstOrDefault().Value;
+
+            try
+            {
+                var responseId = new ThreadIdData()
+                {
+                    Id = postService
+                         .DeletePost(threadId, postId, userId)
+                };
+                return responseId;
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { error = e.Message });
+            }
+
         }
     }
 }

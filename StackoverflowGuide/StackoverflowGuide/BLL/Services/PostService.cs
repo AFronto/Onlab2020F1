@@ -27,6 +27,44 @@ namespace StackoverflowGuide.BLL.Services
             this.suggestionHelper = suggestionHelper;
         }
 
+        public string DeletePost(string threadId, string postId, string askingUser)
+        {
+            if (!hasAccessToThread(threadId, askingUser))
+            {
+                throw new Exception("You have no access to this thread!");
+            }
+
+            var thread = threadRepository.Find(threadId);
+            thread.ThreadPosts.Remove(postId);
+            threadRepository.Update(thread);
+
+            var postToDelete = postsRepository.Querry(p => p.ThreadId == postId).First();
+            var modifiedPosts = postsRepository.Querry(p => p.ConnectedPosts.Contains(postId));
+
+            foreach(var post in modifiedPosts)
+            {
+                post.ConnectedPosts.Remove(postId);
+                post.ConnectedPosts.AddRange(postToDelete.ConnectedPosts);
+                postsRepository.Update(post);
+            }
+
+            var postsFollowing = postsRepository.Querry(p => p.ThreadIndex > postToDelete.ThreadIndex);
+            foreach (var post in postsFollowing)
+            {
+                post.ThreadIndex -= 1;
+                postsRepository.Update(post);
+            }
+
+            if (postsRepository.Delete(postToDelete.Id))
+            {
+                return threadId;
+            }
+            else
+            {
+                throw new Exception("Cannot delete nonexistant post!");
+            }
+        }
+
         public NewPostAndSuggestions GetSuggestionsAfterAccept(string threadId, ThreadPost acceptedPost, string askingUser)
         {
             if (!hasAccessToThread(threadId, askingUser))
@@ -36,13 +74,14 @@ namespace StackoverflowGuide.BLL.Services
 
 
             var thread = threadRepository.Find(threadId);
-            thread.ThreadPosts.Add(acceptedPost.Id);
+            var dbId = ObjectId.GenerateNewId().ToString();
+            thread.ThreadPosts.Add(dbId);
             threadRepository.Update(thread);
 
-            var storedThreadPosts = postsRepository.Querry(p => thread.ThreadPosts.Contains(p.ThreadId)).ToList();
+            var storedThreadPosts = postsRepository.Querry(p => thread.ThreadPosts.Contains(p.Id)).ToList();
             var acceptedStoredThreadPost = new StoredThreadPost
             {
-                Id = ObjectId.GenerateNewId().ToString(),
+                Id = dbId,
                 ThreadId = acceptedPost.Id,
                 ConnectedPosts = acceptedPost.ConnectedPosts,
                 ThreadIndex = storedThreadPosts.Count() > 0 ? storedThreadPosts.MaxBy(sTP => sTP.ThreadIndex).First().ThreadIndex + 1 : 0
@@ -79,7 +118,7 @@ namespace StackoverflowGuide.BLL.Services
 
 
             var thread = threadRepository.Find(threadId);
-            var storedThreadPosts = postsRepository.Querry(p => thread.ThreadPosts.Contains(p.ThreadId));
+            var storedThreadPosts = postsRepository.Querry(p => thread.ThreadPosts.Contains(p.Id));
             var suggestions = suggestionHelper.GetSuggestionIds(storedThreadPosts.OrderByDescending(sTP => sTP.ThreadIndex)
                                                                                 .Select(sTP => sTP.ThreadId)
                                                                                 .ToList());

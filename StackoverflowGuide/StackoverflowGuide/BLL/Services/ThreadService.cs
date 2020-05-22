@@ -56,6 +56,16 @@ namespace StackoverflowGuide.BLL.Services
                 throw new Exception("You have no access to this thread!");
             }
 
+            var thread = threadRepository.Find(id);
+            foreach (var post in thread.ThreadPosts)
+            {
+                var postToDelete = postsRepository.Querry(p => p.Id == post).First();
+                if (!(postsRepository.Delete(postToDelete.Id)))
+                {
+                    throw new Exception("Cannot delete nonexistant post!");
+                }
+            }
+
             if (threadRepository.Delete(id))
             {
                 return id;
@@ -102,11 +112,11 @@ namespace StackoverflowGuide.BLL.Services
             }
 
             var thread = threadRepository.Find(id);
-            var storedThreadPosts = postsRepository.Querry(p => thread.ThreadPosts.Contains(p.ThreadId));
+            var storedThreadPosts = postsRepository.Querry(p => thread.ThreadPosts.Contains(p.Id));
             var suggestions = suggestionHelper.GetSuggestionIds(storedThreadPosts.OrderByDescending(sTP => sTP.ThreadIndex)
                                                                                 .Select(sTP => sTP.ThreadId)
                                                                                 .ToList());
-            var bqPosts = postsBQRepository.GetAllByIds(thread.ThreadPosts.Concat(suggestions).ToList());
+            var bqPosts = postsBQRepository.GetAllByIds(storedThreadPosts.Select(sTP => sTP.ThreadId).Concat(suggestions).ToList());
 
             if (bqPosts.Count() != storedThreadPosts.Count() + suggestions.Count)
             {
