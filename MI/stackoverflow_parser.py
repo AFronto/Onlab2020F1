@@ -11,28 +11,25 @@ class GroupHandler(xml.sax.ContentHandler):
         if attrs.get("PostTypeId") == "1":
 
             post = {}
-            post["Id"] = attrs.get("Id") if  (
-                "Id" in attrs.keys()) else '0'
-            )
+            post["Id"] = attrs.get("Id")
             # post["Title"] = attrs.get("Title")
             # post["Body"] = attrs.get("Body")
-            # post["Tags"] = attrs.get("Tags") if (
-            #     "Tags" in attrs.keys()) else '0'
-            post["Score"] = attrs.get("Score") if (
-                "Score" in attrs.keys()) else '0'
-            post["FavoriteCount"] = attrs.get("FavoriteCount") if (
-                "FavoriteCount" in attrs.keys()) else '0'
-            post["ViewCount"] = attrs.get("ViewCount") if (
-                "ViewCount" in attrs.keys()) else '0'
-            post["AnswerCount"] = attrs.get("AnswerCount") if (
-                "AnswerCount" in attrs.keys()) else '0'
-            post["CommentCount"] = attrs.get("CommentCount") if (
-                "CommentCount" in attrs.keys()) else '0'
+            post["Tags"] = attrs.get("Tags")
+            # post["Score"] = attrs.get("Score") if (
+            #     "Score" in attrs.keys()) else '0'
+            # post["FavoriteCount"] = attrs.get("FavoriteCount") if (
+            #     "FavoriteCount" in attrs.keys()) else '0'
+            # post["ViewCount"] = attrs.get("ViewCount") if (
+            #     "ViewCount" in attrs.keys()) else '0'
+            # post["AnswerCount"] = attrs.get("AnswerCount") if (
+            #     "AnswerCount" in attrs.keys()) else '0'
+            # post["CommentCount"] = attrs.get("CommentCount") if (
+            #     "CommentCount" in attrs.keys()) else '0'
 
-            if post["Id"] != '0'
+            if post["Id"] != '0':
                 self.posts.append(post)
 
-            if len(self.posts) == 1000000:
+            if len(self.posts) == 100000:
                 root = ET.Element("posts")
                 print(self.fileCounter)
                 for currentPost in self.posts:
@@ -45,33 +42,33 @@ class GroupHandler(xml.sax.ContentHandler):
                     # title.text = currentPost["Title"]
                     # body = ET.SubElement(child, "Body")
                     # body.text = currentPost["Body"]
-                    # tags = ET.SubElement(child, "Tags")
-                    # tagParts = currentPost["Tags"].split(">")
-                    # for tagPart in tagParts:
-                    #     if(tagPart != "&lt" and tagPart != ""):
-                    #         tagPart = tagPart.replace("<", "")
-                    #         if(tagPart in TagHandler.dictionary):
-                    #             tagChild = ET.Element("Tag")
-                    #             tags.append(tagChild)
-                    #             tagId = ET.SubElement(tagChild, "Id")
-                    #             tagId.text = TagHandler.dictionary[tagPart][0]
-                    #             tagName = ET.SubElement(tagChild, "Name")
-                    #             tagName.text = tagPart
-                    #             tagCount = ET.SubElement(tagChild, "Count")
-                    #             tagCount.text = TagHandler.dictionary[tagPart][1]
-                    score = ET.SubElement(child, "Score")
-                    score.text = currentPost["Score"]
-                    favouriteCount = ET.SubElement(child, "FavoriteCount")
-                    favouriteCount.text = currentPost["FavoriteCount"]
-                    viewCount = ET.SubElement(child, "ViewCount")
-                    viewCount.text = currentPost["ViewCount"]
-                    answerCount = ET.SubElement(child, "AnswerCount")
-                    answerCount.text = currentPost["AnswerCount"]
-                    commentCount = ET.SubElement(child, "CommentCount")
-                    commentCount.text = currentPost["CommentCount"]
+                    tags = ET.SubElement(child, "Tags")
+                    tagParts = currentPost["Tags"].split(">")
+                    for tagPart in tagParts:
+                        if(tagPart != "&lt" and tagPart != ""):
+                            tagPart = tagPart.replace("<", "")
+                            if(tagPart in TagHandler.dictionary):
+                                tagChild = ET.Element("Tag")
+                                tags.append(tagChild)
+                                # tagId = ET.SubElement(tagChild, "Id")
+                                # tagId.text = TagHandler.dictionary[tagPart][0]
+                                tagName = ET.SubElement(tagChild, "Name")
+                                tagName.text = tagPart
+                                # tagCount = ET.SubElement(tagChild, "Count")
+                                # tagCount.text = TagHandler.dictionary[tagPart][1]
+                    # score = ET.SubElement(child, "Score")
+                    # score.text = currentPost["Score"]
+                    # favouriteCount = ET.SubElement(child, "FavoriteCount")
+                    # favouriteCount.text = currentPost["FavoriteCount"]
+                    # viewCount = ET.SubElement(child, "ViewCount")
+                    # viewCount.text = currentPost["ViewCount"]
+                    # answerCount = ET.SubElement(child, "AnswerCount")
+                    # answerCount.text = currentPost["AnswerCount"]
+                    # commentCount = ET.SubElement(child, "CommentCount")
+                    # commentCount.text = currentPost["CommentCount"]
 
                 tree = ET.ElementTree(root)
-                filename = "BigData_noText_" + str(self.fileCounter) + ".xml"
+                filename = "TagTest_" + str(self.fileCounter) + ".xml"
                 print(filename)
                 with open(filename, "wb") as fh:
                     tree.write(fh)
@@ -98,10 +95,10 @@ class TagHandler(xml.sax.ContentHandler):
             self.dictionary[key] = [tag["Id"], tag["Count"]]
 
 
-# tagHandler = TagHandler()
-# parser = xml.sax.make_parser()
-# parser.setContentHandler(tagHandler)
-# parser.parse('Tags.xml')
+tagHandler = TagHandler()
+parser = xml.sax.make_parser()
+parser.setContentHandler(tagHandler)
+parser.parse('Tags.xml')
 
 handler = GroupHandler()
 parser = xml.sax.make_parser()
