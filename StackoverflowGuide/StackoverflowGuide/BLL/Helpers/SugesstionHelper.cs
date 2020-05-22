@@ -24,19 +24,28 @@ namespace StackoverflowGuide.BLL.Helpers
             CreateTagRepository();
             ReadHierarchy();
         }
-        public List<string> GetSuggestionIds(List<string> incomingIds)
+        public List<string> GetSuggestionIds(List<string> incomingIds, List<string> tagsFromThread)
         {
 
-            var buffedIncoming = incomingIds.Concat(new List<string> { "4", "25224", "78669", "75267", "19" })
-                                            .Distinct()
-                                            .Take(5);
+            var mostImportantIncoming = incomingIds.Take(5);
+            var highestCluster = (postInClusters.Keys.Count() - 1) * 2;
 
-
-            var posts = GetPostsFromCluster(GetCommonCluster(buffedIncoming
+            var posts = GetPostsFromCluster(mostImportantIncoming.Count() < 5 
+                                            ? highestCluster 
+                                            : GetCommonCluster(mostImportantIncoming
                             .Select(id => Int32.Parse(id)).ToList()));
-            Random rng = new Random();
-            var shuffledPosts = posts.OrderBy(a => rng.Next());
-            return shuffledPosts.Where(p => !incomingIds.Contains("" + p) && !buffedIncoming.Contains("" + p))
+
+            
+            var orderedPosts = posts.OrderByDescending(postId => { var tagMatchCountList = mostImportantIncoming
+                                                        .Select(mII => postInClusters[Int32.Parse(mII)].TagList
+                                                                                                       .Intersect(postInClusters[postId].TagList)
+                                                                                                       .Count()).ToList();
+                                                        tagMatchCountList.Add(tagsFromThread.Intersect(postInClusters[postId].TagList)
+                                                                                            .Count());
+                                                        return tagMatchCountList.Sum(x => x);
+            });
+
+            return orderedPosts.Where(p => !incomingIds.Contains("" + p))
                                 .Take(3)
                                 .Select(id => id.ToString())
                                 .ToList();
@@ -131,17 +140,17 @@ namespace StackoverflowGuide.BLL.Helpers
                 }
             }
 
-            for (int i = 0; i < postIds.Count; i++)
+            for (int i = 0; i < postIds.Count(); i++)
             {
                 postInClusters.Add(postIds[i], new SuggestedPost());
 
                 List<int> idHit = listOfMerges.Where(pair => pair.Contains(i)).First();
-                var clusterNumber = listOfMerges.IndexOf(idHit) + postIds.Count;
+                var clusterNumber = listOfMerges.IndexOf(idHit) + postIds.Count();
                 postInClusters[postIds[i]].Clusters.Add(clusterNumber);
-                while (clusterNumber != (postIds.Count - 1) * 2)
+                while (clusterNumber != (postIds.Count() - 1) * 2)
                 {
                     idHit = listOfMerges.Where(pair => pair.Contains(clusterNumber)).First();
-                    clusterNumber = listOfMerges.IndexOf(idHit) + postIds.Count;
+                    clusterNumber = listOfMerges.IndexOf(idHit) + postIds.Count();
                     postInClusters[postIds[i]].Clusters.Add(clusterNumber);
                     postInClusters[postIds[i]].TagList = tagsOfPosts[postIds[i]];
                 }

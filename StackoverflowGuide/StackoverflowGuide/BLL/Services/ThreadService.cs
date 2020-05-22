@@ -83,6 +83,9 @@ namespace StackoverflowGuide.BLL.Services
                 throw new Exception("You have no access to this thread!");
             }
 
+            var thread = threadRepository.Find(id);
+            updatedThread.ThreadPosts = thread.ThreadPosts;
+
             if (threadRepository.Update(updatedThread))
             {
                 return id;
@@ -115,7 +118,8 @@ namespace StackoverflowGuide.BLL.Services
             var storedThreadPosts = postsRepository.Querry(p => thread.ThreadPosts.Contains(p.Id));
             var suggestions = suggestionHelper.GetSuggestionIds(storedThreadPosts.OrderByDescending(sTP => sTP.ThreadIndex)
                                                                                 .Select(sTP => sTP.ThreadId)
-                                                                                .ToList());
+                                                                                .ToList(),
+                                                                thread.TagList.ToList());
             var bqPosts = postsBQRepository.GetAllByIds(storedThreadPosts.Select(sTP => sTP.ThreadId).Concat(suggestions).ToList());
 
             if (bqPosts.Count() != storedThreadPosts.Count() + suggestions.Count)
@@ -131,7 +135,7 @@ namespace StackoverflowGuide.BLL.Services
                     var bqPost = bqPosts.Where(bqP => sTP.ThreadId == bqP.Id).First();
                     return new ThreadPost
                     {
-                        Id = bqPost.Id,
+                        Id = sTP.Id,
                         Title = bqPost.Title,
                         Body = bqPost.Body,
                         ThreadIndex = sTP.ThreadIndex,

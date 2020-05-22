@@ -91,7 +91,8 @@ namespace StackoverflowGuide.BLL.Services
 
             var suggestion = suggestionHelper.GetSuggestionIds(storedThreadPosts.OrderByDescending(sTP => sTP.ThreadIndex)
                                                                                 .Select(sTP => sTP.ThreadId)
-                                                                                .ToList());
+                                                                                .ToList(),
+                                                               thread.TagList.ToList());
 
             var bqPosts = postsBQRepository.GetAllByIds(suggestion);
 
@@ -121,7 +122,8 @@ namespace StackoverflowGuide.BLL.Services
             var storedThreadPosts = postsRepository.Querry(p => thread.ThreadPosts.Contains(p.Id));
             var suggestions = suggestionHelper.GetSuggestionIds(storedThreadPosts.OrderByDescending(sTP => sTP.ThreadIndex)
                                                                                 .Select(sTP => sTP.ThreadId)
-                                                                                .ToList());
+                                                                                .ToList(),
+                                                                thread.TagList.ToList());
             var bqPosts = postsBQRepository.GetAllByIds(suggestions);
 
 
