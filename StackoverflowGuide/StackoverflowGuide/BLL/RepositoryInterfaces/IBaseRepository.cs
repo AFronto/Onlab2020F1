@@ -15,6 +15,8 @@ namespace StackoverflowGuide.BLL.RepositoryInterfaces
 
         bool Create(TEntity model);
 
+        long Count();
+
         bool Delete(string id);
 
         DeleteResult EmptyTable();

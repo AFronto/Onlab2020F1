@@ -47,7 +47,7 @@ namespace StackoverflowGuide
                 RequireNonAlphanumeric = false,
                 RequireDigit = false
             };
-            
+
             services.AddIdentityMongoDbProvider<User, MongoRole>
                 (
                     identityOptions => { identityOptions.Password = passwordOptions; },
@@ -96,6 +96,7 @@ namespace StackoverflowGuide
             services.AddScoped<ITagBQRepository, TagBQRepository>();
             services.AddScoped<IPostsRepository, PostsRepository>();
             services.AddScoped<ITagRepository, TagRepository>();
+            services.AddScoped<IPostInClusterRepository, PostInClusterRepository>();
 
             var serviceProvider = services.BuildServiceProvider();
             var userManager = serviceProvider.GetService<UserManager<User>>();
@@ -112,8 +113,9 @@ namespace StackoverflowGuide
             services.AddScoped<IThreadService, ThreadService>();
             services.AddScoped<IPostService, PostService>();
 
-   
-            services.AddSingleton<ISuggestionHelper>(new SugesstionHelper(serviceProvider.GetService<ITagRepository>()));
+
+            services.AddSingleton<ISuggestionHelper>(new SugesstionHelper(serviceProvider.GetService<ITagRepository>(), 
+                                                                          serviceProvider.GetService<IPostInClusterRepository>()));
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

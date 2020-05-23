@@ -1,48 +1,68 @@
-﻿using Google.Apis.Bigquery.v2.Data;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using MoreLinq;
-using StackoverflowGuide.API.DTOs.Thread;
 using StackoverflowGuide.BLL.Helpers.Interfaces;
-using StackoverflowGuide.BLL.Helpers.Models;
 using StackoverflowGuide.BLL.Models.Post;
 using StackoverflowGuide.BLL.Models.Tag;
 using StackoverflowGuide.BLL.RepositoryInterfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace StackoverflowGuide.BLL.Helpers
 {
     public class SugesstionHelper : ISuggestionHelper
     {
         private ITagRepository tagRepository;
-        private Dictionary<int, SuggestedPost> postInClusters = new Dictionary<int, SuggestedPost>();
-        public SugesstionHelper(ITagRepository tagRepository)
+        private IPostInClusterRepository postInClusterRepository;
+
+        public SugesstionHelper(ITagRepository tagRepository, IPostInClusterRepository postInClusterRepository)
         {
             this.tagRepository = tagRepository;
-            CreateTagRepository();
-            ReadHierarchy();
+            this.postInClusterRepository = postInClusterRepository;
+            while (true)
+            {
+                Console.WriteLine("Want to load the suggestions data from files to the database? (y/n)");
+                string answer = Console.ReadLine();
+                answer.ToLower();
+                if (answer.Length > 0 && answer[0] == 'y')
+                {
+                    Console.WriteLine("Loading...");
+                    CreateTagRepository();
+                    ReadHierarchy();
+                    break;
+                }
+                else if (answer.Length > 0 && answer[0] == 'n')
+                {
+                    break;
+                }
+            }
+
+
         }
         public List<string> GetSuggestionIds(List<string> incomingIds, List<string> tagsFromThread)
         {
 
-            var mostImportantIncoming = incomingIds.Take(5);
-            var highestCluster = (postInClusters.Keys.Count() - 1) * 2;
+            var mostImportantIncoming = incomingIds.Take(5).Select(id => Int32.Parse(id)).ToList();
+            int highestCluster = Convert.ToInt32((postInClusterRepository.Count() - 1) * 2);
 
-            var posts = GetPostsFromCluster(mostImportantIncoming.Count() < 5 
-                                            ? highestCluster 
-                                            : GetCommonCluster(mostImportantIncoming
-                            .Select(id => Int32.Parse(id)).ToList()));
+            var posts = GetPostsFromCluster(mostImportantIncoming.Count() < 5
+                                            ? highestCluster
+                                            : GetCommonCluster(mostImportantIncoming));
 
-            
-            var orderedPosts = posts.OrderByDescending(postId => { var tagMatchCountList = mostImportantIncoming
-                                                        .Select(mII => postInClusters[Int32.Parse(mII)].TagList
-                                                                                                       .Intersect(postInClusters[postId].TagList)
-                                                                                                       .Count()).ToList();
-                                                        tagMatchCountList.Add(tagsFromThread.Intersect(postInClusters[postId].TagList)
-                                                                                            .Count());
-                                                        return tagMatchCountList.Sum(x => x);
+            var mostImportantIncomingPost = postInClusterRepository.Querry(p => mostImportantIncoming.Contains(p.PostId)).ToList();
+
+            var allPostFromCluster = postInClusterRepository.Querry(p => posts.Contains(p.PostId)).ToDictionary(p => p.PostId, p => p.TagList);
+
+            var orderedPosts = posts.OrderByDescending(postId =>
+            {
+                var tagMatchCountList = mostImportantIncomingPost
+                       .Select(mII => mII.TagList
+                       .Intersect(allPostFromCluster[postId])
+                       .Count()).ToList();
+                tagMatchCountList.Add(tagsFromThread.Intersect(allPostFromCluster[postId])
+                                                    .Count());
+                return tagMatchCountList.Sum(x => x);
             });
 
             return orderedPosts.Where(p => !incomingIds.Contains("" + p))
@@ -62,7 +82,7 @@ namespace StackoverflowGuide.BLL.Helpers
                 ThreadIndex = -1,
                 ConnectedPosts = storedThreadPosts.Count() > 0
                                     ?
-                                    new List<string> { storedThreadPosts.MaxBy(sTP => sTP.ThreadIndex).First().ThreadId }
+                                    new List<string> { storedThreadPosts.MaxBy(sTP => sTP.ThreadIndex).First().Id }
                                     :
                                     new List<string>()
             }
@@ -71,18 +91,20 @@ namespace StackoverflowGuide.BLL.Helpers
 
         public List<int> GetPostsFromCluster(int clusterId)
         {
-            return postInClusters.Where(postAndClusters => postAndClusters.Value.Clusters.Contains(clusterId))
-                                 .Select(postAndClusters => postAndClusters.Key)
-                                 .ToList();
+            return postInClusterRepository.Querry(pIC => pIC.Clusters.Contains(clusterId))
+                                          .Select(pIC => pIC.PostId)
+                                          .ToList();
         }
 
 
         private int GetCommonCluster(List<int> ids)
         {
-            List<int> commonClusters = postInClusters[ids.First()].Clusters;
-            foreach (int id in ids)
+            var postInClustersList = postInClusterRepository.Querry(pIC => ids.Contains(pIC.PostId)).ToList();
+
+            List<int> commonClusters = postInClustersList.First().Clusters;
+            foreach (var postInCluster in postInClustersList)
             {
-                commonClusters = commonClusters.Intersect(postInClusters[id].Clusters).ToList();
+                commonClusters = commonClusters.Intersect(postInCluster.Clusters).ToList();
             }
 
             return commonClusters.First();
@@ -90,6 +112,7 @@ namespace StackoverflowGuide.BLL.Helpers
 
         private void ReadHierarchy()
         {
+            postInClusterRepository.EmptyTable();
             List<int> postIds = new List<int>();
             List<List<int>> listOfMerges = new List<List<int>>();
             Dictionary<int, List<string>> tagsOfPosts = new Dictionary<int, List<string>>();
@@ -133,7 +156,7 @@ namespace StackoverflowGuide.BLL.Helpers
                     List<string> tags = new List<string>();
                     foreach (string splitTag in splitTags)
                     {
-                        if(splitTag != "")
+                        if (splitTag != "")
                             tags.Add(splitTag);
                     }
                     tagsOfPosts.Add(int.Parse(row[1]), tags);
@@ -142,18 +165,26 @@ namespace StackoverflowGuide.BLL.Helpers
 
             for (int i = 0; i < postIds.Count(); i++)
             {
-                postInClusters.Add(postIds[i], new SuggestedPost());
+                var postInCluster = new PostInCluster
+                {
+                    Id = ObjectId.GenerateNewId().ToString(),
+                    PostId = postIds[i],
+                    Clusters = new List<int>(),
+                    TagList = new List<string>()
+                };
 
                 List<int> idHit = listOfMerges.Where(pair => pair.Contains(i)).First();
                 var clusterNumber = listOfMerges.IndexOf(idHit) + postIds.Count();
-                postInClusters[postIds[i]].Clusters.Add(clusterNumber);
+                postInCluster.Clusters.Add(clusterNumber);
                 while (clusterNumber != (postIds.Count() - 1) * 2)
                 {
                     idHit = listOfMerges.Where(pair => pair.Contains(clusterNumber)).First();
                     clusterNumber = listOfMerges.IndexOf(idHit) + postIds.Count();
-                    postInClusters[postIds[i]].Clusters.Add(clusterNumber);
-                    postInClusters[postIds[i]].TagList = tagsOfPosts[postIds[i]];
+                    postInCluster.Clusters.Add(clusterNumber);
+                    postInCluster.TagList = tagsOfPosts[postIds[i]];
                 }
+
+                postInClusterRepository.Create(postInCluster);
             }
         }
 

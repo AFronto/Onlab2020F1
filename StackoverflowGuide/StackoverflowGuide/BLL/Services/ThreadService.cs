@@ -117,10 +117,10 @@ namespace StackoverflowGuide.BLL.Services
             var thread = threadRepository.Find(id);
             var storedThreadPosts = postsRepository.Querry(p => thread.ThreadPosts.Contains(p.Id));
             var suggestions = suggestionHelper.GetSuggestionIds(storedThreadPosts.OrderByDescending(sTP => sTP.ThreadIndex)
-                                                                                .Select(sTP => sTP.ThreadId)
+                                                                                .Select(sTP => sTP.PostId)
                                                                                 .ToList(),
                                                                 thread.TagList.ToList());
-            var bqPosts = postsBQRepository.GetAllByIds(storedThreadPosts.Select(sTP => sTP.ThreadId).Concat(suggestions).ToList());
+            var bqPosts = postsBQRepository.GetAllByIds(storedThreadPosts.Select(sTP => sTP.PostId).Concat(suggestions).ToList());
 
             if (bqPosts.Count() != storedThreadPosts.Count() + suggestions.Count)
             {
@@ -132,7 +132,7 @@ namespace StackoverflowGuide.BLL.Services
                 Thread = thread,
                 Posts = storedThreadPosts.Select(sTP =>
                 {
-                    var bqPost = bqPosts.Where(bqP => sTP.ThreadId == bqP.Id).First();
+                    var bqPost = bqPosts.Where(bqP => sTP.PostId == bqP.Id).First();
                     return new ThreadPost
                     {
                         Id = sTP.Id,

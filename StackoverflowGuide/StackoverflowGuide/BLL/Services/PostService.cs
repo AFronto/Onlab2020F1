@@ -38,7 +38,7 @@ namespace StackoverflowGuide.BLL.Services
             thread.ThreadPosts.Remove(postId);
             threadRepository.Update(thread);
 
-            var postToDelete = postsRepository.Querry(p => p.ThreadId == postId).First();
+            var postToDelete = postsRepository.Querry(p => p.Id == postId).First();
             var modifiedPosts = postsRepository.Querry(p => p.ConnectedPosts.Contains(postId));
 
             foreach(var post in modifiedPosts)
@@ -48,7 +48,7 @@ namespace StackoverflowGuide.BLL.Services
                 postsRepository.Update(post);
             }
 
-            var postsFollowing = postsRepository.Querry(p => p.ThreadIndex > postToDelete.ThreadIndex);
+            var postsFollowing = postsRepository.Querry(p => p.ThreadIndex > postToDelete.ThreadIndex && p.ThreadId == threadId);
             foreach (var post in postsFollowing)
             {
                 post.ThreadIndex -= 1;
@@ -82,7 +82,8 @@ namespace StackoverflowGuide.BLL.Services
             var acceptedStoredThreadPost = new StoredThreadPost
             {
                 Id = dbId,
-                ThreadId = acceptedPost.Id,
+                ThreadId = threadId,
+                PostId = acceptedPost.Id,
                 ConnectedPosts = acceptedPost.ConnectedPosts,
                 ThreadIndex = storedThreadPosts.Count() > 0 ? storedThreadPosts.MaxBy(sTP => sTP.ThreadIndex).First().ThreadIndex + 1 : 0
             };
@@ -90,7 +91,7 @@ namespace StackoverflowGuide.BLL.Services
             postsRepository.Create(acceptedStoredThreadPost);
 
             var suggestion = suggestionHelper.GetSuggestionIds(storedThreadPosts.OrderByDescending(sTP => sTP.ThreadIndex)
-                                                                                .Select(sTP => sTP.ThreadId)
+                                                                                .Select(sTP => sTP.PostId)
                                                                                 .ToList(),
                                                                thread.TagList.ToList());
 
@@ -100,7 +101,7 @@ namespace StackoverflowGuide.BLL.Services
             {
                 NewPost = new ThreadPost
                 {
-                    Id = acceptedStoredThreadPost.ThreadId,
+                    Id = acceptedStoredThreadPost.Id,
                     ThreadIndex = acceptedStoredThreadPost.ThreadIndex,
                     Title = acceptedPost.Title,
                     Body = acceptedPost.Body,
@@ -121,7 +122,7 @@ namespace StackoverflowGuide.BLL.Services
             var thread = threadRepository.Find(threadId);
             var storedThreadPosts = postsRepository.Querry(p => thread.ThreadPosts.Contains(p.Id));
             var suggestions = suggestionHelper.GetSuggestionIds(storedThreadPosts.OrderByDescending(sTP => sTP.ThreadIndex)
-                                                                                .Select(sTP => sTP.ThreadId)
+                                                                                .Select(sTP => sTP.PostId)
                                                                                 .ToList(),
                                                                 thread.TagList.ToList());
             var bqPosts = postsBQRepository.GetAllByIds(suggestions);

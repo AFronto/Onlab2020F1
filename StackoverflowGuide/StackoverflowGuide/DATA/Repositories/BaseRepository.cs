@@ -57,6 +57,18 @@ namespace StackoverflowGuide.DATA.Repositories
             }
         }
 
+        public long Count()
+        {
+            try
+            { 
+                return Collection.EstimatedDocumentCount();
+            }
+            catch (Exception e)
+            {
+                return 0;
+            }
+        }
+
         public bool Delete(string id)
         {
             ObjectId objectId;

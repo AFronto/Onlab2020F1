@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace StackoverflowGuide.BLL.Models.Post
 {
-    [Table("Post")]
-    public class StoredThreadPost : DBModel
+    [Table("ClusteredPost")]
+    public class PostInCluster : DBModel
     {
-        public string ThreadId { get; set; }
-        public int ThreadIndex { get; set; }
-        public List<string> ConnectedPosts { get; set; }
+        public int PostId { get; set; }
+        public List<int> Clusters { get; set; }
+        public List<string> TagList { get; set; }
     }
 }
