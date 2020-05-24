@@ -12,31 +12,25 @@ import { Redirect } from "react-router";
 
 export const RegisterScreen: FunctionComponent = () => {
   const schema = yup.object({
-    email: yup
-      .string()
-      .email()
-      .required(),
-    password: yup
-      .string()
-      .min(8)
-      .required(),
+    email: yup.string().email().required(),
+    password: yup.string().min(8).required(),
     passwordConfirmation: yup
       .string()
-      .oneOf([yup.ref("password"), null], "Passwords must match")
+      .oneOf([yup.ref("password"), null], "Passwords must match"),
   });
 
   const { register, handleSubmit, errors } = useForm({
-    validationSchema: schema
+    validationSchema: schema,
   });
 
   const dispatch = useDispatch();
 
-  const onSubmit = handleSubmit(data => {
+  const onSubmit = handleSubmit((data) => {
     dispatch(
       createNewAccount({
         email: data.email,
         password: data.password,
-        repeatPassword: data.passwordConfirmation
+        repeatPassword: data.passwordConfirmation,
       })
     );
   });
@@ -50,7 +44,7 @@ export const RegisterScreen: FunctionComponent = () => {
   return isLoggedIn() ? (
     <Redirect
       to={{
-        pathname: "/threads"
+        pathname: "/threads",
       }}
     />
   ) : (
@@ -114,7 +108,7 @@ export const RegisterScreen: FunctionComponent = () => {
             <Form.Row>
               <Form.Group as={Col} controlId="passwordConfirmationField">
                 <Form.Label>
-                  <h5>Repeate your password:</h5>
+                  <h5>Repeat your password:</h5>
                 </Form.Label>
                 <Form.Control
                   size="lg"
