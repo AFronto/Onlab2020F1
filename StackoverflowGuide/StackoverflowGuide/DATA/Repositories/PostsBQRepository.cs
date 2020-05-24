@@ -1,6 +1,6 @@
-﻿using StackoverflowGuide.BLL.BigQueryInterfaces;
-using StackoverflowGuide.BLL.Models.Post;
+﻿using StackoverflowGuide.BLL.Models.Post;
 using StackoverflowGuide.BLL.RepositoryInterfaces;
+using StackoverflowGuide.DATA.BigQuery.BigQueryInterfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;

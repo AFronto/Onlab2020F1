@@ -1,7 +1,7 @@
 ﻿using Google.Apis.Auth.OAuth2;
 using Google.Apis.Bigquery.v2.Data;
 using Google.Cloud.BigQuery.V2;
-using StackoverflowGuide.BLL.BigQueryInterfaces;
+using StackoverflowGuide.DATA.BigQuery.BigQueryInterfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
