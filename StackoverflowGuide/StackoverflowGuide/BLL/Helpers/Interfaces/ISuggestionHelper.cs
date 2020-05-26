@@ -11,6 +11,6 @@ namespace StackoverflowGuide.BLL.Helpers.Interfaces
     {
         public List<string> GetSuggestionIds(List<string> incomingIds, List<string> tagsFromThread);
         public List<ThreadPost> ParseSuggestions(List<Post> bqPosts, List<StoredThreadPost> storedThreadPosts);
-        public List<int> GetPostsFromCluster(int clusterId);
+        public Dictionary<int, List<string>> GetPostsFromCluster(int clusterId);
     }
 }

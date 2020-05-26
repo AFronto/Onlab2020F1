@@ -46,13 +46,13 @@ namespace StackoverflowGuide.BLL.Helpers
             var mostImportantIncoming = incomingIds.Take(5).Select(id => Int32.Parse(id)).ToList();
             int highestCluster = Convert.ToInt32((postInClusterRepository.Count() - 1) * 2);
 
-            var posts = GetPostsFromCluster(mostImportantIncoming.Count() < 5
+            var allPostFromCluster = GetPostsFromCluster(mostImportantIncoming.Count() < 5
                                             ? highestCluster
                                             : GetCommonCluster(mostImportantIncoming));
 
             var mostImportantIncomingPost = postInClusterRepository.Querry(p => mostImportantIncoming.Contains(p.PostId)).ToList();
 
-            var allPostFromCluster = postInClusterRepository.Querry(p => posts.Contains(p.PostId)).ToDictionary(p => p.PostId, p => p.TagList);
+            var posts = allPostFromCluster.Keys.ToList();
 
             var orderedPosts = posts.OrderByDescending(postId =>
             {
@@ -89,11 +89,10 @@ namespace StackoverflowGuide.BLL.Helpers
             ).ToList();
         }
 
-        public List<int> GetPostsFromCluster(int clusterId)
+        public Dictionary<int, List<String>> GetPostsFromCluster(int clusterId)
         {
             return postInClusterRepository.Querry(pIC => pIC.Clusters.Contains(clusterId))
-                                          .Select(pIC => pIC.PostId)
-                                          .ToList();
+                                          .ToDictionary(p => p.PostId, p => p.TagList);
         }
 
 
