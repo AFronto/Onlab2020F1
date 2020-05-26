@@ -53,7 +53,7 @@ namespace StackoverflowGuide.BLL.Services
             var result = await signInManager.PasswordSignInAsync(login.Email, login.Password, false, false);
             if (result.Succeeded)
             {
-                var user = userManager.Users.SingleOrDefault(r => r.Email == login.Email);
+                var user = userManager.Users.SingleOrDefault(r => r.Email.ToLower() == login.Email.ToLower());
                 return new Guid(user.Id);
             }
             throw new Exception("Bad Credentials!");
