@@ -15,18 +15,18 @@ namespace StackoverflowGuide.BLL.Services
     {
 
         private IThreadRepository threadRepository;
-        private IPostsBQRepository postsBQRepository;
+        private IQuestionsElasticRepository questionsElasticRepository;
         private IPostsRepository postsRepository;
         private ITagBQRepository tagBQRepository;
         private ITagRepository tagRepository;
         private ISuggestionHelper suggestionHelper;
 
-        public ThreadService(IThreadRepository threadRepository, IPostsBQRepository postsBQRepository,
+        public ThreadService(IThreadRepository threadRepository, IQuestionsElasticRepository questionsElasticRepository,
                                 IPostsRepository postsRepository, ISuggestionHelper suggestionHelper,
                                 ITagBQRepository tagBQRepository, ITagRepository tagRepository)
         {
             this.threadRepository = threadRepository;
-            this.postsBQRepository = postsBQRepository;
+            this.questionsElasticRepository = questionsElasticRepository;
             this.postsRepository = postsRepository;
             this.suggestionHelper = suggestionHelper;
             this.tagBQRepository = tagBQRepository;
@@ -120,7 +120,8 @@ namespace StackoverflowGuide.BLL.Services
                                                                                 .Select(sTP => sTP.PostId)
                                                                                 .ToList(),
                                                                 thread.TagList.ToList());
-            var bqPosts = postsBQRepository.GetAllByIds(storedThreadPosts.Select(sTP => sTP.PostId).Concat(suggestions).ToList());
+            var bqPosts = questionsElasticRepository.GetAllByIds(storedThreadPosts.Select(sTP => sTP.PostId).Concat(suggestions).ToList())
+                          .Select(q => new Post() { Id = q.Id, Body = q.Body, Title = q.Title }).ToList();
 
             if (bqPosts.Count() != storedThreadPosts.Count() + suggestions.Count)
             {

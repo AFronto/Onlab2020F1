@@ -20,6 +20,7 @@ using StackoverflowGuide.BLL.Services.Interfaces;
 using StackoverflowGuide.DATA.BigQuerry;
 using StackoverflowGuide.DATA.BigQuery.BigQueryInterfaces;
 using StackoverflowGuide.DATA.Context;
+using StackoverflowGuide.DATA.Context.Interfaces;
 using StackoverflowGuide.DATA.Repositories;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -90,10 +91,15 @@ namespace StackoverflowGuide
 
             services.AddTransient<IBigQuery, BigQuery>();
 
+            services.AddScoped<IElasticStackContext, ElasticStackContext>();
             services.AddScoped<IMongoDBContext, MongoDBContext>();
-            services.AddScoped<IThreadRepository, ThreadRepository>();
+
             services.AddScoped<IPostsBQRepository, PostsBQRepository>();
             services.AddScoped<ITagBQRepository, TagBQRepository>();
+
+            services.AddScoped<IQuestionsElasticRepository, QuestionsElasticRepository>();
+
+            services.AddScoped<IThreadRepository, ThreadRepository>();
             services.AddScoped<IPostsRepository, PostsRepository>();
             services.AddScoped<ITagRepository, TagRepository>();
             services.AddScoped<IPostInClusterRepository, PostInClusterRepository>();

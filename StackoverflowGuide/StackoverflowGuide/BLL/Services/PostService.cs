@@ -13,15 +13,15 @@ namespace StackoverflowGuide.BLL.Services
 {
     public class PostService : IPostService
     {
-        IPostsBQRepository postsBQRepository;
+        IQuestionsElasticRepository questionsElasticRepository;
         IThreadRepository threadRepository;
         IPostsRepository postsRepository;
         ISuggestionHelper suggestionHelper;
 
-        public PostService(IPostsBQRepository postsBQRepository, IThreadRepository threadRepository,
+        public PostService(IQuestionsElasticRepository questionsElasticRepository, IThreadRepository threadRepository,
                            IPostsRepository postsRepository, ISuggestionHelper suggestionHelper)
         {
-            this.postsBQRepository = postsBQRepository;
+            this.questionsElasticRepository = questionsElasticRepository;
             this.threadRepository = threadRepository;
             this.postsRepository = postsRepository;
             this.suggestionHelper = suggestionHelper;
@@ -95,7 +95,8 @@ namespace StackoverflowGuide.BLL.Services
                                                                                 .ToList(),
                                                                thread.TagList.ToList());
 
-            var bqPosts = postsBQRepository.GetAllByIds(suggestion);
+            var bqPosts = questionsElasticRepository.GetAllByIds(suggestion)
+                          .Select(q => new Post() { Id = q.Id, Body = q.Body, Title = q.Title }).ToList();
 
             return new NewPostAndSuggestions
             {
@@ -125,7 +126,8 @@ namespace StackoverflowGuide.BLL.Services
                                                                                 .Select(sTP => sTP.PostId)
                                                                                 .ToList(),
                                                                 thread.TagList.ToList());
-            var bqPosts = postsBQRepository.GetAllByIds(suggestions);
+            var bqPosts = questionsElasticRepository.GetAllByIds(suggestions)
+                          .Select(q => new Post() { Id = q.Id, Body = q.Body, Title = q.Title }).ToList();
 
 
             return suggestionHelper.ParseSuggestions(bqPosts, storedThreadPosts.ToList());
