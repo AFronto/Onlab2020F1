@@ -17,19 +17,16 @@ namespace StackoverflowGuide.BLL.Services
         private IThreadRepository threadRepository;
         private IQuestionsElasticRepository questionsElasticRepository;
         private IPostsRepository postsRepository;
-        private ITagBQRepository tagBQRepository;
         private ITagRepository tagRepository;
         private IBQSuggestionHelper suggestionHelper;
 
         public ThreadService(IThreadRepository threadRepository, IQuestionsElasticRepository questionsElasticRepository,
-                                IPostsRepository postsRepository, IBQSuggestionHelper suggestionHelper,
-                                ITagBQRepository tagBQRepository, ITagRepository tagRepository)
+                                IPostsRepository postsRepository, IBQSuggestionHelper suggestionHelper, ITagRepository tagRepository)
         {
             this.threadRepository = threadRepository;
             this.questionsElasticRepository = questionsElasticRepository;
             this.postsRepository = postsRepository;
             this.suggestionHelper = suggestionHelper;
-            this.tagBQRepository = tagBQRepository;
             this.tagRepository = tagRepository;
         }
 
@@ -122,10 +119,6 @@ namespace StackoverflowGuide.BLL.Services
                                                                 thread.TagList.ToList());
             var bqPosts = questionsElasticRepository.GetAllByIds(storedThreadPosts.Select(sTP => sTP.PostId).Concat(suggestions).ToList())
                           .Select(q => new Post() { Id = q.Id, Body = q.Body, Title = q.Title }).ToList();
-
-            // TEST
-            questionsElasticRepository.SearchByText("inheritance", new List<string>() { "Title"});
-            // TEST
 
             if (bqPosts.Count() != storedThreadPosts.Count() + suggestions.Count)
             {

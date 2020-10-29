@@ -89,13 +89,13 @@ namespace StackoverflowGuide
             services.AddControllersWithViews();
 
 
-            services.AddTransient<IBigQuery, BigQuery>();
+            //services.AddTransient<IBigQuery, BigQuery>();
 
             services.AddScoped<IElasticStackContext, ElasticStackContext>();
             services.AddScoped<IMongoDBContext, MongoDBContext>();
 
-            services.AddScoped<IPostsBQRepository, PostsBQRepository>();
-            services.AddScoped<ITagBQRepository, TagBQRepository>();
+            //services.AddScoped<IPostsBQRepository, PostsBQRepository>();
+            //services.AddScoped<ITagBQRepository, TagBQRepository>();
 
             services.AddScoped<IQuestionsElasticRepository, QuestionsElasticRepository>();
 
