@@ -120,7 +120,7 @@ namespace StackoverflowGuide
             services.AddScoped<IPostService, PostService>();
 
 
-            services.AddSingleton<ISuggestionHelper>(new SugesstionHelper(serviceProvider.GetService<ITagRepository>(), 
+            services.AddSingleton<IBQSuggestionHelper>(new BQSuggestionHelper(serviceProvider.GetService<ITagRepository>(), 
                                                                           serviceProvider.GetService<IPostInClusterRepository>()));
 
             // In production, the React files will be served from this directory

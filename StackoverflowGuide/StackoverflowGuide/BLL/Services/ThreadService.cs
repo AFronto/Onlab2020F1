@@ -19,10 +19,10 @@ namespace StackoverflowGuide.BLL.Services
         private IPostsRepository postsRepository;
         private ITagBQRepository tagBQRepository;
         private ITagRepository tagRepository;
-        private ISuggestionHelper suggestionHelper;
+        private IBQSuggestionHelper suggestionHelper;
 
         public ThreadService(IThreadRepository threadRepository, IQuestionsElasticRepository questionsElasticRepository,
-                                IPostsRepository postsRepository, ISuggestionHelper suggestionHelper,
+                                IPostsRepository postsRepository, IBQSuggestionHelper suggestionHelper,
                                 ITagBQRepository tagBQRepository, ITagRepository tagRepository)
         {
             this.threadRepository = threadRepository;

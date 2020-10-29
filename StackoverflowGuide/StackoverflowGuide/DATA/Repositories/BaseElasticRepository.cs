@@ -18,10 +18,13 @@ namespace StackoverflowGuide.DATA.Repositories
             this.elastic = elastic;
         }
 
-        public TEntity SearchByQuery(Nest.SearchRequest<TEntity> query)
+        public List<TEntity> SearchByQuery(Nest.SearchRequest<TEntity> query)
         {
             var searchResponse = elastic.client.Search<TEntity>(query);
-            return new TEntity();
+            return searchResponse.Hits.Select(h => {
+                                              h.Source.Id = h.Id;
+                                              return h.Source; })
+                                      .ToList();
         }
     }
 }

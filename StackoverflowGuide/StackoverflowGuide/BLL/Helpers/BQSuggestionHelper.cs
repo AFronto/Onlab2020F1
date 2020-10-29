@@ -11,12 +11,12 @@ using System.Linq;
 
 namespace StackoverflowGuide.BLL.Helpers
 {
-    public class SugesstionHelper : ISuggestionHelper
+    public class BQSuggestionHelper : IBQSuggestionHelper
     {
         private ITagRepository tagRepository;
         private IPostInClusterRepository postInClusterRepository;
 
-        public SugesstionHelper(ITagRepository tagRepository, IPostInClusterRepository postInClusterRepository)
+        public BQSuggestionHelper(ITagRepository tagRepository, IPostInClusterRepository postInClusterRepository)
         {
             this.tagRepository = tagRepository;
             this.postInClusterRepository = postInClusterRepository;

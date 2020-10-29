@@ -31,7 +31,7 @@ namespace StackoverflowGuide.DATA.Repositories
             if (ids.Count > 0)
             {
                 var ret = SearchByQuery(query);
-                return new List<Question>();
+                return ret;
             }
             else
             {

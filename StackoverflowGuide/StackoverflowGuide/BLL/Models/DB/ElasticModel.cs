@@ -9,10 +9,8 @@ using System.Threading.Tasks;
 namespace StackoverflowGuide.BLL.Models.DB
 {
     [BsonIgnoreExtraElements]
-    [ElasticsearchType(IdProperty = nameof(Id))]
     public class ElasticModel
     {
-        [BsonId]
         public string Id { get; set; }
     }
 }
