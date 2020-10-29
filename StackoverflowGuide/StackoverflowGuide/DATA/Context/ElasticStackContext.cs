@@ -16,7 +16,8 @@ namespace StackoverflowGuide.DATA.Context
             var node = new Uri("http://localhost:9200");
             var settings = new ConnectionSettings(node);
             settings.DefaultFieldNameInferrer(p => p);
-            client = new ElasticClient();
+            settings.EnableDebugMode();
+            client = new ElasticClient(settings);
         }
     }
 }
