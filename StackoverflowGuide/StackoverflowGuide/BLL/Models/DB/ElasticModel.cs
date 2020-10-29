@@ -11,6 +11,6 @@ namespace StackoverflowGuide.BLL.Models.DB
     [BsonIgnoreExtraElements]
     public class ElasticModel
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
     }
 }
