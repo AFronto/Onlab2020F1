@@ -18,11 +18,11 @@ namespace StackoverflowGuide.BLL.Models.Post.Elastic
 
         public long? CommentCount { get; set; }
 
-        public string? CreationDate { get; set; }
+        public string CreationDate { get; set; }
 
         public long? FavoriteCount { get; set; }
 
-        public long? Score { get; set; }
+        public long Score { get; set; }
 
         public string? Tags { get; set; }
 

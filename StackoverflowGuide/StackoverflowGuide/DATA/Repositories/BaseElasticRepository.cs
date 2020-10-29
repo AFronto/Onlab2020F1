@@ -1,4 +1,5 @@
-﻿using StackoverflowGuide.BLL.Models.DB;
+﻿using Elasticsearch.Net;
+using StackoverflowGuide.BLL.Models.DB;
 using StackoverflowGuide.BLL.RepositoryInterfaces;
 using StackoverflowGuide.DATA.Context;
 using StackoverflowGuide.DATA.Context.Interfaces;

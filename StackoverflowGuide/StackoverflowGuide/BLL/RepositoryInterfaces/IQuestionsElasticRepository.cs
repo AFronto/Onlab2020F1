@@ -12,5 +12,7 @@ namespace StackoverflowGuide.BLL.RepositoryInterfaces
         public Question GetById(string id);
 
         public List<Question> GetAllByIds(List<string> ids);
+
+        public List<Question> SearchByText(String searchTerm, List<string> searchFields);
     }
 }

@@ -123,6 +123,10 @@ namespace StackoverflowGuide.BLL.Services
             var bqPosts = questionsElasticRepository.GetAllByIds(storedThreadPosts.Select(sTP => sTP.PostId).Concat(suggestions).ToList())
                           .Select(q => new Post() { Id = q.Id, Body = q.Body, Title = q.Title }).ToList();
 
+            // TEST
+            questionsElasticRepository.SearchByText("inheritance", new List<string>() { "Title"});
+            // TEST
+
             if (bqPosts.Count() != storedThreadPosts.Count() + suggestions.Count)
             {
                 throw new Exception("Cannot get the relevant posts!");

@@ -30,8 +30,7 @@ namespace StackoverflowGuide.DATA.Repositories
 
             if (ids.Count > 0)
             {
-                var ret = SearchByQuery(query);
-                return ret;
+                return SearchByQuery(query);
             }
             else
             {
@@ -45,5 +44,19 @@ namespace StackoverflowGuide.DATA.Repositories
             return new Question();
         }
 
+        public List<Question> SearchByText(string searchTerm, List<string> searchFields)
+        {
+            var query = new SearchRequest<Question>(Nest.Indices.Index("questions"))
+            {
+                Size = 10,
+                Query = new MultiMatchQuery
+                {
+                    Fields = searchFields.ToArray(),
+                    Query = searchTerm
+                }
+            };
+
+            return SearchByQuery(query);
+        }
     }
 }
