@@ -1,4 +1,6 @@
-﻿using StackoverflowGuide.BLL.Models.Post;
+﻿using Nest;
+using StackoverflowGuide.BLL.Models.ElasticBLL;
+using StackoverflowGuide.BLL.Models.Post;
 using StackoverflowGuide.BLL.Models.Post.Elastic;
 using System;
 using System.Collections.Generic;
@@ -14,5 +16,7 @@ namespace StackoverflowGuide.BLL.RepositoryInterfaces
         public List<Question> GetAllByIds(List<string> ids);
 
         public List<Question> SearchByText(String searchTerm, List<string> searchFields);
+
+        public Dictionary<string, IReadOnlyDictionary<string, TermVectorTerm>> GetTermVectorsOfDoc(TermRequestParametersModel requestParameters);
     }
 }

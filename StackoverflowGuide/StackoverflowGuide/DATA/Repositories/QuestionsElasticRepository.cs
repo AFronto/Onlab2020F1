@@ -1,4 +1,5 @@
 ﻿using Nest;
+using StackoverflowGuide.BLL.Models.ElasticBLL;
 using StackoverflowGuide.BLL.Models.Post;
 using StackoverflowGuide.BLL.Models.Post.Elastic;
 using StackoverflowGuide.BLL.RepositoryInterfaces;
@@ -57,6 +58,27 @@ namespace StackoverflowGuide.DATA.Repositories
             };
 
             return SearchByQuery(query);
+        }
+
+        public Dictionary<string, IReadOnlyDictionary<string, TermVectorTerm>> GetTermVectorsOfDoc(TermRequestParametersModel requestParameters)
+        {
+            TermVectorsDescriptor<Question> termVectorDescriptor = new TermVectorsDescriptor<Question>();
+
+            termVectorDescriptor.Index(requestParameters.Index);
+            termVectorDescriptor.Id(requestParameters.Id);
+            termVectorDescriptor.Fields(requestParameters.Fields);
+            termVectorDescriptor.TermStatistics(true);
+            termVectorDescriptor.Offsets(false);
+            termVectorDescriptor.Positions(false);
+            termVectorDescriptor.Payloads(false);
+            termVectorDescriptor.Filter(f => f.MaximimumNumberOfTerms(requestParameters.MaxNumberOfTerms));
+
+            var termVectorResponse = TermRequestToDoc(termVectorDescriptor);
+
+            return termVectorResponse.TermVectors
+                                     .Select(tvItem => new KeyValuePair<string, IReadOnlyDictionary<string, TermVectorTerm>>(tvItem.Key.Name,
+                                                                                                                             tvItem.Value.Terms))
+                                     .ToDictionary(tv => tv.Key, tv => tv.Value);
         }
     }
 }

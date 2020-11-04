@@ -9,5 +9,7 @@ namespace StackoverflowGuide.BLL.RepositoryInterfaces
     public interface IBaseElasticRepository<TEntity> where TEntity : class
     {
         public List<TEntity> SearchByQuery(SearchRequest<TEntity> query);
+
+        public TermVectorsResponse TermRequestToDoc(TermVectorsDescriptor<TEntity> request);
     }
 }

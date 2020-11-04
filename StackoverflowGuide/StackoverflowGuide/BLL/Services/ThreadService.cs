@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using StackoverflowGuide.BLL.Helpers.Interfaces;
+using StackoverflowGuide.BLL.Models.ElasticBLL;
 using StackoverflowGuide.BLL.Models.Post;
 using StackoverflowGuide.BLL.Models.Tag;
 using StackoverflowGuide.BLL.Models.Thread;
@@ -119,6 +120,17 @@ namespace StackoverflowGuide.BLL.Services
                                                                 thread.TagList.ToList());
             var bqPosts = questionsElasticRepository.GetAllByIds(storedThreadPosts.Select(sTP => sTP.PostId).Concat(suggestions).ToList())
                           .Select(q => new Post() { Id = q.Id, Body = q.Body, Title = q.Title }).ToList();
+
+            // TEST //
+            List<string> testFields = new List<string>() { "Body" };
+            var keywords = questionsElasticRepository
+                                    .GetTermVectorsOfDoc(new TermRequestParametersModel() {
+                                            Index = "questions",
+                                            Id = "6709072",
+                                            Fields = testFields.ToArray(),
+                                            MaxNumberOfTerms = 10
+                                            });
+            // TEST //
 
             if (bqPosts.Count() != storedThreadPosts.Count() + suggestions.Count)
             {

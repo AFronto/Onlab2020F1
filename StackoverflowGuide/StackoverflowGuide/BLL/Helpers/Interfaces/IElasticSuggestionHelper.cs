@@ -7,10 +7,9 @@ namespace StackoverflowGuide.BLL.Helpers.Interfaces
 {
     interface IElasticSuggestionHelper
     {
-        public List<string> GetSuggestionIds(List<string> keywords);
-
         public List<string> GetCommonKeywords(List<string> questionIds);
 
+        public List<string> GetSuggestionIds(List<string> keywords);
 
     }
 }

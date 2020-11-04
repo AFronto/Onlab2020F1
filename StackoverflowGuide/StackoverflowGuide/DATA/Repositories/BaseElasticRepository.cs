@@ -1,4 +1,7 @@
 ﻿using Elasticsearch.Net;
+using MoreLinq;
+using MoreLinq.Extensions;
+using Nest;
 using StackoverflowGuide.BLL.Models.DB;
 using StackoverflowGuide.BLL.RepositoryInterfaces;
 using StackoverflowGuide.DATA.Context;
@@ -17,6 +20,11 @@ namespace StackoverflowGuide.DATA.Repositories
         public BaseElasticRepository(IElasticStackContext elastic)
         {
             this.elastic = elastic;
+        }
+
+        public TermVectorsResponse TermRequestToDoc(TermVectorsDescriptor<TEntity> requestParameters)
+        {
+            return elastic.client.TermVectors(requestParameters);
         }
 
         public List<TEntity> SearchByQuery(Nest.SearchRequest<TEntity> query)
