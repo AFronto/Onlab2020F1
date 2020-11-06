@@ -19,16 +19,21 @@ namespace StackoverflowGuide.BLL.Services
         private IQuestionsElasticRepository questionsElasticRepository;
         private IPostsRepository postsRepository;
         private ITagRepository tagRepository;
+
         private IBQSuggestionHelper suggestionHelper;
+        private IElasticSuggestionHelper elasticSuggestionHelper;
 
         public ThreadService(IThreadRepository threadRepository, IQuestionsElasticRepository questionsElasticRepository,
-                                IPostsRepository postsRepository, IBQSuggestionHelper suggestionHelper, ITagRepository tagRepository)
+                                IPostsRepository postsRepository, IBQSuggestionHelper suggestionHelper, ITagRepository tagRepository,
+                                IElasticSuggestionHelper elasticSuggestionHelper)
         {
             this.threadRepository = threadRepository;
             this.questionsElasticRepository = questionsElasticRepository;
             this.postsRepository = postsRepository;
             this.suggestionHelper = suggestionHelper;
             this.tagRepository = tagRepository;
+
+            this.elasticSuggestionHelper = elasticSuggestionHelper;
         }
 
         public string CreateNewThread(Thread newThread)
@@ -122,14 +127,7 @@ namespace StackoverflowGuide.BLL.Services
                           .Select(q => new Post() { Id = q.Id, Body = q.Body, Title = q.Title }).ToList();
 
             // TEST //
-            List<string> testFields = new List<string>() { "Body" };
-            var keywords = questionsElasticRepository
-                                    .GetTermVectorsOfDoc(new TermRequestParametersModel() {
-                                            Index = "questions",
-                                            Id = "6709072",
-                                            Fields = testFields.ToArray(),
-                                            MaxNumberOfTerms = 10
-                                            });
+            
             // TEST //
 
             if (bqPosts.Count() != storedThreadPosts.Count() + suggestions.Count)

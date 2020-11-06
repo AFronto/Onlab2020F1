@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 
 namespace StackoverflowGuide.BLL.Models.ElasticBLL
 {
-    public class TermRequestParametersModel: ElasticRequestOnFields
+    public class ElasticRequestOnFields
     {
-        public string Id { get; set; }
-        public int MaxNumberOfTerms { get; set; }
-
+        public string[] Fields { get; set; }
+        public string Index { get; set; }
     }
 }

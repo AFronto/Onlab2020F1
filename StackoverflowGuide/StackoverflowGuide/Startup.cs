@@ -122,6 +122,7 @@ namespace StackoverflowGuide
 
             services.AddSingleton<IBQSuggestionHelper>(new BQSuggestionHelper(serviceProvider.GetService<ITagRepository>(), 
                                                                           serviceProvider.GetService<IPostInClusterRepository>()));
+            services.AddSingleton<IElasticSuggestionHelper>(new ElasticSuggestionHelper(serviceProvider.GetService<IQuestionsElasticRepository>()));
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

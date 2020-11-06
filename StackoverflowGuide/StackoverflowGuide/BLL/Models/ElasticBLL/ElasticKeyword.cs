@@ -24,33 +24,6 @@ namespace StackoverflowGuide.BLL.Models.ElasticBLL
 
         public double Score { get; set; }
 
-        public ElasticKeyword(string word, double score)
-        {
-            Word = word;
-            Score = score;
-            Occurrences = 1;
-        }
-
-        //public override bool Equals(object obj)
-        //{
-        //    if (obj == null) return false;
-        //    ElasticKeyword objAsKeyword = obj as ElasticKeyword;
-        //    if (objAsKeyword == null) return false;
-        //    else return Equals(objAsKeyword);
-        //}
-
-        //public bool Equals(ElasticKeyword other)
-        //{
-        //    if (other == null) return false;
-        //    return (this.Word.Equals(other.Word));
-        //}
-
-        public void ExtendKeyword(double addedScore)
-        {
-            Occurrences += 1;
-            Score += addedScore;
-        }
-
         public double getAverageScore()
         {
             return Score / Occurrences;
