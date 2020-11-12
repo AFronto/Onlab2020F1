@@ -54,14 +54,7 @@ namespace StackoverflowGuide.BLL.Helpers
                                              })
                                     .ToList();
 
-            // közös kulcsszavak kikeresése
-            // keywords.Sort<>
-            // nem közös kulcsszavak rangsorolása score alapján
-
-            keywords = keywords.OrderByDescending(kw => kw.Occurrences).ThenBy(kw => kw.Score).ToList();
-
-            // kereső kifejezés elkészítése
-            // lehetséges extra paraméterek: csakKözösKulcsszavak, mennyi kulcsszóból álljon a kereső kifejezés
+            keywords = keywords.OrderByDescending(kw => kw.Occurrences).ThenByDescending(kw => kw.Score).ToList();
 
             return parameters.OnlyMultipleOccurrences ? keywords.Where(kw => kw.Occurrences > 1).ToList() : keywords;
         }

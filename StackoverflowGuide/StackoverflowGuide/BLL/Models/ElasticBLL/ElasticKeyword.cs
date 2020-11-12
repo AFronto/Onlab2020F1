@@ -7,18 +7,20 @@ namespace StackoverflowGuide.BLL.Models.ElasticBLL
 {
     public class ElasticKeyword
     {
+        private int _occurrences;
+
         public string Word { get; set; }
 
         public int Occurrences
         {
-            get { return Occurrences; }
+            get { return _occurrences; }
             set
             {
                 if (value <= 0)
                 {
                     throw new ArgumentOutOfRangeException("Occurrences can be only a positive number!");
                 }
-                Occurrences = value;
+                _occurrences = value;
             }
         }
 

@@ -127,7 +127,14 @@ namespace StackoverflowGuide.BLL.Services
                           .Select(q => new Post() { Id = q.Id, Body = q.Body, Title = q.Title }).ToList();
 
             // TEST //
-            
+            string[] f = { "Body" };
+            var commonKeywords = elasticSuggestionHelper.GetKeywords(new GetKeywordRequestParametersModel()
+                                                                        {
+                                                                            Index = "questions",
+                                                                            Fields = f,
+                                                                            QuestionIds = new List<String>() { "31617301", "54569682", "7041356", "3921412", "9652506" },
+                                                                            OnlyMultipleOccurrences = false
+                                                                        });
             // TEST //
 
             if (bqPosts.Count() != storedThreadPosts.Count() + suggestions.Count)
