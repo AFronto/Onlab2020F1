@@ -45,7 +45,7 @@ namespace StackoverflowGuide.DATA.Repositories
             return new Question();
         }
 
-        public List<Question> SearchByText(string searchTerm, List<string> searchFields)
+        public List<Question> SearchByText(string searchTerm, List<string> searchFields, List<string> idsToNotSearch)
         {
             var query = new SearchRequest<Question>(Nest.Indices.Index("questions"))
             {
@@ -54,6 +54,10 @@ namespace StackoverflowGuide.DATA.Repositories
                 {
                     Fields = searchFields.ToArray(),
                     Query = searchTerm
+                } &&
+                !new IdsQuery
+                {
+                    Values = idsToNotSearch.Select(id => new Id(id)).ToList()
                 }
             };
 

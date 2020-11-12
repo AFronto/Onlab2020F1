@@ -1,4 +1,6 @@
 ﻿using StackoverflowGuide.BLL.Models.ElasticBLL;
+using StackoverflowGuide.BLL.Models.Post;
+using StackoverflowGuide.BLL.Models.Post.Elastic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +12,9 @@ namespace StackoverflowGuide.BLL.Helpers.Interfaces
     {
         public List<ElasticKeyword> GetKeywords(GetKeywordRequestParametersModel parameters);
 
-        public List<string> GetSuggestionIds(List<string> keywords);
+        public List<Question> GetRecommendedQuestions(List<string> incomingIds, string userSearchTerm, List<string> tagsFromThread);
+
+        public List<ThreadPost> ParseQuestionsToThreadPosts(List<Question> questions, List<StoredThreadPost> storedThreadPosts);
 
     }
 }

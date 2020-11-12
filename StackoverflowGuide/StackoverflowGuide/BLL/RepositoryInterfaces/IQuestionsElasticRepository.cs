@@ -15,7 +15,7 @@ namespace StackoverflowGuide.BLL.RepositoryInterfaces
 
         public List<Question> GetAllByIds(List<string> ids);
 
-        public List<Question> SearchByText(String searchTerm, List<string> searchFields);
+        public List<Question> SearchByText(String searchTerm, List<string> searchFields, List<string> idsToNotSearch);
 
         public Dictionary<string, IReadOnlyDictionary<string, TermVectorTerm>> GetTermVectorsOfDoc(TermRequestParametersModel requestParameters);
     }

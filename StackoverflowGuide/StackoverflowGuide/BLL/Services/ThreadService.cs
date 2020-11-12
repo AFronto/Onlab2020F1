@@ -20,17 +20,15 @@ namespace StackoverflowGuide.BLL.Services
         private IPostsRepository postsRepository;
         private ITagRepository tagRepository;
 
-        private IBQSuggestionHelper suggestionHelper;
         private IElasticSuggestionHelper elasticSuggestionHelper;
 
         public ThreadService(IThreadRepository threadRepository, IQuestionsElasticRepository questionsElasticRepository,
-                                IPostsRepository postsRepository, IBQSuggestionHelper suggestionHelper, ITagRepository tagRepository,
+                                IPostsRepository postsRepository, ITagRepository tagRepository,
                                 IElasticSuggestionHelper elasticSuggestionHelper)
         {
             this.threadRepository = threadRepository;
             this.questionsElasticRepository = questionsElasticRepository;
             this.postsRepository = postsRepository;
-            this.suggestionHelper = suggestionHelper;
             this.tagRepository = tagRepository;
 
             this.elasticSuggestionHelper = elasticSuggestionHelper;
@@ -119,25 +117,17 @@ namespace StackoverflowGuide.BLL.Services
 
             var thread = threadRepository.Find(id);
             var storedThreadPosts = postsRepository.Querry(p => thread.ThreadPosts.Contains(p.Id));
-            var suggestions = suggestionHelper.GetSuggestionIds(storedThreadPosts.OrderByDescending(sTP => sTP.ThreadIndex)
+            var recommendedQuestions = elasticSuggestionHelper.GetRecommendedQuestions(storedThreadPosts.OrderByDescending(sTP => sTP.ThreadIndex)
                                                                                 .Select(sTP => sTP.PostId)
                                                                                 .ToList(),
+                                                                "c# property",
                                                                 thread.TagList.ToList());
-            var bqPosts = questionsElasticRepository.GetAllByIds(storedThreadPosts.Select(sTP => sTP.PostId).Concat(suggestions).ToList())
-                          .Select(q => new BQPost() { Id = q.Id, Body = q.Body, Title = q.Title }).ToList();
+            var threadQuestions = questionsElasticRepository.GetAllByIds(storedThreadPosts.Select(sTP => sTP.PostId)
+                                                                                       .Concat(recommendedQuestions.Select(recQ => recQ.Id))
+                                                                                       .ToList());
 
-            // TEST //
-            string[] f = { "Body" };
-            var commonKeywords = elasticSuggestionHelper.GetKeywords(new GetKeywordRequestParametersModel()
-                                                                        {
-                                                                            Index = "questions",
-                                                                            Fields = f,
-                                                                            QuestionIds = new List<String>() { "31617301", "54569682", "7041356", "3921412", "9652506" },
-                                                                            OnlyMultipleOccurrences = false
-                                                                        });
-            // TEST //
 
-            if (bqPosts.Count() != storedThreadPosts.Count() + suggestions.Count)
+            if (threadQuestions.Count() != storedThreadPosts.Count() + recommendedQuestions.Count || threadQuestions.Count() == 0)
             {
                 throw new Exception("Cannot get the relevant posts!");
             }
@@ -147,7 +137,7 @@ namespace StackoverflowGuide.BLL.Services
                 Thread = thread,
                 Posts = storedThreadPosts.Select(sTP =>
                 {
-                    var bqPost = bqPosts.Where(bqP => sTP.PostId == bqP.Id).First();
+                    var bqPost = threadQuestions.Where(tQ => sTP.PostId == tQ.Id).First();
                     return new ThreadPost
                     {
                         Id = sTP.Id,
@@ -157,18 +147,15 @@ namespace StackoverflowGuide.BLL.Services
                         ConnectedPosts = sTP.ConnectedPosts
                     };
                 }).OrderBy(post => post.ThreadIndex).ToList(),
-                Suggestions = suggestionHelper.ParseSuggestions(bqPosts
-                                                                .Where(bqP => suggestions.Contains(bqP.Id))
-                                                                .ToList(),
-                                                               storedThreadPosts.ToList())
+                Suggestions = elasticSuggestionHelper.ParseQuestionsToThreadPosts(threadQuestions, storedThreadPosts.ToList())
             };
         }
 
-        private bool hasAccessToThread(string threadId, string userId)
-        {
-            var thread = threadRepository.Find(threadId);
+    private bool hasAccessToThread(string threadId, string userId)
+    {
+        var thread = threadRepository.Find(threadId);
 
-            return thread.Owner == userId;
-        }
+        return thread.Owner == userId;
     }
+}
 }

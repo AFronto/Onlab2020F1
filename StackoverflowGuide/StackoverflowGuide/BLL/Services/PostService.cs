@@ -17,14 +17,16 @@ namespace StackoverflowGuide.BLL.Services
         IThreadRepository threadRepository;
         IPostsRepository postsRepository;
         IBQSuggestionHelper suggestionHelper;
+        IElasticSuggestionHelper elasticSuggestionHelper;
 
         public PostService(IQuestionsElasticRepository questionsElasticRepository, IThreadRepository threadRepository,
-                           IPostsRepository postsRepository, IBQSuggestionHelper suggestionHelper)
+                           IPostsRepository postsRepository, IBQSuggestionHelper suggestionHelper, IElasticSuggestionHelper elasticSuggestionHelper)
         {
             this.questionsElasticRepository = questionsElasticRepository;
             this.threadRepository = threadRepository;
             this.postsRepository = postsRepository;
             this.suggestionHelper = suggestionHelper;
+            this.elasticSuggestionHelper = elasticSuggestionHelper;
         }
 
         public string DeletePost(string threadId, string postId, string askingUser)
@@ -90,13 +92,14 @@ namespace StackoverflowGuide.BLL.Services
             storedThreadPosts.Add(acceptedStoredThreadPost);
             postsRepository.Create(acceptedStoredThreadPost);
 
-            var suggestion = suggestionHelper.GetSuggestionIds(storedThreadPosts.OrderByDescending(sTP => sTP.ThreadIndex)
+            var recommendedQuestions = elasticSuggestionHelper.GetRecommendedQuestions(storedThreadPosts.OrderByDescending(sTP => sTP.ThreadIndex)
                                                                                 .Select(sTP => sTP.PostId)
                                                                                 .ToList(),
-                                                               thread.TagList.ToList());
-
-            var bqPosts = questionsElasticRepository.GetAllByIds(suggestion)
-                          .Select(q => new BQPost() { Id = q.Id, Body = q.Body, Title = q.Title }).ToList();
+                                                                "",
+                                                                thread.TagList.ToList());
+            var threadQuestions = questionsElasticRepository.GetAllByIds(storedThreadPosts.Select(sTP => sTP.PostId)
+                                                                                       .Concat(recommendedQuestions.Select(recQ => recQ.Id))
+                                                                                       .ToList());
 
             return new NewPostAndSuggestions
             {
@@ -108,7 +111,7 @@ namespace StackoverflowGuide.BLL.Services
                     Body = acceptedPost.Body,
                     ConnectedPosts = acceptedStoredThreadPost.ConnectedPosts
                 },
-                Suggestions = suggestionHelper.ParseSuggestions(bqPosts, storedThreadPosts)
+                Suggestions = elasticSuggestionHelper.ParseQuestionsToThreadPosts(recommendedQuestions, storedThreadPosts.ToList())
             };
         }
 
@@ -122,15 +125,17 @@ namespace StackoverflowGuide.BLL.Services
 
             var thread = threadRepository.Find(threadId);
             var storedThreadPosts = postsRepository.Querry(p => thread.ThreadPosts.Contains(p.Id));
-            var suggestions = suggestionHelper.GetSuggestionIds(storedThreadPosts.OrderByDescending(sTP => sTP.ThreadIndex)
+            var recommendedQuestions = elasticSuggestionHelper.GetRecommendedQuestions(storedThreadPosts.OrderByDescending(sTP => sTP.ThreadIndex)
                                                                                 .Select(sTP => sTP.PostId)
                                                                                 .ToList(),
+                                                                "",
                                                                 thread.TagList.ToList());
-            var bqPosts = questionsElasticRepository.GetAllByIds(suggestions)
-                          .Select(q => new BQPost() { Id = q.Id, Body = q.Body, Title = q.Title }).ToList();
+            var threadQuestions = questionsElasticRepository.GetAllByIds(storedThreadPosts.Select(sTP => sTP.PostId)
+                                                                                       .Concat(recommendedQuestions.Select(recQ => recQ.Id))
+                                                                                       .ToList());
 
 
-            return suggestionHelper.ParseSuggestions(bqPosts, storedThreadPosts.ToList());
+            return elasticSuggestionHelper.ParseQuestionsToThreadPosts(recommendedQuestions, storedThreadPosts.ToList());
 
         }
 

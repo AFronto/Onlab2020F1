@@ -9,6 +9,5 @@ namespace StackoverflowGuide.BLL.Models.ElasticBLL
     {
         public string Id { get; set; }
         public int MaxNumberOfTerms { get; set; }
-
     }
 }
