@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace StackoverflowGuide.BLL.RepositoryInterfaces
 {
-    public interface IPostsBQRepository: IBaseBQRepository<Post>
+    public interface IPostsBQRepository: IBaseBQRepository<BQPost>
     {
-        public Post GetById(string id);
+        public BQPost GetById(string id);
 
-        public List<Post> GetAllByIds(List<string> ids);
+        public List<BQPost> GetAllByIds(List<string> ids);
 
     }
 }

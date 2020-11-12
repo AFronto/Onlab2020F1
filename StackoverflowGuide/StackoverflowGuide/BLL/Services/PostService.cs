@@ -96,7 +96,7 @@ namespace StackoverflowGuide.BLL.Services
                                                                thread.TagList.ToList());
 
             var bqPosts = questionsElasticRepository.GetAllByIds(suggestion)
-                          .Select(q => new Post() { Id = q.Id, Body = q.Body, Title = q.Title }).ToList();
+                          .Select(q => new BQPost() { Id = q.Id, Body = q.Body, Title = q.Title }).ToList();
 
             return new NewPostAndSuggestions
             {
@@ -127,7 +127,7 @@ namespace StackoverflowGuide.BLL.Services
                                                                                 .ToList(),
                                                                 thread.TagList.ToList());
             var bqPosts = questionsElasticRepository.GetAllByIds(suggestions)
-                          .Select(q => new Post() { Id = q.Id, Body = q.Body, Title = q.Title }).ToList();
+                          .Select(q => new BQPost() { Id = q.Id, Body = q.Body, Title = q.Title }).ToList();
 
 
             return suggestionHelper.ParseSuggestions(bqPosts, storedThreadPosts.ToList());

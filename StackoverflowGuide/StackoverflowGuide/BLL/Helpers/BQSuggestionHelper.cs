@@ -72,7 +72,7 @@ namespace StackoverflowGuide.BLL.Helpers
 
         }
 
-        public List<ThreadPost> ParseSuggestions(List<Post> bqPosts, List<StoredThreadPost> storedThreadPosts)
+        public List<ThreadPost> ParseSuggestions(List<BQPost> bqPosts, List<StoredThreadPost> storedThreadPosts)
         {
             return bqPosts.Select(bqP => new ThreadPost
             {

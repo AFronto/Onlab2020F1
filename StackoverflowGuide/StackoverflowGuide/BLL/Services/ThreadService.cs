@@ -124,7 +124,7 @@ namespace StackoverflowGuide.BLL.Services
                                                                                 .ToList(),
                                                                 thread.TagList.ToList());
             var bqPosts = questionsElasticRepository.GetAllByIds(storedThreadPosts.Select(sTP => sTP.PostId).Concat(suggestions).ToList())
-                          .Select(q => new Post() { Id = q.Id, Body = q.Body, Title = q.Title }).ToList();
+                          .Select(q => new BQPost() { Id = q.Id, Body = q.Body, Title = q.Title }).ToList();
 
             // TEST //
             string[] f = { "Body" };

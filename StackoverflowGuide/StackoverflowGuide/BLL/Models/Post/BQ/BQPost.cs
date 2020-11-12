@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace StackoverflowGuide.BLL.Models.Post
 {
-    public class Post : BQModel
+    public class BQPost : BQModel
     {
         public string Title { get; set; }
         public string Body { get; set; }
