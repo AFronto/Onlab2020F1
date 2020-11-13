@@ -16,7 +16,7 @@ namespace StackoverflowGuide.BLL.Services.Interfaces
         public string EditThread(string id, Thread updatedThread);
         public IEnumerable<Thread> GetAll(string userId);
         public SingleThread GetSingleThread(string id, string askingUser);
-
+        public void SetSearchForThread(string id, string searchTerm, string askingUser);
         public IEnumerable<DbTag> GetAllTags();
     }
 }

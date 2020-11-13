@@ -174,15 +174,15 @@ export function sendSearch(id: string, searchTerm: SearchData) {
       data: searchTerm,
     }).then(
       (success) => {
-        // dispatch(
-        //   loadSingleThread({
-        //     singleThread: {
-        //       thread: success.data.thread,
-        //       posts: success.data.posts,
-        //     } as SingleThreadData,
-        //   })
-        // );
-        // dispatch(loadSuggestions({ suggestions: success.data.suggestions }));
+        dispatch(
+          loadSingleThread({
+            singleThread: {
+              thread: success.data.thread,
+              posts: success.data.posts,
+            } as SingleThreadData,
+          })
+        );
+        dispatch(loadSuggestions({ suggestions: success.data.suggestions }));
       },
       (error) => {
         if (error.response.status === 401) {

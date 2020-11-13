@@ -9,6 +9,7 @@ namespace StackoverflowGuide.BLL.Models.Thread
     {
         public string Name { get; set; }
         public string Owner { get; set; }
+        public string LastSearched { get; set; }
         public string[] TagList { get; set; }
         public List<string> ThreadPosts { get; set; }
     }

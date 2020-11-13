@@ -95,7 +95,7 @@ namespace StackoverflowGuide.BLL.Services
             var recommendedQuestions = elasticSuggestionHelper.GetRecommendedQuestions(storedThreadPosts.OrderByDescending(sTP => sTP.ThreadIndex)
                                                                                 .Select(sTP => sTP.PostId)
                                                                                 .ToList(),
-                                                                "",
+                                                                thread.LastSearched,
                                                                 thread.TagList.ToList());
             var threadQuestions = questionsElasticRepository.GetAllByIds(storedThreadPosts.Select(sTP => sTP.PostId)
                                                                                        .Concat(recommendedQuestions.Select(recQ => recQ.Id))
@@ -128,7 +128,7 @@ namespace StackoverflowGuide.BLL.Services
             var recommendedQuestions = elasticSuggestionHelper.GetRecommendedQuestions(storedThreadPosts.OrderByDescending(sTP => sTP.ThreadIndex)
                                                                                 .Select(sTP => sTP.PostId)
                                                                                 .ToList(),
-                                                                "",
+                                                                thread.LastSearched,
                                                                 thread.TagList.ToList());
             var threadQuestions = questionsElasticRepository.GetAllByIds(storedThreadPosts.Select(sTP => sTP.PostId)
                                                                                        .Concat(recommendedQuestions.Select(recQ => recQ.Id))

@@ -39,6 +39,7 @@ namespace StackoverflowGuide.BLL.Services
             var id = ObjectId.GenerateNewId().ToString();
             newThread.Id = id;
             newThread.ThreadPosts = new List<string>();
+            newThread.LastSearched = "";
             if (threadRepository.Create(newThread))
             {
                 return id;
@@ -86,6 +87,7 @@ namespace StackoverflowGuide.BLL.Services
 
             var thread = threadRepository.Find(id);
             updatedThread.ThreadPosts = thread.ThreadPosts;
+            updatedThread.LastSearched = thread.LastSearched;
 
             if (threadRepository.Update(updatedThread))
             {
@@ -120,7 +122,7 @@ namespace StackoverflowGuide.BLL.Services
             var recommendedQuestions = elasticSuggestionHelper.GetRecommendedQuestions(storedThreadPosts.OrderByDescending(sTP => sTP.ThreadIndex)
                                                                                 .Select(sTP => sTP.PostId)
                                                                                 .ToList(),
-                                                                "c# property",
+                                                                thread.LastSearched,
                                                                 thread.TagList.ToList());
             var threadQuestions = questionsElasticRepository.GetAllByIds(storedThreadPosts.Select(sTP => sTP.PostId)
                                                                                        .Concat(recommendedQuestions.Select(recQ => recQ.Id))
@@ -151,11 +153,38 @@ namespace StackoverflowGuide.BLL.Services
             };
         }
 
-    private bool hasAccessToThread(string threadId, string userId)
-    {
-        var thread = threadRepository.Find(threadId);
+        public void SetSearchForThread(string id, string searchTerm, string askingUser)
+        {
+            if (!hasAccessToThread(id, askingUser))
+            {
+                throw new Exception("You have no access to this thread!");
+            }
 
-        return thread.Owner == userId;
-    }
+            var thread = threadRepository.Find(id);
+            if(thread != null)
+            {
+                thread.LastSearched = searchTerm;
+                if (threadRepository.Update(thread))
+                {
+                    return;
+                }
+                else
+                {
+                    throw new Exception("Cannot update nonexistant thread!");
+                }
+            }
+            else
+            {
+                throw new Exception("Cannot find thread!");
+            }
+
+        }
+
+        private bool hasAccessToThread(string threadId, string userId)
+        {
+            var thread = threadRepository.Find(threadId);
+
+            return thread.Owner == userId;
+        }
 }
 }

@@ -155,7 +155,21 @@ namespace StackoverflowGuide.API.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var userId = this.User.Claims.FirstOrDefault().Value;
 
-            return new SingleThreadData();
+            try
+            {
+                threadService.SetSearchForThread(id,model.SearchTerm,userId);
+                var singleThread = threadService.GetSingleThread(id, userId);
+                return new SingleThreadData
+                {
+                    Thread = mapper.Map<ThreadData>(singleThread.Thread),
+                    Posts = singleThread.Posts.Select(mapper.Map<PostData>).ToList(),
+                    Suggestions = singleThread.Suggestions.Select(mapper.Map<PostData>).ToList()
+                };
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { error = e.Message });
+            }
         }
     }
 }
