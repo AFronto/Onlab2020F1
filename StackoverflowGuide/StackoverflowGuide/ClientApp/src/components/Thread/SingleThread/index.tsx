@@ -12,7 +12,14 @@ import { ReduxState } from "../../../store";
 import { loadSingleThread } from "../../../store/Thread/SingleThread/OpenThread";
 import { Graph } from "react-d3-graph";
 import { graphData, customLabelBuilder } from "./logic/graphGeneration";
-import { Row, Col, Spinner } from "react-bootstrap";
+import {
+  Row,
+  Col,
+  Spinner,
+  InputGroup,
+  FormControl,
+  Button,
+} from "react-bootstrap";
 import { PostCard } from "./ThreadPost";
 import ScrollArea from "react-scrollbar";
 import { useWindowSize } from "../../../general_helpers/WindowHelper";

@@ -147,7 +147,7 @@ namespace StackoverflowGuide.BLL.Services
                         ConnectedPosts = sTP.ConnectedPosts
                     };
                 }).OrderBy(post => post.ThreadIndex).ToList(),
-                Suggestions = elasticSuggestionHelper.ParseQuestionsToThreadPosts(threadQuestions, storedThreadPosts.ToList())
+                Suggestions = elasticSuggestionHelper.ParseQuestionsToThreadPosts(recommendedQuestions, storedThreadPosts.ToList())
             };
         }
 

@@ -13,6 +13,7 @@ import { loadSingleThread } from "../../store/Thread/SingleThread/OpenThread";
 import { loadAllTags } from "../../store/Tag";
 import { loadSuggestions } from "../../store/Thread/SingleThread/Suggestions";
 import SingleThreadData from "../../data/server/Thread/SingleThreadData";
+import SearchData from "../../data/server/Thread/SearchData";
 
 export function getThreads() {
   return (dispatch: AppDispatch, getState: () => ReduxState) => {
@@ -115,7 +116,7 @@ export function editThread(
   };
 }
 
-export function getSingleThread(id: String) {
+export function getSingleThread(id: string) {
   return (dispatch: AppDispatch, getState: () => ReduxState) => {
     const header = generateAuthenticationHeadder(getState());
 
@@ -154,6 +155,35 @@ export function getAllTags() {
       headers: header,
     }).then(
       (success) => dispatch(loadAllTags({ tags: success.data })),
+      (error) => {
+        if (error.response.status === 401) {
+          jwtExpires(dispatch);
+        }
+      }
+    );
+  };
+}
+
+export function sendSearch(id: string, searchTerm: SearchData) {
+  return (dispatch: AppDispatch, getState: () => ReduxState) => {
+    const header = generateAuthenticationHeadder(getState());
+    return axios({
+      method: "POST",
+      url: "thread/" + id + "/search",
+      headers: header,
+      data: searchTerm,
+    }).then(
+      (success) => {
+        // dispatch(
+        //   loadSingleThread({
+        //     singleThread: {
+        //       thread: success.data.thread,
+        //       posts: success.data.posts,
+        //     } as SingleThreadData,
+        //   })
+        // );
+        // dispatch(loadSuggestions({ suggestions: success.data.suggestions }));
+      },
       (error) => {
         if (error.response.status === 401) {
           jwtExpires(dispatch);

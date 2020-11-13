@@ -148,5 +148,14 @@ namespace StackoverflowGuide.API.Controllers
                 return BadRequest(new { error = e.Message });
             }
         }
+
+        [HttpPost("{id}/search")]
+        public ActionResult<SingleThreadData> Search(string id, [FromBody] SearchData model)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            var userId = this.User.Claims.FirstOrDefault().Value;
+
+            return new SingleThreadData();
+        }
     }
 }

@@ -29,6 +29,8 @@ namespace StackoverflowGuide.DATA.Repositories
 
         public List<TEntity> SearchByQuery(Nest.SearchRequest<TEntity> query)
         {
+            // var json = elastic.client.RequestResponseSerializer.SerializeToString(query);
+
             var searchResponse = elastic.client.Search<TEntity>(query);
             return searchResponse.Hits.Select(h => {
                                               h.Source.Id = h.Id;

@@ -8,7 +8,7 @@ import { loadSingleThread } from "../../store/Thread/SingleThread/OpenThread";
 import SingleThreadData from "../../data/server/Thread/SingleThreadData";
 
 export function getSuggestionsAfterDecline(
-  id: String,
+  id: string,
   oldState: PostData[],
   declinedPost: PostData
 ) {
@@ -37,7 +37,7 @@ export function getSuggestionsAfterDecline(
 }
 
 export function getSuggestionsAfterAccept(
-  id: String,
+  id: string,
   oldState: { suggestions: PostData[]; singleThread: SingleThreadData },
   acceptedPost: PostData
 ) {
@@ -81,7 +81,7 @@ export function getSuggestionsAfterAccept(
 }
 
 export function deleteWatched(
-  id: String,
+  id: string,
   oldState: { suggestions: PostData[]; singleThread: SingleThreadData },
   deletedPost: PostData
 ) {

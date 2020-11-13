@@ -1,10 +1,20 @@
-import React, { FunctionComponent } from "react";
-import { Navbar, Nav } from "react-bootstrap";
+import React, { FunctionComponent, useState } from "react";
+import {
+  Navbar,
+  Nav,
+  InputGroup,
+  FormControl,
+  Button,
+  Form,
+} from "react-bootstrap";
 import { isLoggedIn, logOut } from "../general_helpers/AuthHelper";
 import { Link } from "react-router-dom";
 import { ReduxState } from "../store";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaSearch } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
+import { sendSearch } from "../api/Thread";
+import * as yup from "yup";
+import { useForm } from "react-hook-form";
 
 export const NavMenu: FunctionComponent = () => {
   const activePath = useSelector(
@@ -15,15 +25,55 @@ export const NavMenu: FunctionComponent = () => {
     (state: ReduxState) => state.single_thread.open_thread
   );
 
+  const schema = yup.object({
+    searchTerm: yup.string().required(),
+  });
+
+  const { register, handleSubmit, reset } = useForm({
+    validationSchema: schema,
+  });
+
   const dispatch = useDispatch();
+
+  const handleSearch = handleSubmit((data) => {
+    dispatch(
+      sendSearch(open_thread.thread.id, { searchTerm: data.searchTerm })
+    );
+    reset();
+  });
 
   return (
     <Navbar fixed="top" bg="dark" variant="dark" expand="sm">
       {open_thread.thread ? (
-        <Link className="ml-3 navbar-brand" to="/threads">
-          <FaArrowLeft className="mr-3" />
-          {open_thread.thread.name}
-        </Link>
+        <>
+          <Link className="ml-3 navbar-brand" to="/threads">
+            <FaArrowLeft className="mr-3" />
+            {open_thread.thread.name}
+          </Link>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Form className="col-12" inline noValidate onSubmit={handleSearch}>
+              <InputGroup
+                className="col-lg-8 col-md-10 col-xs-col-12 mx-auto"
+                size="lg"
+              >
+                <Form.Control
+                  type="text"
+                  color="primary"
+                  defaultValue=""
+                  name="searchTerm"
+                  ref={register}
+                  placeholder="Search keywords here..."
+                />
+                <InputGroup.Append>
+                  <Button variant="secondary" type="submit">
+                    <FaSearch />
+                  </Button>
+                </InputGroup.Append>
+              </InputGroup>
+            </Form>
+          </Navbar.Collapse>
+        </>
       ) : (
         <>
           <Navbar.Brand className="ml-3" href="/">
