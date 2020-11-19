@@ -2,6 +2,7 @@
 using StackoverflowGuide.BLL.Models.ElasticBLL;
 using StackoverflowGuide.BLL.Models.Post;
 using StackoverflowGuide.BLL.Models.Post.Elastic;
+using StackoverflowGuide.BLL.Models.Tag;
 using StackoverflowGuide.BLL.RepositoryInterfaces;
 using StackoverflowGuide.DATA.Context.Interfaces;
 using System;
@@ -83,6 +84,21 @@ namespace StackoverflowGuide.DATA.Repositories
                                      .Select(tvItem => new KeyValuePair<string, IReadOnlyDictionary<string, TermVectorTerm>>(tvItem.Key.Name,
                                                                                                                              tvItem.Value.Terms))
                                      .ToDictionary(tv => tv.Key, tv => tv.Value);
+        }
+
+        public List<DbTag> GetAllTags()
+        {
+            var query = new SearchRequest<Question>(Nest.Indices.Index("questions"))
+            {
+                Size = 0,
+                Aggregations = new TermsAggregation("tag_agg")
+                {
+                    Field = "Tags",
+                    Size = 10000000
+                }
+            };
+
+            return AgregateByQuery(query).Select(tag => new DbTag() { Id="elastic-tag", Name=tag}).ToList();
         }
     }
 }

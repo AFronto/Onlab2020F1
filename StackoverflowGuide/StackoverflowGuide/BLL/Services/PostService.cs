@@ -16,16 +16,14 @@ namespace StackoverflowGuide.BLL.Services
         IQuestionsElasticRepository questionsElasticRepository;
         IThreadRepository threadRepository;
         IPostsRepository postsRepository;
-        IBQSuggestionHelper suggestionHelper;
         IElasticSuggestionHelper elasticSuggestionHelper;
 
         public PostService(IQuestionsElasticRepository questionsElasticRepository, IThreadRepository threadRepository,
-                           IPostsRepository postsRepository, IBQSuggestionHelper suggestionHelper, IElasticSuggestionHelper elasticSuggestionHelper)
+                           IPostsRepository postsRepository, IElasticSuggestionHelper elasticSuggestionHelper)
         {
             this.questionsElasticRepository = questionsElasticRepository;
             this.threadRepository = threadRepository;
             this.postsRepository = postsRepository;
-            this.suggestionHelper = suggestionHelper;
             this.elasticSuggestionHelper = elasticSuggestionHelper;
         }
 

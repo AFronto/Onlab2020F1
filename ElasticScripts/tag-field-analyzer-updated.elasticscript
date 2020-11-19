@@ -1,0 +1,94 @@
+DELETE /questions1
+
+PUT /questions1
+
+GET _cat/indices?pretty
+
+POST questions1/_close
+
+PUT questions1/_settings
+{
+    "analysis": {
+      "analyzer": {
+        "custom_tag_pattern": {
+          "type":      "pattern",
+          "pattern":   "(<)|(>)", 
+          "lowercase": true
+        }
+      }
+    }
+}
+
+POST questions1/_open
+
+GET questions1/_settings
+
+GET /questions1/_analyze
+{
+    "analyzer": "custom_tag_pattern",
+    "text": "<C#><developer-alma><c++>"
+}
+
+PUT questions1/_mapping
+{
+  "properties": {
+    "Tags": { 
+      "type":     "text",
+      "fielddata": true,
+      "analyzer": "custom_tag_pattern"
+    }
+  }
+}
+
+POST _reindex?timeout=10000s
+{
+  "source": {
+    "index": "questions"
+  },
+  "dest": {
+    "index": "questions1"
+  }
+}
+
+GET questions1/_mapping
+GET questions/_mapping
+
+GET questions/_search
+{
+  "query": {
+    "match_all": {}
+  }
+}
+
+GET questions/_search
+{
+  "size":0,
+  "aggs" : 
+  {
+    "tag_agg" : {
+      "terms": {"field" : "Tags", "size" : 10000000}
+    }
+  }
+}
+
+
+GET questions1/_search
+{
+  "size":0,
+  "aggs" : 
+  {
+    "tag_agg" : {
+      "terms": {"field" : "Tags", "size" : 10000000}
+    }
+  }
+}
+
+POST /_aliases
+{
+    "actions" : [
+        { "add":  { "index": "questions1", "alias": "questions" } },
+        { "remove_index": { "index": "questions" } }  
+    ]
+}
+
+GET _cat/aliases

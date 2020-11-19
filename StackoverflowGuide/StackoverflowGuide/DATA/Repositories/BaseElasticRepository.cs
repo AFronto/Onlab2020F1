@@ -37,5 +37,18 @@ namespace StackoverflowGuide.DATA.Repositories
                                               return h.Source; })
                                       .ToList();
         }
+
+        public List<string> SingleAgregateByQuery(SearchRequest<TEntity> query)
+        {
+            var json = elastic.client.RequestResponseSerializer.SerializeToString(query);
+
+            var searchResponse = elastic.client.Search<TEntity>(query);
+
+            if(query.Aggregations.First().Value.Terms != null)
+            {
+                return searchResponse.Aggregations.Terms(query.Aggregations.First().Key).Buckets.Select(bucket => bucket.Key).ToList();
+            }
+            return new List<string>();
+        }
     }
 }

@@ -10,6 +10,8 @@ namespace StackoverflowGuide.BLL.RepositoryInterfaces
     {
         public List<TEntity> SearchByQuery(SearchRequest<TEntity> query);
 
+        public List<string> SingleAgregateByQuery(SearchRequest<TEntity> query);
+
         public TermVectorsResponse TermRequestToDoc(TermVectorsDescriptor<TEntity> request);
     }
 }

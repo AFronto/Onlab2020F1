@@ -101,7 +101,7 @@ namespace StackoverflowGuide
 
             services.AddScoped<IThreadRepository, ThreadRepository>();
             services.AddScoped<IPostsRepository, PostsRepository>();
-            services.AddScoped<ITagRepository, TagRepository>();
+            //services.AddScoped<ITagRepository, TagRepository>();
             services.AddScoped<IPostInClusterRepository, PostInClusterRepository>();
 
             var serviceProvider = services.BuildServiceProvider();
@@ -120,8 +120,8 @@ namespace StackoverflowGuide
             services.AddScoped<IPostService, PostService>();
 
 
-            services.AddSingleton<IBQSuggestionHelper>(new BQSuggestionHelper(serviceProvider.GetService<ITagRepository>(), 
-                                                                          serviceProvider.GetService<IPostInClusterRepository>()));
+            // services.AddSingleton<IBQSuggestionHelper>(new BQSuggestionHelper(serviceProvider.GetService<ITagRepository>(), 
+            //                                                              serviceProvider.GetService<IPostInClusterRepository>()));
             services.AddSingleton<IElasticSuggestionHelper>(new ElasticSuggestionHelper(serviceProvider.GetService<IQuestionsElasticRepository>()));
 
             // In production, the React files will be served from this directory

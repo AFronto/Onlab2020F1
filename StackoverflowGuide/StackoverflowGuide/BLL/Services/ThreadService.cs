@@ -18,18 +18,15 @@ namespace StackoverflowGuide.BLL.Services
         private IThreadRepository threadRepository;
         private IQuestionsElasticRepository questionsElasticRepository;
         private IPostsRepository postsRepository;
-        private ITagRepository tagRepository;
 
         private IElasticSuggestionHelper elasticSuggestionHelper;
 
         public ThreadService(IThreadRepository threadRepository, IQuestionsElasticRepository questionsElasticRepository,
-                                IPostsRepository postsRepository, ITagRepository tagRepository,
-                                IElasticSuggestionHelper elasticSuggestionHelper)
+                                IPostsRepository postsRepository, IElasticSuggestionHelper elasticSuggestionHelper)
         {
             this.threadRepository = threadRepository;
             this.questionsElasticRepository = questionsElasticRepository;
             this.postsRepository = postsRepository;
-            this.tagRepository = tagRepository;
 
             this.elasticSuggestionHelper = elasticSuggestionHelper;
         }
@@ -107,7 +104,7 @@ namespace StackoverflowGuide.BLL.Services
 
         public IEnumerable<DbTag> GetAllTags()
         {
-            return tagRepository.QuerryAll();
+            return questionsElasticRepository.GetAllTags();
         }
 
         public SingleThread GetSingleThread(string id, string askingUser)
