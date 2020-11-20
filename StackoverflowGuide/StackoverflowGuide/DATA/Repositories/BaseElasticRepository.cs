@@ -38,7 +38,7 @@ namespace StackoverflowGuide.DATA.Repositories
                                       .ToList();
         }
 
-        public List<string> SingleAgregateByQuery(SearchRequest<TEntity> query)
+        public List<string> SingleAggregateByQuery(SearchRequest<TEntity> query)
         {
             var json = elastic.client.RequestResponseSerializer.SerializeToString(query);
 

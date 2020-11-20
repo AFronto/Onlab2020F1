@@ -98,7 +98,7 @@ namespace StackoverflowGuide.DATA.Repositories
                 }
             };
 
-            return SingleAgregateByQuery(query).Select(tag => new DbTag() { Id="elastic-tag", Name=tag}).ToList();
+            return SingleAggregateByQuery(query).Select(tag => new DbTag() { Id="elastic-tag", Name=tag}).ToList();
         }
     }
 }
