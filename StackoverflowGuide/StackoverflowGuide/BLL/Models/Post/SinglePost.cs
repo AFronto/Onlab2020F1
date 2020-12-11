@@ -22,7 +22,7 @@ namespace StackoverflowGuide.BLL.Models.Post
 
         public long Score { get; set; }
 
-        public string? Tags { get; set; }
+        public string[]? Tags { get; set; }
 
         public string? Title { get; set; }
 

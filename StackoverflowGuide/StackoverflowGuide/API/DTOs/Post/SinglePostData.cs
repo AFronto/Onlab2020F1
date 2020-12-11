@@ -21,7 +21,7 @@ namespace StackoverflowGuide.API.DTOs.Post
 
         public long Score { get; set; }
 
-        public string? Tags { get; set; }
+        public string[]? Tags { get; set; }
 
         public string? Title { get; set; }
 

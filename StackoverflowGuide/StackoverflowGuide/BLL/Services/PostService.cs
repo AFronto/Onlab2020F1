@@ -81,7 +81,7 @@ namespace StackoverflowGuide.BLL.Services
                 Body = question.Body,
                 CreationDate = question.CreationDate,
                 FavoriteCount = question.FavoriteCount,
-                Tags = question.Tags,
+                Tags = question.Tags.Substring(1, question.Tags.Length - 2).Split("><"),
                 Title = question.Title,
                 ViewCount = question.ViewCount
             };
