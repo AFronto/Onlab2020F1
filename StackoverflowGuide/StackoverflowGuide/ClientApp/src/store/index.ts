@@ -8,6 +8,7 @@ import jwt from "./Auth";
 import errors from "./Errors";
 import tags from "./Tag";
 import { single_thread } from "./Thread/SingleThread";
+import open_post from "./Thread/OpenPost";
 
 const rootReducer = combineReducers({
   router: connectRouter(history),
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   threads: threads,
   tags: tags,
   single_thread: single_thread,
+  open_post: open_post,
 });
 
 const middleware = [

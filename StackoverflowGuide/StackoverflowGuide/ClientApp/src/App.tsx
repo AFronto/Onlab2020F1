@@ -10,6 +10,7 @@ import "./custom.css";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import { AuthenticatedRoute } from "./routing/AuthenticatedRoute";
 import { NavMenu } from "./components/NavMenu";
+import { SinglePostScreen } from "./components/Thread/SinglePost";
 
 export default () => (
   <div style={{ height: "100%" }}>
@@ -23,9 +24,13 @@ export default () => (
       <AuthenticatedRoute exact path="/threads">
         <ThreadsScreen />
       </AuthenticatedRoute>
-      <AuthenticatedRoute path="/threads/:id">
+      <AuthenticatedRoute exact path="/threads/:id">
         <SingleThreadScreen />
       </AuthenticatedRoute>
+      <AuthenticatedRoute exact path="/threads/:threadId/post/:postId">
+        <SinglePostScreen />
+      </AuthenticatedRoute>
+      <Route path="/post" component={SinglePostScreen} />
     </Layout>
   </div>
 );

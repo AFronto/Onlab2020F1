@@ -6,6 +6,7 @@ import { loadSuggestions } from "../../store/Thread/SingleThread/Suggestions";
 import PostData from "../../data/server/Post/PostData";
 import { loadSingleThread } from "../../store/Thread/SingleThread/OpenThread";
 import SingleThreadData from "../../data/server/Thread/SingleThreadData";
+import { loadPost } from "../../store/Thread/OpenPost";
 
 export function getSuggestionsAfterDecline(
   id: string,
@@ -134,6 +135,7 @@ export function getSinglePost(threadId: string, postId: string) {
     }).then(
       (success) => {
         console.log(success.data);
+        dispatch(loadPost({ post: success.data }));
       },
       (error) => {
         if (error.response.status === 401) {

@@ -5,6 +5,7 @@ import { FaEllipsisV } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { ReduxState } from "../../../store";
 import { getSinglePost } from "../../../api/Post";
+import { push } from "connected-react-router";
 
 export const PostCard: FunctionComponent<{
   post: PostData;
@@ -42,7 +43,9 @@ export const PostCard: FunctionComponent<{
       index: 0,
       title: "Open",
       action: () => {
-        dispatch(getSinglePost(open_thread.thread.id, props.post.id));
+        dispatch(
+          push(`/threads/${open_thread.thread.id}/post/${props.post.id}`)
+        );
       },
     },
     {
