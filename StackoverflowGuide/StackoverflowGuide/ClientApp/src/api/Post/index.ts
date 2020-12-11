@@ -93,8 +93,16 @@ export function deleteWatched(
       url: `post/${id}/delete/${deletedPost.id}`,
       headers: header,
     }).then(
-      (_success) => {
-        console.log("Succesfully deleted!");
+      (success) => {
+        dispatch(
+          loadSingleThread({
+            singleThread: {
+              thread: success.data.thread,
+              posts: success.data.posts,
+            } as SingleThreadData,
+          })
+        );
+        dispatch(loadSuggestions({ suggestions: success.data.suggestions }));
       },
       (error) => {
         dispatch(
@@ -107,6 +115,27 @@ export function deleteWatched(
             singleThread: oldState.singleThread,
           })
         );
+        if (error.response.status === 401) {
+          jwtExpires(dispatch);
+        }
+      }
+    );
+  };
+}
+
+export function getSinglePost(threadId: string, postId: string) {
+  return (dispatch: AppDispatch, getState: () => ReduxState) => {
+    const header = generateAuthenticationHeadder(getState());
+
+    return axios({
+      method: "GET",
+      url: `post/${threadId}/get/${postId}`,
+      headers: header,
+    }).then(
+      (success) => {
+        console.log(success.data);
+      },
+      (error) => {
         if (error.response.status === 401) {
           jwtExpires(dispatch);
         }

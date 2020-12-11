@@ -43,7 +43,7 @@ namespace StackoverflowGuide.DATA.Repositories
         public Question GetById(string id)
         {
             var ret = GetAllByIds(new List<string> { id });
-            return new Question();
+            return ret[0];
         }
 
         public List<Question> SearchByText(string searchTerm, List<string> searchFields, List<string> idsToNotSearch)

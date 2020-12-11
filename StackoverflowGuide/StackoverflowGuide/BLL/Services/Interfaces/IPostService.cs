@@ -13,5 +13,7 @@ namespace StackoverflowGuide.BLL.Services.Interfaces
         public NewPostAndSuggestions GetSuggestionsAfterAccept(string threadId, ThreadPost acceptedPost, string askingUser);
 
         public string DeletePost(string threadId, string postId, string askingUser);
+
+        public SinglePost GetSingleById(string questionId);
     }
 }

@@ -14,14 +14,16 @@ namespace StackoverflowGuide.BLL.Services
     public class PostService : IPostService
     {
         IQuestionsElasticRepository questionsElasticRepository;
+        IAnswerElasticRepository answerElasticRepository;
         IThreadRepository threadRepository;
         IPostsRepository postsRepository;
         IElasticSuggestionHelper elasticSuggestionHelper;
 
-        public PostService(IQuestionsElasticRepository questionsElasticRepository, IThreadRepository threadRepository,
+        public PostService(IQuestionsElasticRepository questionsElasticRepository, IAnswerElasticRepository answerElasticRepository, IThreadRepository threadRepository,
                            IPostsRepository postsRepository, IElasticSuggestionHelper elasticSuggestionHelper)
         {
             this.questionsElasticRepository = questionsElasticRepository;
+            this.answerElasticRepository = answerElasticRepository;
             this.threadRepository = threadRepository;
             this.postsRepository = postsRepository;
             this.elasticSuggestionHelper = elasticSuggestionHelper;
@@ -41,7 +43,7 @@ namespace StackoverflowGuide.BLL.Services
             var postToDelete = postsRepository.Querry(p => p.Id == postId).First();
             var modifiedPosts = postsRepository.Querry(p => p.ConnectedPosts.Contains(postId));
 
-            foreach(var post in modifiedPosts)
+            foreach (var post in modifiedPosts)
             {
                 post.ConnectedPosts.Remove(postId);
                 post.ConnectedPosts.AddRange(postToDelete.ConnectedPosts);
@@ -63,6 +65,26 @@ namespace StackoverflowGuide.BLL.Services
             {
                 throw new Exception("Cannot delete nonexistant post!");
             }
+        }
+
+        public SinglePost GetSingleById(string questionId)
+        {
+            var post = postsRepository.Find(questionId);
+            var question = questionsElasticRepository.GetById(post.PostId);
+            var answers = answerElasticRepository.GetAllByQuestionId(post.PostId);
+            return new SinglePost()
+            {
+                Id = question.Id,
+                Score = question.Score,
+                AcceptedAnswerId = question.AcceptedAnswerId.ToString(),
+                Answers = answers,
+                Body = question.Body,
+                CreationDate = question.CreationDate,
+                FavoriteCount = question.FavoriteCount,
+                Tags = question.Tags,
+                Title = question.Title,
+                ViewCount = question.ViewCount
+            };
         }
 
         public NewPostAndSuggestions GetSuggestionsAfterAccept(string threadId, ThreadPost acceptedPost, string askingUser)

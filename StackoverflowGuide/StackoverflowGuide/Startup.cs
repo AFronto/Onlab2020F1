@@ -98,6 +98,7 @@ namespace StackoverflowGuide
             //services.AddScoped<ITagBQRepository, TagBQRepository>();
 
             services.AddScoped<IQuestionsElasticRepository, QuestionsElasticRepository>();
+            services.AddScoped<IAnswerElasticRepository, AnswerElasticRepository>();
 
             services.AddScoped<IThreadRepository, ThreadRepository>();
             services.AddScoped<IPostsRepository, PostsRepository>();

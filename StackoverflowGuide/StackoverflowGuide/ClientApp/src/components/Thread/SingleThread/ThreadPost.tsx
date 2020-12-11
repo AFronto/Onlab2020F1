@@ -2,6 +2,9 @@ import PostData from "../../../data/server/Post/PostData";
 import React, { FunctionComponent, useState, MouseEvent } from "react";
 import { Card, Button, Popover, Overlay } from "react-bootstrap";
 import { FaEllipsisV } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { ReduxState } from "../../../store";
+import { getSinglePost } from "../../../api/Post";
 
 export const PostCard: FunctionComponent<{
   post: PostData;
@@ -29,8 +32,19 @@ export const PostCard: FunctionComponent<{
     },
   ];
 
+  const open_thread = useSelector(
+    (state: ReduxState) => state.single_thread.open_thread
+  );
+  const dispatch = useDispatch();
+
   const watchedOptions = [
-    { index: 0, title: "Open", action: () => {} },
+    {
+      index: 0,
+      title: "Open",
+      action: () => {
+        dispatch(getSinglePost(open_thread.thread.id, props.post.id));
+      },
+    },
     {
       index: 1,
       title: "Delete",

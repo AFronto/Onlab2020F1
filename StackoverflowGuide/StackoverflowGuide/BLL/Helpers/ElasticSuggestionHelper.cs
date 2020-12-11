@@ -28,7 +28,7 @@ namespace StackoverflowGuide.BLL.Helpers
                                                     Index = parameters.Index,
                                                     Id = id,
                                                     Fields = parameters.Fields,
-                                                    MaxNumberOfTerms = 5
+                                                    MaxNumberOfTerms = 2
                                                 }).Values
                                                 .SelectMany(v => v)
                                                 .ToList())
@@ -61,12 +61,8 @@ namespace StackoverflowGuide.BLL.Helpers
 
         public List<Question> GetRecommendedQuestions(List<string> incomingIds, string userSearchTerm, List<string> tagsFromThread)
         {
-            string searchTerm = "";
-            if (userSearchTerm != "")
-            {
-                searchTerm = userSearchTerm;
-            }
-            else if (incomingIds.Count != 0)
+            string searchTerm = userSearchTerm;
+            if (incomingIds.Count != 0)
             {
                 string[] f = { "Body" };
                 List<ElasticKeyword> commonKeywords = GetKeywords(new GetKeywordRequestParametersModel()
@@ -76,11 +72,7 @@ namespace StackoverflowGuide.BLL.Helpers
                     QuestionIds = incomingIds,
                     OnlyMultipleOccurrences = false
                 });
-                searchTerm = String.Join(',', commonKeywords.Select(cKw => cKw.Word).ToList());
-            }
-            else
-            {   
-                //TODO tags
+                searchTerm = String.Join(',', searchTerm, String.Join(',', commonKeywords.Select(cKw => cKw.Word).ToList()));
             }
 
             List<string> searchFields = new List<string>() { "Body" };

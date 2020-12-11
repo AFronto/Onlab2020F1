@@ -20,11 +20,13 @@ namespace StackoverflowGuide.API.Controllers
     {
         IMapper mapper;
         IPostService postService;
+        IThreadService threadService;
 
-        public PostController(IMapper mapper, IPostService postService)
+        public PostController(IMapper mapper, IPostService postService, IThreadService threadService)
         {
             this.mapper = mapper;
             this.postService = postService;
+            this.threadService = threadService;
         }
 
         [HttpPost("suggestions/{threadId}/declined")]
@@ -68,7 +70,7 @@ namespace StackoverflowGuide.API.Controllers
         }
 
         [HttpDelete("{threadId}/delete/{postId}")]
-        public ActionResult<ThreadIdData> DeleteWatched(string threadId, string postId)
+        public ActionResult<SingleThreadData> DeleteWatched(string threadId, string postId)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var userId = this.User.Claims.FirstOrDefault().Value;
@@ -80,7 +82,31 @@ namespace StackoverflowGuide.API.Controllers
                     Id = postService
                          .DeletePost(threadId, postId, userId)
                 };
-                return responseId;
+                var singleThread = threadService.GetSingleThread(threadId, userId);
+                return new SingleThreadData
+                {
+                    Thread = mapper.Map<ThreadData>(singleThread.Thread),
+                    Posts = singleThread.Posts.Select(mapper.Map<PostData>).ToList(),
+                    Suggestions = singleThread.Suggestions.Select(mapper.Map<PostData>).ToList()
+                };
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { error = e.Message });
+            }
+
+        }
+
+        [HttpGet("{threadId}/get/{postId}")]
+        public ActionResult<SinglePostData> GetSinglePost(string threadId, string postId)
+        {
+            var userId = this.User.Claims.FirstOrDefault().Value;
+
+            try
+            {
+                var question = postService.GetSingleById(postId);
+                var response = mapper.Map<SinglePostData>(question);
+                return response;
             }
             catch (Exception e)
             {

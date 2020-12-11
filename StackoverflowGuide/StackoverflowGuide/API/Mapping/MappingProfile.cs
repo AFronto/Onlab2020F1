@@ -6,6 +6,7 @@ using StackoverflowGuide.API.DTOs.Thread;
 using StackoverflowGuide.BLL.Models;
 using StackoverflowGuide.BLL.Models.Auth;
 using StackoverflowGuide.BLL.Models.Post;
+using StackoverflowGuide.BLL.Models.Post.Elastic;
 using StackoverflowGuide.BLL.Models.Tag;
 using StackoverflowGuide.BLL.Models.Thread;
 using System;
@@ -27,6 +28,9 @@ namespace StackoverflowGuide.API.Mapping
             CreateMap<PostData, ThreadPost>();
             CreateMap<BqTag, TagData>();
             CreateMap<DbTag, TagData>();
+            CreateMap<SinglePost, SinglePostData>();
+            CreateMap<Answer, AnswerData>();
+
         }
     }
 }
