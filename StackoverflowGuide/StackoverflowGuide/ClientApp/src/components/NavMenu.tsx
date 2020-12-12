@@ -1,12 +1,5 @@
 import React, { FunctionComponent, useState } from "react";
-import {
-  Navbar,
-  Nav,
-  InputGroup,
-  FormControl,
-  Button,
-  Form,
-} from "react-bootstrap";
+import { Navbar, Nav, InputGroup, Button, Form } from "react-bootstrap";
 import { isLoggedIn, logOut } from "../general_helpers/AuthHelper";
 import { Link } from "react-router-dom";
 import { ReduxState } from "../store";
@@ -24,6 +17,10 @@ export const NavMenu: FunctionComponent = () => {
   const open_thread = useSelector(
     (state: ReduxState) => state.single_thread.open_thread
   );
+
+  const open_post = useSelector((state: ReduxState) => state.open_post);
+
+  const router = useSelector((state: ReduxState) => state.router);
 
   const schema = yup.object({
     searchTerm: yup.string().required(),
@@ -73,6 +70,16 @@ export const NavMenu: FunctionComponent = () => {
               </InputGroup>
             </Form>
           </Navbar.Collapse>
+        </>
+      ) : open_post.title ? (
+        <>
+          <Link
+            className="ml-3 navbar-brand"
+            to={router.location.pathname.split("/post")[0]}
+          >
+            <FaArrowLeft className="mr-3" />
+            Open Question
+          </Link>
         </>
       ) : (
         <>

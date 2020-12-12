@@ -9,6 +9,6 @@ export default interface SinglePostData {
   tags: string[];
   creationDate: string;
   score: number;
-  favoriteCount: string;
+  favoriteCount: number;
   viewCount: number;
 }

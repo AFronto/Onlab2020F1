@@ -134,7 +134,6 @@ export function getSinglePost(threadId: string, postId: string) {
       headers: header,
     }).then(
       (success) => {
-        console.log(success.data);
         dispatch(loadPost({ post: success.data }));
       },
       (error) => {

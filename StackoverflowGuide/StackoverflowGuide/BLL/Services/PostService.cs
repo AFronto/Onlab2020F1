@@ -71,7 +71,15 @@ namespace StackoverflowGuide.BLL.Services
         {
             var post = postsRepository.Find(questionId);
             var question = questionsElasticRepository.GetById(post.PostId);
-            var answers = answerElasticRepository.GetAllByQuestionId(post.PostId);
+            var answers = answerElasticRepository.GetAllByQuestionId(post.PostId).OrderByDescending(a => a.Score).ToList();
+            if (question.AcceptedAnswerId != null)
+            {
+                var acceptedIndex = answers.FindIndex(a => a.Id == question.AcceptedAnswerId.ToString());
+                if(acceptedIndex != -1)
+                {
+                    answers.Move(acceptedIndex, 1, 0);
+                }
+            }
             return new SinglePost()
             {
                 Id = question.Id,
