@@ -28,7 +28,10 @@ export const SinglePostScreen: FunctionComponent = () => {
           <Row style={{ paddingBottom: 30 }}>
             <Col xs={12}>
               <Card>
-                <Card.Header as="h5" style={{ background: "#41b3a3" }}>
+                <Card.Header
+                  as="h5"
+                  style={{ text: "white", background: "DarkMagenta" }}
+                >
                   {post.title}
                 </Card.Header>
                 <Card.Body>

@@ -50,7 +50,7 @@ namespace StackoverflowGuide.DATA.Repositories
         {
             var query = new SearchRequest<Question>(Nest.Indices.Index("questions"))
             {
-                Size = 3,
+                Size = 10,
                 Query = new MultiMatchQuery
                 {
                     Fields = searchFields.ToArray(),

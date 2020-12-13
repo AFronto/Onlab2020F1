@@ -12,7 +12,7 @@ export const AnswerCard: FunctionComponent<{
   return (
     <>
       <Card>
-        <Card.Header as="h5" style={{ background: "#85dcb5" }}>
+        <Card.Header as="h5" style={{ background: "DarkOrange" }}>
           <div className="d-flex justify-content-end">
             {acceptedAnswer && acceptedAnswer === answer.id && (
               <FaCheckCircle color={"white"} size={24} />
