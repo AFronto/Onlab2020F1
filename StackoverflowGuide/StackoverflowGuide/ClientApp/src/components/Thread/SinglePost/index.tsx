@@ -30,7 +30,7 @@ export const SinglePostScreen: FunctionComponent = () => {
               <Card>
                 <Card.Header
                   as="h5"
-                  style={{ text: "white", background: "DarkMagenta" }}
+                  style={{ color: "white", background: "DarkMagenta" }}
                 >
                   {post.title}
                 </Card.Header>

@@ -106,7 +106,9 @@ export const PostCard: FunctionComponent<{
     >
       <Card.Body>
         <div className="d-flex align-items-center justify-content-between">
-          <Card.Title>{props.post.title}</Card.Title>
+          <Card.Title style={{ maxWidth: "180px" }}>
+            {props.post.title}
+          </Card.Title>
           {props.isSuggestion ? (
             <Button
               className="ml-4"
