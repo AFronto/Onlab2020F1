@@ -59,7 +59,11 @@ export const SinglePostScreen: FunctionComponent = () => {
                     style={{ marginBottom: 10 }}
                     className="d-flex justify-content-between"
                   >
-                    <div dangerouslySetInnerHTML={{ __html: post.body }} />
+                    <div
+                      className="w-100"
+                      style={{ display: "flex", flexFlow: "column" }}
+                      dangerouslySetInnerHTML={{ __html: post.body }}
+                    />
                   </div>
                   <hr></hr>
                   <div className="d-flex justify-content-between">

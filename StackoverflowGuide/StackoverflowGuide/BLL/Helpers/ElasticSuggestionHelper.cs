@@ -62,10 +62,10 @@ namespace StackoverflowGuide.BLL.Helpers
         public List<Question> GetRecommendedQuestions(List<string> incomingIds, string userSearchTerm, List<string> tagsFromThread)
         {
             string searchTerm = userSearchTerm;
-            List<TagScore> incomingTags = new List<TagScore>();
+            List<TagScore> incomingTagScores = new List<TagScore>();
             if (incomingIds.Count != 0)
             {
-                incomingTags = GetTagScore(incomingIds);
+                incomingTagScores = GetTagScore(incomingIds);
 
                 string[] f = { "Body" };
                 List<ElasticKeyword> commonKeywords = GetKeywords(new GetKeywordRequestParametersModel()
@@ -80,7 +80,7 @@ namespace StackoverflowGuide.BLL.Helpers
 
             List<string> searchFields = new List<string>() { "Body" };
             List<Question> ret = questionsElasticRepository.SearchByText(searchTerm, searchFields, incomingIds);
-            var orderedByTagsQuestions = ret.Select(question => new KeyValuePair<int, Question>(CalculateQuestionsTagScore(incomingTags, question), question))
+            var orderedByTagsQuestions = ret.Select(question => new KeyValuePair<int, Question>(CalculateQuestionsTagScore(incomingTagScores, question), question))
                                 .OrderByDescending(questionKV => questionKV.Key )
                                 .Select(questionKV => questionKV.Value)
                                 .ToList();
@@ -109,11 +109,9 @@ namespace StackoverflowGuide.BLL.Helpers
         public List<TagScore> GetTagScore(List<string> incomingIds)
         {
             List<Question> Questions = questionsElasticRepository.GetAllByIds(incomingIds);
-            List<string> rawTags = new List<string>();
-            Questions.ForEach(question => rawTags.Add(question.Tags));
 
             List<string> splitTags = new List<string>();
-            rawTags.ForEach(rawTag => splitTags.AddRange(rawTag.Substring(1, rawTag.Length - 2).Split("><").ToList()));
+            Questions.ForEach(question => splitTags.AddRange(question.Tags.Substring(1, question.Tags.Length - 2).Split("><").ToList()));
 
             List<TagScore> tags = splitTags.Select(splitTag => new TagScore() { Tag = splitTag, Occurrences = 1,})
                                            .ToList()
