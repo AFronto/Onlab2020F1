@@ -59,7 +59,7 @@ html {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
-.prettyprint-override {
+pre {
   background: lavender;
 }
 

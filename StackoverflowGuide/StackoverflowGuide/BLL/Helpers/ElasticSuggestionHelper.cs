@@ -62,10 +62,15 @@ namespace StackoverflowGuide.BLL.Helpers
         public List<Question> GetRecommendedQuestions(List<string> incomingIds, string userSearchTerm, List<string> tagsFromThread)
         {
             string searchTerm = userSearchTerm;
+            if (incomingIds.Count == 0 && searchTerm == "")
+            {
+                searchTerm = String.Join(',', tagsFromThread);
+            }
+
             List<TagScore> incomingTagScores = new List<TagScore>();
             if (incomingIds.Count != 0)
             {
-                incomingTagScores = GetTagScore(incomingIds);
+                incomingTagScores = GetTagScore(incomingIds, tagsFromThread);
 
                 string[] f = { "Body" };
                 List<ElasticKeyword> commonKeywords = GetKeywords(new GetKeywordRequestParametersModel()
@@ -77,6 +82,7 @@ namespace StackoverflowGuide.BLL.Helpers
                 });
                 searchTerm = String.Join(',', searchTerm, String.Join(',', commonKeywords.Select(cKw => cKw.Word).ToList()));
             }
+
 
             List<string> searchFields = new List<string>() { "Body" };
             List<Question> ret = questionsElasticRepository.SearchByText(searchTerm, searchFields, incomingIds);
@@ -106,11 +112,12 @@ namespace StackoverflowGuide.BLL.Helpers
             ).ToList();
         }
 
-        public List<TagScore> GetTagScore(List<string> incomingIds)
+        public List<TagScore> GetTagScore(List<string> incomingIds, List<string> tagsFromThread)
         {
             List<Question> Questions = questionsElasticRepository.GetAllByIds(incomingIds);
 
             List<string> splitTags = new List<string>();
+            splitTags.AddRange(tagsFromThread);
             Questions.ForEach(question => splitTags.AddRange(question.Tags.Substring(1, question.Tags.Length - 2).Split("><").ToList()));
 
             List<TagScore> tags = splitTags.Select(splitTag => new TagScore() { Tag = splitTag, Occurrences = 1,})

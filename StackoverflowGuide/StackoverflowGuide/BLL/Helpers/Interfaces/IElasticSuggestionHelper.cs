@@ -16,6 +16,6 @@ namespace StackoverflowGuide.BLL.Helpers.Interfaces
 
         public List<ThreadPost> ParseQuestionsToThreadPosts(List<Question> questions, List<StoredThreadPost> storedThreadPosts);
 
-        public List<TagScore> GetTagScore(List<string> incomingIds);
+        public List<TagScore> GetTagScore(List<string> incomingIds, List<string> tagsFromThread);
     }
 }
