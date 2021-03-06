@@ -24,6 +24,7 @@ import {
   getSuggestionsAfterAccept,
   deleteWatched,
 } from "../../../api/Post";
+import { initializeScreen } from "../../../api/Auth";
 
 export const SingleThreadScreen: FunctionComponent = () => {
   /////////////////////////////////////////////////////////////////////////////////////
@@ -36,6 +37,7 @@ export const SingleThreadScreen: FunctionComponent = () => {
     if (id) {
       dispatch(getSingleThread(id));
     }
+    dispatch(initializeScreen());
 
     return function cleanup() {
       dispatch(loadSingleThread({ singleThread: {} }));

@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent } from "react";
 import { Navbar, Nav, InputGroup, Button, Form } from "react-bootstrap";
 import { isLoggedIn, logOut } from "../general_helpers/AuthHelper";
 import { Link } from "react-router-dom";

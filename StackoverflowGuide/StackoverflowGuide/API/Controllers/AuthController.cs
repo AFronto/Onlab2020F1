@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StackoverflowGuide.API.DTOs;
 using StackoverflowGuide.BLL.Models;
@@ -57,5 +59,19 @@ namespace StackoverflowGuide.API.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost("token")]
+        public ActionResult<AuthData> Post()
+        {
+            var userId = this.User.Claims.FirstOrDefault().Value;
+            try
+            {
+                return authService.GetAuthData(new Guid(userId));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { error = e.Message });
+            }
+        }
     }
 }

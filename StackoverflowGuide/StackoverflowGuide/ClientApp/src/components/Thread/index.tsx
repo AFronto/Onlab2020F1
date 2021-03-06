@@ -12,6 +12,7 @@ import { ReduxState } from "../../store";
 
 import { getThreads } from "../../api/Thread";
 import { ThreadModal } from "./ThreadModal";
+import { initializeScreen } from "../../api/Auth";
 
 export const ThreadsScreen: FunctionComponent = () => {
   const dispatch = useDispatch();
@@ -23,6 +24,7 @@ export const ThreadsScreen: FunctionComponent = () => {
 
   useEffect(() => {
     dispatch(getThreads());
+    dispatch(initializeScreen());
   }, []);
 
   const threads = useSelector((state: ReduxState) => state.threads);

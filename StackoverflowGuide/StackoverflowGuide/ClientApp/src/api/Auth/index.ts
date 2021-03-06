@@ -1,10 +1,12 @@
 import axios from "axios";
 import LoginData from "../../data/server/Auth/LoginData";
 import RegisterData from "../../data/server/Auth/RegisterData";
-import { AppDispatch } from "../../store";
+import { AppDispatch, ReduxState } from "../../store";
 import { loadAuthData } from "../../store/Auth";
 import { addError } from "../../store/Errors";
 import { push } from "connected-react-router";
+import { generateAuthenticationHeadder } from "../Helpers/HeaderHelper";
+import { logOut, refreshInterval } from "../../general_helpers/AuthHelper";
 
 export function login(loginData: LoginData) {
   return (dispatch: AppDispatch) => {
@@ -40,4 +42,38 @@ export function createNewAccount(registerData: RegisterData) {
         )
     );
   };
+}
+
+export function initializeScreen() {
+  return (dispatch: AppDispatch, getState: () => ReduxState) => {
+    if (refreshInterval.isSet === false) {
+      refreshInterval.isSet = true;
+      refreshToken(dispatch, getState);
+      refreshInterval.interval = setInterval(() => {
+        refreshToken(dispatch, getState);
+      }, 5000);
+    }
+  };
+}
+
+function refreshToken(dispatch: AppDispatch, getState: () => ReduxState) {
+  const header = generateAuthenticationHeadder(getState());
+  return axios({
+    method: "POST",
+    url: "auth/token",
+    headers: header,
+  }).then(
+    (success) => {
+      dispatch(loadAuthData({ jwt: success.data }));
+    },
+    (error) => {
+      dispatch(
+        addError({
+          name: "refreshError",
+          description: error.response.data.error,
+        })
+      );
+      logOut(dispatch);
+    }
+  );
 }

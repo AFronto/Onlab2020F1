@@ -61,7 +61,7 @@ namespace StackoverflowGuide.BLL.Services
 
         public AuthData GetAuthData(Guid id)
         {
-            var expirationTime = DateTime.UtcNow.AddDays(jwtLifespan);
+            var expirationTime = DateTime.UtcNow.AddSeconds(jwtLifespan);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

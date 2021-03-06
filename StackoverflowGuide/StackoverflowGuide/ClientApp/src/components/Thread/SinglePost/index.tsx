@@ -2,6 +2,7 @@ import React, { FunctionComponent, useEffect } from "react";
 import { Badge, Card, Col, Row, Spinner } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
+import { initializeScreen } from "../../../api/Auth";
 import { getSinglePost } from "../../../api/Post";
 import { ReduxState } from "../../../store";
 import { loadPost } from "../../../store/Thread/OpenPost";
@@ -14,6 +15,7 @@ export const SinglePostScreen: FunctionComponent = () => {
 
   useEffect(() => {
     dispatch(getSinglePost(threadId || "", postId || ""));
+    dispatch(initializeScreen());
     return function cleanup() {
       dispatch(loadPost({ post: {} }));
     };

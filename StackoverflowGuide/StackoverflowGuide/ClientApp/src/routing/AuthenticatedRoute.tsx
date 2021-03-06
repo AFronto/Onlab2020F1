@@ -26,7 +26,6 @@ export const AuthenticatedRoute: FunctionComponent<IProps> = ({
       id: localStorage.getItem("jwtId")!,
     };
     dispatch(loadAuthData({ jwt: jwt }));
-
     return <Route {...rest} render={({ location }) => children} />;
   }
 
